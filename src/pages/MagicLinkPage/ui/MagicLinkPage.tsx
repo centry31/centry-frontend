@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+
 import { axiosInstance } from 'shared/api';
 
 export const MagicLinkPage = () => {

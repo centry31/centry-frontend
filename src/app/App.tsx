@@ -1,22 +1,36 @@
-import { HeroUIProvider } from '@heroui/react';
-import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { HeroUIProvider, Spinner } from '@heroui/react';
+
+import { Navbar } from 'widgets/Navbar';
+
+import { useUserStore } from 'entities/User';
+
 import { AppRouter } from './providers/AppRouter';
 
 import './styles/index.css';
-import './styles/reset.css';
 
 const App = () => {
-	// if (!_init) {
-	// 	return <LoadScreen label={'UniShare'} />;
-	// }
+	const { isInit, initAuthData } = useUserStore();
+
+	useEffect(() => {
+		initAuthData();
+	}, [initAuthData]);
+
+	// TODO: add load screen
+	if (!isInit) {
+		return <Spinner />;
+	}
 
 	return (
-		<HeroUIProvider>
+		<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
 			<BrowserRouter>
-				<div className={classNames('App', 'content-page')}>
-					<AppRouter />
+				<div className={'App'}>
+					<Navbar />
+
+					<div className={'content'}>
+						<AppRouter />
+					</div>
 				</div>
 			</BrowserRouter>
 		</HeroUIProvider>

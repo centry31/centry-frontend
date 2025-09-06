@@ -1,0 +1,25 @@
+.dayhead {
+    display: grid;
+    place-items: center;
+    gap: 4px;
+}
+.dow {
+    text-transform: lowercase;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8E8E93;
+}
+.day {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1C1C1E;
+    border-radius: 50%;
+}
+.day.is-today {
+    background: #007AFF;
+    color: #FFFFFF;
+}

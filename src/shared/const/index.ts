@@ -1,1 +1,2 @@
-export { ACCESS_TOKEN_LOCALSTORAGE_KEY } from './localstorage';
+export { CURRENT_SPACE_ID_COOKIE_KEY } from './cookie';
+export { ACCESS_TOKEN_LOCALSTORAGE_KEY, CURRENT_SPACE_ID_LOCALSTORAGE_KEY } from './localstorage';

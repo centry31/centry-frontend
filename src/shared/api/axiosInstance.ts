@@ -1,6 +1,7 @@
 import axios from 'axios';
+
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from '../const';
-import type { ApiResponse, TAccessToken } from '../types';
+import type { AccessToken, ApiResponse } from '../types';
 
 const axiosInstance = axios.create({
 	baseURL: __API_URL__,
@@ -65,7 +66,7 @@ axiosInstance.interceptors.response.use(
 
 			const refreshToken = async () => {
 				try {
-					const refreshResponse = await axios.get<ApiResponse<TAccessToken>>(
+					const refreshResponse = await axios.get<ApiResponse<AccessToken>>(
 						`${__API_URL__}/refresh`,
 						{ withCredentials: true },
 					);
