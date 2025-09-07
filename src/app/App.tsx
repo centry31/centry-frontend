@@ -23,8 +23,8 @@ const App = () => {
 	}
 
 	return (
-		<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
-			<BrowserRouter>
+		<BrowserRouter>
+			<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
 				<div className={'App'}>
 					<Navbar />
 
@@ -32,8 +32,8 @@ const App = () => {
 						<AppRouter />
 					</div>
 				</div>
-			</BrowserRouter>
-		</HeroUIProvider>
+			</HeroUIProvider>
+		</BrowserRouter>
 	);
 };
 

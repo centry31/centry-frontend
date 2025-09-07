@@ -9,7 +9,7 @@ import { CURRENT_SPACE_ID_COOKIE_KEY, CURRENT_SPACE_ID_LOCALSTORAGE_KEY } from '
  * spaceId, к которому привязаны запросы в API.
  * */
 class CurrentSpaceIdController {
-	static setCurrentSpaceIdAndSendEvent(spaceId: string) {
+	static setCurrentSpaceId(spaceId: string) {
 		Cookies.set(CURRENT_SPACE_ID_COOKIE_KEY, spaceId);
 		localStorage.setItem(CURRENT_SPACE_ID_LOCALSTORAGE_KEY, spaceId);
 

@@ -4,6 +4,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
+import { Spinner } from '@heroui/react';
 
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetPersonalUserSpaces } from 'entities/Space';
@@ -20,14 +21,15 @@ export const CalendarPage = () => {
 		error: eventError,
 	} = useGetCalendarEvents();
 
-	// const {
-	// 	data: userSpaces,
-	// 	isLoading: isUserSpacesLoading,
-	// 	error: spacesError,
-	// } = useGetPersonalUserSpaces();
-	//
-	// if (isEventsLoading || isUserSpacesLoading) return null;
-	// if (!userSpaces?.length) return null;
+	const {
+		data: userSpaces,
+		isLoading: isUserSpacesLoading,
+		error: spacesError,
+	} = useGetPersonalUserSpaces();
+
+	if (isEventsLoading || isUserSpacesLoading) return <Spinner />;
+
+	if (!userSpaces?.length) return <div>У вас нет пространств</div>;
 
 	return (
 		<FullCalendar
@@ -49,7 +51,7 @@ export const CalendarPage = () => {
 			selectable
 			selectMirror
 			height={'100%'}
-			initialView="timeGridDay"
+			initialView={'timeGridDay'}
 			// кастомизация
 			dayHeaderContent={(arg) => {
 				const d = arg.date;

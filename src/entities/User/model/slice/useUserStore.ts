@@ -34,7 +34,7 @@ export const useUserStore = create<Store>((set) => ({
 			const savedSpaceId = CurrentSpaceIdController.getSavedSpaceId();
 
 			if (savedSpaceId) {
-				CurrentSpaceIdController.setCurrentSpaceIdAndSendEvent(savedSpaceId);
+				CurrentSpaceIdController.setCurrentSpaceId(savedSpaceId);
 			}
 
 			set({ authData });
