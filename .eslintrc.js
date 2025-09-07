@@ -91,6 +91,14 @@ module.exports = {
 			},
 		],
 		'simple-import-sort/exports': 'error',
+		'@typescript-eslint/consistent-type-imports': [
+			'error',
+			{
+				prefer: 'type-imports',
+				disallowTypeAnnotations: false,
+				fixStyle: 'inline-type-imports',
+			},
+		],
 	},
 	ignorePatterns: ['dist', 'build', 'coverage'],
 };

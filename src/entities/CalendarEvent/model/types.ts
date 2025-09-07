@@ -9,3 +9,4 @@ export type CalendarEvent = {
 };
 
 export type CreateCalendarEvent = Omit<CalendarEvent, 'id'>;
+export type UpdateCalendarEvent = Omit<CalendarEvent, 'id'>;

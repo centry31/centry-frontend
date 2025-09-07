@@ -21,7 +21,15 @@ export const SpaceSelect = () => {
 	};
 
 	const initSelectedSpace = useCallback(() => {
-		if (!spaces?.length || selectedSpaceId) return;
+		const savedSpaceId = CurrentSpaceIdController.getSavedSpaceId();
+
+		if (selectedSpaceId === CurrentSpaceIdController.getSavedSpaceId()) return;
+		if (!spaces) return;
+
+		if (savedSpaceId && spaces?.find((space) => space.id === selectedSpaceId)) {
+			setSelectedSpaceId(savedSpaceId);
+			return;
+		}
 
 		setSelectedSpaceId(spaces[0].id);
 	}, [selectedSpaceId, spaces]);

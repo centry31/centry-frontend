@@ -31,7 +31,7 @@ export const useTelegramLogin = () => {
 
 			initAuthData();
 		} catch (error) {
-			// TODO: add api error handler (utils?)
+			// TODO: add error handler (https://uniteam31.atlassian.net/browse/US-8)
 			console.error({ error });
 		} finally {
 			setIsLoading(false);

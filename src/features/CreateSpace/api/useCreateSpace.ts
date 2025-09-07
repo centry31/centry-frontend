@@ -23,7 +23,7 @@ export const useCreateSpace = () => {
 			const response = await axiosInstance.post<ApiResponse<Space>>('/spaces', space);
 			return response.data.data;
 		} catch (error) {
-			// TODO: add api error handler (utils?)
+			// TODO: add error handler (https://uniteam31.atlassian.net/browse/US-8)
 			console.error({ error });
 		} finally {
 			setIsLoading(false);
