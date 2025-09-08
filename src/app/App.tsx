@@ -11,7 +11,7 @@ import { AppRouter } from './providers/AppRouter';
 import './styles/index.css';
 
 const App = () => {
-	const { isInit, initAuthData } = useUserStore();
+	const { isInit, initAuthData, authData } = useUserStore();
 
 	useEffect(() => {
 		initAuthData();
@@ -26,7 +26,7 @@ const App = () => {
 		<BrowserRouter>
 			<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
 				<div className={'App'}>
-					<Navbar />
+					{authData && <Navbar />}
 
 					<div className={'content'}>
 						<AppRouter />
