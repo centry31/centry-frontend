@@ -1,1 +1,1 @@
-export { CreateSpaceForm } from './ui/CreateSpaceForm/CreateSpaceForm';
+export { CreateSpaceForm } from './ui/CreateSpaceForm';

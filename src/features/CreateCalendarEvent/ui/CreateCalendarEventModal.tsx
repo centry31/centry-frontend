@@ -1,23 +1,37 @@
 import { useController, useForm } from 'react-hook-form';
-import { Button, DateInput, Input } from '@heroui/react';
+import {
+	Button,
+	DateInput,
+	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+} from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 import { parseAbsoluteToLocal } from '@internationalized/date';
 
-import type { CalendarEvent, CreateCalendarEvent } from 'entities/CalendarEvent';
+import type {
+	CalendarEvent,
+	CreateCalendarEvent,
+	UpdateCalendarEvent,
+} from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
 
-import { useCreateCalendarEvent } from '../../api/useCreateCalendarEvent';
+import { useCreateCalendarEvent } from '../api/useCreateCalendarEvent';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 
 type Props = {
-	onOpenModalChange: (isOpen: boolean) => void;
-	initialFormValues: Partial<CreateCalendarEvent>;
+	isOpen: boolean;
+	onOpenChange: (isOpen: boolean) => void;
+
+	initialFormValues: Partial<UpdateCalendarEvent>;
 };
 
-// TODO: add fields validation
-export const CreateCalendarEventForm = (props: Props) => {
-	const { onOpenModalChange, initialFormValues } = props;
+export const CreateCalendarEventModal = (props: Props) => {
+	const { initialFormValues, isOpen, onOpenChange } = props;
 
 	const defaultFormValues = {
 		start: DEFAULT_TIME_ISO_VALUE,
@@ -78,7 +92,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 			return [...events, createdEvent];
 		});
 
-		onOpenModalChange(false);
+		onOpenChange(false);
 	};
 
 	const handleCreateCalendarEvent = () => {
@@ -93,31 +107,39 @@ export const CreateCalendarEventForm = (props: Props) => {
 	};
 
 	return (
-		<div className={'flex flex-col gap-4'}>
-			<Input label={'Название'} value={title} onChange={onChangeTitle} />
-			<Input label={'Описание'} value={description} onChange={onChangeDescription} />
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+			<ModalContent>
+				<ModalHeader>Создать событие</ModalHeader>
 
-			<DateInput
-				label={'Начало'}
-				value={parseAbsoluteToLocal(start)}
-				onChange={handleChangeStart}
-				hideTimeZone
-			/>
-			<DateInput
-				label={'Конец'}
-				value={parseAbsoluteToLocal(end)}
-				onChange={handleChangeEnd}
-				hideTimeZone
-			/>
+				<ModalBody>
+					<Input label={'Название'} value={title} onChange={onChangeTitle} />
+					<Input label={'Описание'} value={description} onChange={onChangeDescription} />
 
-			<Button
-				color={'primary'}
-				onPress={handleCreateCalendarEvent}
-				isLoading={isCreating}
-				disabled={isCreating}
-			>
-				Создать
-			</Button>
-		</div>
+					<DateInput
+						label={'Начало'}
+						value={parseAbsoluteToLocal(start)}
+						onChange={handleChangeStart}
+						hideTimeZone
+					/>
+					<DateInput
+						label={'Конец'}
+						value={parseAbsoluteToLocal(end)}
+						onChange={handleChangeEnd}
+						hideTimeZone
+					/>
+				</ModalBody>
+
+				<ModalFooter>
+					<Button
+						color={'primary'}
+						onPress={handleCreateCalendarEvent}
+						isLoading={isCreating}
+						disabled={isCreating}
+					>
+						Создать
+					</Button>
+				</ModalFooter>
+			</ModalContent>
+		</Modal>
 	);
 };

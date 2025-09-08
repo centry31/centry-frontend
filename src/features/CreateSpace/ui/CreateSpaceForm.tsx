@@ -3,7 +3,7 @@ import { Button, Card, CardBody, CardHeader, Input } from '@heroui/react';
 
 import type { CreateSpace } from 'entities/Space';
 
-import { useCreateSpace } from '../../api/useCreateSpace';
+import { useCreateSpace } from '../api/useCreateSpace';
 
 export const CreateSpaceForm = () => {
 	const { request: createSpace, isLoading } = useCreateSpace();
@@ -26,7 +26,7 @@ export const CreateSpaceForm = () => {
 	};
 
 	return (
-		<Card className={'m-2'}>
+		<Card shadow={'none'}>
 			<CardHeader>
 				<h4 className="font-bold text-large">Создание пространства</h4>
 			</CardHeader>

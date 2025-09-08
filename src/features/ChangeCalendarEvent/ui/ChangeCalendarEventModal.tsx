@@ -1,25 +1,35 @@
 import { useController, useForm } from 'react-hook-form';
-import { Button, DateInput, Input } from '@heroui/react';
+import {
+	Button,
+	DateInput,
+	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+} from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 import { parseAbsoluteToLocal } from '@internationalized/date';
 
 import type { CalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
 
-import { useDeleteCalendarEvent } from '../../api/useDeleteCalendarEvent';
-import { useUpdateCalendarEvent } from '../../api/useUpdateCalendarEvent';
+import { useDeleteCalendarEvent } from '../api/useDeleteCalendarEvent';
+import { useUpdateCalendarEvent } from '../api/useUpdateCalendarEvent';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 
 type Props = {
-	onOpenModalChange: (isOpen: boolean) => void;
+	isOpen: boolean;
+	onOpenChange: (isOpen: boolean) => void;
+
 	eventId: string;
 	initialFormValues: UpdateCalendarEvent;
 };
 
-// TODO: add fields validation
-export const ChangeCalendarEventForm = (props: Props) => {
-	const { onOpenModalChange, initialFormValues, eventId } = props;
+export const ChangeCalendarEventModal = (props: Props) => {
+	const { eventId, initialFormValues, isOpen, onOpenChange } = props;
 
 	const { control } = useForm<UpdateCalendarEvent>({ defaultValues: initialFormValues });
 
@@ -75,7 +85,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 			return [...events, createdEvent];
 		});
 
-		onOpenModalChange(false);
+		onOpenChange(false);
 	};
 
 	/**
@@ -88,7 +98,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 			return events.filter((event) => event.id !== deletedEvent.id);
 		});
 
-		onOpenModalChange(false);
+		onOpenChange(false);
 	};
 
 	const handleUpdateCalendarEvent = () => {
@@ -107,40 +117,48 @@ export const ChangeCalendarEventForm = (props: Props) => {
 	};
 
 	return (
-		<div className={'flex flex-col gap-4'}>
-			<Input label={'Название'} value={title} onChange={onChangeTitle} />
-			<Input label={'Описание'} value={description} onChange={onChangeDescription} />
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+			<ModalContent>
+				<ModalHeader>Редактировать событие</ModalHeader>
 
-			<DateInput
-				label={'Начало'}
-				value={parseAbsoluteToLocal(start)}
-				onChange={handleChangeStart}
-				hideTimeZone
-			/>
-			<DateInput
-				label={'Конец'}
-				value={parseAbsoluteToLocal(end)}
-				onChange={handleChangeEnd}
-				hideTimeZone
-			/>
+				<ModalBody>
+					<Input label={'Название'} value={title} onChange={onChangeTitle} />
+					<Input label={'Описание'} value={description} onChange={onChangeDescription} />
 
-			<Button
-				color={'primary'}
-				onPress={handleUpdateCalendarEvent}
-				isLoading={isCreating}
-				disabled={isCreating}
-			>
-				Обновить
-			</Button>
+					<DateInput
+						label={'Начало'}
+						value={parseAbsoluteToLocal(start)}
+						onChange={handleChangeStart}
+						hideTimeZone
+					/>
+					<DateInput
+						label={'Конец'}
+						value={parseAbsoluteToLocal(end)}
+						onChange={handleChangeEnd}
+						hideTimeZone
+					/>
+				</ModalBody>
 
-			<Button
-				color={'danger'}
-				onPress={handleDeleteCalendarEvent}
-				isLoading={isDeleting}
-				disabled={isDeleting}
-			>
-				Удалить
-			</Button>
-		</div>
+				<ModalFooter className={'flex-col'}>
+					<Button
+						color={'primary'}
+						onPress={handleUpdateCalendarEvent}
+						isLoading={isCreating}
+						disabled={isCreating}
+					>
+						Обновить
+					</Button>
+
+					<Button
+						color={'danger'}
+						onPress={handleDeleteCalendarEvent}
+						isLoading={isDeleting}
+						disabled={isDeleting}
+					>
+						Удалить
+					</Button>
+				</ModalFooter>
+			</ModalContent>
+		</Modal>
 	);
 };
