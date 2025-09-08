@@ -32,6 +32,7 @@ export const SpaceSelect = () => {
 		}
 
 		setSelectedSpaceId(spaces[0].id);
+		CurrentSpaceIdController.setCurrentSpaceId(spaces[0].id);
 	}, [selectedSpaceId, spaces]);
 
 	useEffect(() => {
