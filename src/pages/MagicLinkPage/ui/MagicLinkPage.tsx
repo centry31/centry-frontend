@@ -92,7 +92,7 @@ export const MagicLinkPage = () => {
 							>
 								code
 							</Chip>
-							<Code className="rounded-lg px-3 py-2">{code}</Code>
+							<Code className="rounded-lg px-3 py-2 truncate">{code}</Code>
 
 							{isLoading && (
 								<div className="space-y-3">

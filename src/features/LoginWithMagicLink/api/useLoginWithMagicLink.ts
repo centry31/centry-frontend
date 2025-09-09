@@ -25,7 +25,7 @@ export const useLoginWithMagicLink = () => {
 		try {
 			const response = await axiosInstance.post<ApiResponse<AccessToken>>(
 				'/auth/magic-link',
-				code,
+				{ code },
 			);
 
 			const accessToken = response.data.data;
