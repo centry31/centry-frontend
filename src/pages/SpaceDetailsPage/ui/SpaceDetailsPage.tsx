@@ -27,7 +27,11 @@ export const SpaceDetailsPage = () => {
 		<div className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-6">
 			<Header space={space} />
 
-			<Tabs aria-label="space-tabs" className="mt-4">
+			<Tabs
+				aria-label="space-tabs"
+				className="mt-4 w-full sm:w-auto"
+				classNames={{ tabList: 'w-full sm:w-auto' }}
+			>
 				<Tab
 					key="overview"
 					title={<TabTitle icon={<Calendar size={16} />} label="Обзор" />}

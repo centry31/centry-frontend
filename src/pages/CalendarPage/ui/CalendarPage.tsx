@@ -128,7 +128,7 @@ export const CalendarPage = () => {
 	if (!userSpaces?.length) return <div>У вас нет пространств</div>;
 
 	return (
-		<>
+		<div className={'flex flex-col h-full'}>
 			{createEventInitialFormValues && (
 				<CreateCalendarEventModal
 					isOpen={isCreateEventModalOpen}
@@ -218,6 +218,6 @@ export const CalendarPage = () => {
 				eventResize={handleChangeEvent}
 				eventClick={handleOpenChangeEventModal}
 			/>
-		</>
+		</div>
 	);
 };
