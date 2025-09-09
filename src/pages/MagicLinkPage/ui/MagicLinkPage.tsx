@@ -1,42 +1,137 @@
-import { useEffect, useMemo } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Chip,
+	Code,
+	Divider,
+	Progress,
+	Spacer,
+} from '@heroui/react';
+import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 
-import { axiosInstance } from 'shared/api';
+import { useLoginWithMagicLink } from 'features/LoginWithMagicLink';
+
+import { useGetLoginCodeFromUrl } from '../lib/useGetLoginCodeFromUrl';
+import { EmptyStateNoCode } from './EmptyStateNoCode';
+import { ErrorBlock } from './ErrorBlock';
+import { HelpBlock } from './HelpBlock';
+import { SuccessBlock } from './SuccessBlock';
+
+const REDIRECT_IN_SECONDS = 3;
 
 export const MagicLinkPage = () => {
-	const [searchParams] = useSearchParams();
-	const location = useLocation();
+	const [redirectIn, setRedirectIn] = useState<number>(REDIRECT_IN_SECONDS); // секунды до редиректа после успеха
 
-	const codeFromQuery = searchParams.get('code');
+	const navigate = useNavigate();
+	const { code } = useGetLoginCodeFromUrl();
 
-	const codeFromHash = useMemo(() => {
-		if (!location.hash) return null;
+	const { request: loginWithMagicLink, isLoading, error } = useLoginWithMagicLink();
 
-		const sp = new URLSearchParams(location.hash.replace(/^#/, ''));
-		return sp.get('code');
-	}, [location.hash]);
+	const handleRedirectAfterLogin = () => {
+		const interval = setInterval(() => setRedirectIn((prev) => prev - 1), 1000);
 
-	const code = codeFromQuery ?? codeFromHash;
+		const to = setTimeout(() => {
+			navigate('/spaces');
+		}, 3000);
+
+		// TODO: memory leak! fix (https://uniteam31.atlassian.net/browse/US-14)
+		return () => {
+			clearInterval(interval);
+			clearTimeout(to);
+		};
+	};
+
+	const handleRetryLogin = () => {
+		window.location.reload();
+	};
 
 	useEffect(() => {
 		if (!code) return;
 
-		axiosInstance('/auth/magic-link', { method: 'POST', data: { code } })
-			.then((res) => console.log({ res }))
-			.catch((error) => console.log({ error }));
+		loginWithMagicLink({ code }).then(handleRedirectAfterLogin);
 	}, [code]);
 
-	if (!code) {
-		return (
-			<div>
-				Не найден параметр <code>code</code>
-			</div>
-		);
-	}
-
 	return (
-		<div>
-			<div>Авторизуем… (code: {code})</div>
+		<div className="mx-auto flex min-h-[100svh] max-w-md items-center justify-center px-4 py-6">
+			<Card className="w-full border border-neutral-200 shadow-sm">
+				<CardHeader className="flex items-center gap-3">
+					<div className="grid h-10 w-10 place-items-center rounded-2xl bg-neutral-100">
+						<LinkIcon size={18} />
+					</div>
+
+					<div>
+						<h1 className="text-lg font-semibold">Войти через ссылку</h1>
+						<p className="text-sm text-neutral-500">
+							Быстрый вход без пароля через одноразовый код
+						</p>
+					</div>
+				</CardHeader>
+
+				<Divider />
+
+				<CardBody className="space-y-4">
+					{!code && (
+						<div className="space-y-4">
+							<EmptyStateNoCode />
+							<Divider />
+							<HelpBlock />
+						</div>
+					)}
+
+					{code && (
+						<>
+							<Chip
+								size="sm"
+								variant="flat"
+								color="default"
+								className="uppercase tracking-wide"
+							>
+								code
+							</Chip>
+							<Code className="rounded-lg px-3 py-2">{code}</Code>
+
+							{isLoading && (
+								<div className="space-y-3">
+									<Progress isIndeterminate aria-label="Авторизация..." />
+
+									<p className="text-sm text-neutral-600">
+										Подтверждаем вашу ссылку и выполняем вход…
+									</p>
+								</div>
+							)}
+
+							{!isLoading && !error && <SuccessBlock redirectIn={redirectIn} />}
+
+							{error && <ErrorBlock message={error} onRetry={handleRetryLogin} />}
+
+							<Spacer y={2} />
+
+							<div className="flex items-center justify-between gap-2">
+								<Button variant="flat" onPress={() => navigate('/')}>
+									На главную
+								</Button>
+
+								<Button
+									color="primary"
+									endContent={<ArrowRight size={16} />}
+									onPress={() => navigate('/calendar')}
+									isDisabled={Boolean(error)}
+								>
+									Перейти в приложение
+								</Button>
+							</div>
+
+							<Divider />
+
+							<HelpBlock minimal />
+						</>
+					)}
+				</CardBody>
+			</Card>
 		</div>
 	);
 };

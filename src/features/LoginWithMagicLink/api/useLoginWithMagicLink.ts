@@ -1,38 +1,39 @@
 import { useState } from 'react';
 
-import { useUserStore } from 'entities/User';
-
 import { axiosInstance } from 'shared/api';
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
+import { getApiResponseErrorMessage } from 'shared/lib';
 import type { AccessToken, ApiResponse } from 'shared/types';
 
-import type { TelegramUserPayload } from '../model/types';
+type Payload = {
+	code: string;
+};
 
-type Payload = TelegramUserPayload;
-
-export const useTelegramLogin = () => {
+/**
+ * Авторизуется через ссылку со специальным кодом.
+ * */
+export const useLoginWithMagicLink = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const { initAuthData } = useUserStore();
-
 	const request = async (payload: Payload) => {
+		const { code } = payload;
+
 		setIsLoading(true);
 		setError('');
 
 		try {
 			const response = await axiosInstance.post<ApiResponse<AccessToken>>(
-				'/auth/telegram',
-				payload,
+				'/auth/magic-link',
+				code,
 			);
 
 			const accessToken = response.data.data;
 			localStorage.setItem(ACCESS_TOKEN_LOCALSTORAGE_KEY, accessToken);
-
-			initAuthData();
 		} catch (error) {
-			// TODO: add error handler (https://uniteam31.atlassian.net/browse/US-8)
-			console.error({ error });
+			const errorMessage = getApiResponseErrorMessage(error);
+			setError(errorMessage);
+			throw error;
 		} finally {
 			setIsLoading(false);
 		}

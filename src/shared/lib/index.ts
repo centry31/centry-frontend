@@ -6,3 +6,4 @@ export {
 	syncUrlParams,
 } from './calendarNav';
 export { CurrentSpaceIdController } from './currentSpaceIdController';
+export { getApiResponseErrorMessage } from './getApiResponseErrorMessage';
