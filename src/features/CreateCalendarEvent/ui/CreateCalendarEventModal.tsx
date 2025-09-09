@@ -107,7 +107,7 @@ export const CreateCalendarEventModal = (props: Props) => {
 	};
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
 			<ModalContent>
 				<ModalHeader>Создать событие</ModalHeader>
 

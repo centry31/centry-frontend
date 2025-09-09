@@ -12,10 +12,7 @@ type Props = {
 
 export const SettingsTab = (props: Props) => {
 	const { space } = props;
-
 	const { id: spaceId, ...currentSpaceInfo } = space;
-
-	// const { request: remove, isLoading: deleting } = useDeleteSpace();
 
 	return (
 		<div className="mt-2 grid grid-cols-1 gap-3 lg:grid-cols-3">
@@ -25,7 +22,7 @@ export const SettingsTab = (props: Props) => {
 				</CardHeader>
 
 				<CardBody className="flex flex-col gap-3">
-					<UpdateSpaceInfoForm spaceId={space.id} initialFormValues={currentSpaceInfo} />
+					<UpdateSpaceInfoForm spaceId={spaceId} initialFormValues={currentSpaceInfo} />
 				</CardBody>
 			</Card>
 
