@@ -24,7 +24,7 @@ export const SpaceSelect = () => {
 		const savedSpaceId = CurrentSpaceIdController.getSavedSpaceId();
 
 		if (selectedSpaceId === CurrentSpaceIdController.getSavedSpaceId()) return;
-		if (!spaces) return;
+		if (!spaces?.length) return;
 
 		if (savedSpaceId && spaces?.find((space) => space.id === selectedSpaceId)) {
 			setSelectedSpaceId(savedSpaceId);

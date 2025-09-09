@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { DateSelectArg, EventChangeArg, EventClickArg } from '@fullcalendar/core';
+import { useRef, useState } from 'react';
+import type { DateSelectArg, DatesSetArg, EventChangeArg, EventClickArg } from '@fullcalendar/core';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -7,6 +7,9 @@ import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
 import { Spinner, useDisclosure } from '@heroui/react';
+import classNames from 'classnames';
+
+import { CalendarToolbar } from 'widgets/CalendarToolbar';
 
 import { ChangeCalendarEventModal, useUpdateCalendarEvent } from 'features/ChangeCalendarEvent';
 import { CreateCalendarEventModal } from 'features/CreateCalendarEvent';
@@ -14,6 +17,8 @@ import { CreateCalendarEventModal } from 'features/CreateCalendarEvent';
 import type { CreateCalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetPersonalUserSpaces } from 'entities/Space';
+
+import { getInitialDate, getInitialView, saveView, syncUrlParams } from 'shared/lib';
 
 import './styles.css';
 
@@ -32,6 +37,27 @@ export const CalendarPage = () => {
 		useDisclosure();
 	const { isOpen: isUpdateEventModalOpen, onOpenChange: onOpenUpdateEventChange } =
 		useDisclosure();
+
+	const calendarRef = useRef<FullCalendar | null>(null);
+	const [currentView, setCurrentView] = useState(getInitialView());
+	const [currentDate, setCurrentDate] = useState(getInitialDate());
+
+	const api = calendarRef.current?.getApi();
+
+	const onPrev = () => api?.prev();
+	const onNext = () => api?.next();
+	const onToday = () => api?.today();
+	const onChangeView = (v: string) => {
+		api?.changeView(v);
+		setCurrentView(v);
+		saveView(v);
+	};
+
+	const onDatesSet = (arg: DatesSetArg) => {
+		setCurrentView(arg.view.type);
+		setCurrentDate(arg.view.currentStart);
+		syncUrlParams(arg.view.type, arg.view.currentStart);
+	};
 
 	const {
 		data: events,
@@ -120,16 +146,25 @@ export const CalendarPage = () => {
 				/>
 			)}
 
+			<CalendarToolbar
+				view={currentView}
+				date={currentDate}
+				onPrev={onPrev}
+				onNext={onNext}
+				onToday={onToday}
+				onChangeView={onChangeView}
+			/>
+
 			<FullCalendar
+				ref={calendarRef}
+				headerToolbar={false}
+				initialView={currentView}
+				initialDate={currentDate}
+				datesSet={(arg) => onDatesSet(arg)} // синк в URL
 				events={events || []}
 				selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
 				//
 				plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-				// headerToolbar={{
-				// 	left: 'prev,next',
-				// 	right: 'timeGridWeek,timeGridDay',
-				// }}
-				headerToolbar={false}
 				locale={ruLocale}
 				firstDay={1}
 				allDaySlot={false}
@@ -140,7 +175,10 @@ export const CalendarPage = () => {
 				selectMirror
 				editable
 				height={'100%'}
-				initialView={'timeGridDay'}
+				// contentHeight={"auto"}
+				themeSystem="standard"
+				slotLabelFormat={{ hour: '2-digit', minute: '2-digit' }} // метки времени 09:00
+				eventClassNames={() => ['us-event']}
 				// кастомизация
 				dayHeaderContent={(arg) => {
 					const d = arg.date;
@@ -148,10 +186,17 @@ export const CalendarPage = () => {
 					const dow = d.toLocaleDateString('ru', { weekday: 'short' }); // пн
 					const day = d.toLocaleDateString('ru', { day: '2-digit' }); // 01
 
+					const isMonthView = arg.view.type === 'dayGridMonth';
+
 					return (
 						<div className="dayhead">
 							<span className="dow">{dow}</span>
-							<span className={`day ${isToday ? 'is-today' : ''}`}>{day}</span>
+
+							{!isMonthView && (
+								<span className={classNames('day', isToday && 'is-today')}>
+									{day}
+								</span>
+							)}
 						</div>
 					);
 				}}

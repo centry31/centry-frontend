@@ -1,25 +1,100 @@
-.dayhead {
+/* где-нибудь в твоём styles.css */
+:root {
+    /* фон и бордеры календаря */
+    --fc-page-bg-color: #fff;
+    --fc-neutral-bg-color: #fafafa;      /* фон ячеек при hover/selection */
+    --fc-border-color: #E5E5EA;          /* тонкие линии */
+
+    /* «сегодня» и «текущая линия» */
+    --fc-today-bg-color: #eaf0ff;         /* без заливки для Apple-вида */
+    --fc-now-indicator-color: #FF3B30;   /* красная линия «сейчас» */
+
+    /* события — мягкий вид по умолчанию */
+    --fc-event-bg-color: #007AFF;        /* iOS-синий */
+    --fc-event-text-color: #fff;
+    --fc-event-border-color: transparent;
+}
+
+/* Убираем жирную рамку контейнера */
+.fc .fc-scrollgrid { border: none; }
+
+/* Шапка дней — делаем «пилюли» и типографику */
+.fc .fc-col-header-cell-cushion {
     display: grid;
     place-items: center;
     gap: 4px;
-}
-.dow {
+    padding: 8px 0 10px;
     text-transform: lowercase;
-    font-size: 12px;
     font-weight: 600;
     color: #8E8E93;
 }
-.day {
-    display: inline-grid;
-    place-items: center;
+
+/* Внутри твоего dayHeaderContent ты рендеришь .day — подкрашиваем «сегодня» */
+.fc .dayhead {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.fc .day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 28px;
     height: 28px;
-    font-size: 14px;
+    margin-top: 2px;
+    font-size: 16px;
     font-weight: 700;
     color: #1C1C1E;
     border-radius: 50%;
 }
-.day.is-today {
-    background: #007AFF;
-    color: #FFFFFF;
+.fc .day.is-today { background: #007AFF; font-size: 14px; color: #fff; }
+
+/* Ось времени и метки слева (timegrid) */
+.fc .fc-timegrid-axis-cushion {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8E8E93;
+}
+.fc .fc-timegrid-slot-label {
+    font-variant-numeric: tabular-nums;
+    color: #8E8E93;
+}
+
+/* Тонкие горизонтальные линии слотов */
+.fc .fc-timegrid-slot {
+    border-bottom: 1px solid #F2F2F7;
+}
+.fc .fc-timegrid-slot-minor {
+    border-bottom-style: dashed;
+    border-bottom-color: #EFEFF4;
+}
+
+/* События (добавили us-event через eventClassNames) — делаем компактнее и «мягче» */
+.fc .us-event {
+    border-radius: 10px;
+    padding: 2px 6px;                     /* внутри .fc-event-main будет контент */
+}
+.fc .us-event .fc-event-main {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Убираем «заляпанность» выделений при drag/select */
+.fc .fc-highlight {
+    background: rgba(0,122,255,0.08);
+}
+
+/* Линия «сейчас» — тонкая красная */
+.fc .fc-timegrid-now-indicator-line { border-top-width: 2px; }
+
+.fc .fc-daygrid-event {
+    background-color: var(--fc-event-bg-color);
+    overflow: hidden;
+    color: #fff;
+}
+
+.fc-daygrid-event-dot {
+    display: none;
 }
