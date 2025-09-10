@@ -6,7 +6,6 @@ export const WelcomeNavbar = () => {
 		<Navbar
 			maxWidth="xl"
 			isBordered
-			shouldHideOnScroll
 			className="backdrop-blur supports-[backdrop-filter]:bg-white/70"
 		>
 			<NavbarBrand>

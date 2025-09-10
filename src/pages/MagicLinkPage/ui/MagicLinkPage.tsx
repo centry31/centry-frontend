@@ -56,7 +56,7 @@ export const MagicLinkPage = () => {
 	}, [code]);
 
 	return (
-		<div className="mx-auto flex min-h-[100svh] max-w-md items-center justify-center px-4 py-6">
+		<div className="m-auto h-full flex max-w-md items-center justify-center px-4 py-6">
 			<Card className="w-full border border-neutral-200 shadow-sm">
 				<CardHeader className="flex items-center gap-3">
 					<div className="grid h-10 w-10 place-items-center rounded-2xl bg-neutral-100">
@@ -64,7 +64,7 @@ export const MagicLinkPage = () => {
 					</div>
 
 					<div>
-						<h1 className="text-lg font-semibold">Войти через ссылку</h1>
+						<h1 className="text-lg font-semibold">Вход через ссылку</h1>
 						<p className="text-sm text-neutral-500">
 							Быстрый вход без пароля через одноразовый код
 						</p>

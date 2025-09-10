@@ -2,7 +2,7 @@ import type { RouteProps } from 'react-router-dom';
 
 import { CalendarPage } from 'pages/CalendarPage';
 import { CreateSpacePage } from 'pages/CreateSpacePage';
-import { LoginPage } from 'pages/LoginPage';
+import { LoginWithTelegramPage } from 'pages/LoginWithTelegramPage';
 import { MagicLinkPage } from 'pages/MagicLinkPage';
 import { SpaceDetailsPage } from 'pages/SpaceDetailsPage';
 import { SpacesPage } from 'pages/SpacesPage';
@@ -16,7 +16,7 @@ export type AppRoutesProps = RouteProps & {
 export enum Routes {
 	MAGIC_LINK = 'magicLink',
 	CALENDAR = 'calendar',
-	LOGIN = 'login',
+	LOGIN_WITH_TELEGRAM = 'loginWithTelegram',
 	WELCOME = 'welcome',
 	SPACES = 'spaces',
 	SPACE_DETAILS = 'spaceDetails',
@@ -35,7 +35,7 @@ export type Path =
 export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.MAGIC_LINK]: '/auth/magic-link',
 	[Routes.CALENDAR]: '/calendar',
-	[Routes.LOGIN]: '/login',
+	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
 	[Routes.WELCOME]: '/welcome',
 	[Routes.SPACES]: '/spaces',
 	[Routes.SPACE_DETAILS]: '/spaces/:spaceId',
@@ -54,9 +54,9 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <CalendarPage />,
 		authOnly: true,
 	},
-	[Routes.LOGIN]: {
-		path: RoutesPaths.login,
-		element: <LoginPage />,
+	[Routes.LOGIN_WITH_TELEGRAM]: {
+		path: RoutesPaths.loginWithTelegram,
+		element: <LoginWithTelegramPage />,
 	},
 	[Routes.WELCOME]: {
 		path: RoutesPaths.welcome,
