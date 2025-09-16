@@ -1,3 +1,7 @@
+export type CalendarEventReminder = {
+	offsetMinutes: number;
+};
+
 export type CalendarEvent = {
 	id: string;
 
@@ -6,6 +10,7 @@ export type CalendarEvent = {
 
 	title: string;
 	description?: string;
+	reminders: CalendarEventReminder[];
 };
 
 export type CreateCalendarEvent = Omit<CalendarEvent, 'id'>;

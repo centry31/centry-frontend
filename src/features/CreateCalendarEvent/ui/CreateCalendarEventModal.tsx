@@ -1,4 +1,4 @@
-import { useController, useForm } from 'react-hook-form';
+import { useController, useFieldArray, useForm } from 'react-hook-form';
 import {
 	Button,
 	DateInput,
@@ -18,10 +18,14 @@ import type {
 	UpdateCalendarEvent,
 } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
+import { useGetSpace } from 'entities/Space';
+
+import { CurrentSpaceIdController, formatMinutesOffset } from 'shared/lib';
 
 import { useCreateCalendarEvent } from '../api/useCreateCalendarEvent';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
+const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440]; // 1m, 5m, 15m, 30m, 1h, 2h, 1d
 
 type Props = {
 	isOpen: boolean;
@@ -39,9 +43,14 @@ export const CreateCalendarEventModal = (props: Props) => {
 		...initialFormValues,
 	};
 
-	const { control } = useForm<CreateCalendarEvent>({ defaultValues: defaultFormValues });
+	const { control, getValues } = useForm<CreateCalendarEvent>({
+		defaultValues: defaultFormValues,
+	});
+
+	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
 
 	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
+	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 	const { request: createCalendarEvent, isLoading: isCreating } = useCreateCalendarEvent();
 
 	const {
@@ -59,6 +68,15 @@ export const CreateCalendarEventModal = (props: Props) => {
 	const {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
+
+	const {
+		fields: reminderFields,
+		append: appendReminder,
+		remove: removeReminder,
+	} = useFieldArray({
+		control,
+		name: 'reminders',
+	});
 
 	/**
 	 * @summary <DateInput /> работает с ZoneDateTime типом, нужно это учитывать
@@ -82,6 +100,18 @@ export const CreateCalendarEventModal = (props: Props) => {
 		onChangeEnd(absoluteString);
 	};
 
+	const handleAddReminder = (minutes: number) => {
+		const existsReminders = (getValues('reminders') ?? []).some(
+			(r) => r.offsetMinutes === minutes,
+		);
+
+		if (!existsReminders) appendReminder({ offsetMinutes: minutes });
+	};
+
+	const handleRemoveReminder = (idx: number) => {
+		removeReminder(idx);
+	};
+
 	/**
 	 * Мутирует существующий список событий при успешно создании нового события
 	 * */
@@ -101,10 +131,13 @@ export const CreateCalendarEventModal = (props: Props) => {
 			description,
 			start,
 			end,
+			reminders: reminderFields.map((r) => ({ offsetMinutes: r.offsetMinutes })),
 		};
 
 		createCalendarEvent({ event }).then(handleSuccessCreatingEvent);
 	};
+
+	const isRemindersActive = currentSpace?.hasActiveTgChats;
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
@@ -127,6 +160,55 @@ export const CreateCalendarEventModal = (props: Props) => {
 						onChange={handleChangeEnd}
 						hideTimeZone
 					/>
+
+					<div className="flex flex-col gap-2">
+						<div className="text-sm font-medium">Напоминания</div>
+
+						{!isRemindersActive && (
+							<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
+								Чтобы добавлять напоминания, привяжите Telegram-чат в настройках
+								пространства.
+							</div>
+						)}
+
+						{/* Пресеты */}
+						<div className="flex flex-wrap gap-2">
+							{REMINDERS_PRESETS.map((minutes) => (
+								<Button
+									key={minutes}
+									size="sm"
+									variant="flat"
+									onPress={() => handleAddReminder(minutes)}
+									disabled={!isRemindersActive}
+								>
+									{formatMinutesOffset(minutes)}
+								</Button>
+							))}
+						</div>
+
+						{/* Текущий список */}
+						<div className="flex flex-wrap gap-2">
+							{reminderFields.length === 0 && (
+								<span className="text-sm text-neutral-500">Нет напоминаний</span>
+							)}
+
+							{reminderFields.length != 0 &&
+								reminderFields.map((f, idx) => (
+									<Button
+										key={f.id}
+										size="sm"
+										variant="flat"
+										color="primary"
+										onPress={() => handleRemoveReminder(idx)}
+									>
+										{formatMinutesOffset(
+											getValues(`reminders.${idx}.offsetMinutes`),
+										)}
+										&nbsp;×
+									</Button>
+								))}
+						</div>
+					</div>
 				</ModalBody>
 
 				<ModalFooter>

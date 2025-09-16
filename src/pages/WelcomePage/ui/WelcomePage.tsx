@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardHeader, Chip, Link } from '@heroui/react';
 import { ArrowRight, Bell, Calendar, ShieldCheck, Smartphone, Sparkles, Users } from 'lucide-react';
 
@@ -10,6 +10,12 @@ import { WelcomeNavbar } from './WelcomeNavbar';
 
 export const WelcomePage = () => {
 	const { authData } = useUserStore();
+
+	const navigate = useNavigate();
+
+	const handleNavigateToLoginPage = () => {
+		navigate('/login');
+	};
 
 	if (authData) {
 		return <Navigate to={'/calendar'} />;
@@ -182,7 +188,11 @@ export const WelcomePage = () => {
 							</div>
 
 							<div className="flex gap-3 flex-wrap">
-								<Button color="primary" endContent={<ArrowRight size={18} />}>
+								<Button
+									color="primary"
+									endContent={<ArrowRight size={18} />}
+									onPress={handleNavigateToLoginPage}
+								>
 									Войти через Telegram
 								</Button>
 

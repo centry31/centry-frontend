@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from '../const';
 import type { AccessToken, ApiResponse } from '../types';
 
 const axiosInstance = axios.create({
-	baseURL: __API_URL__,
+	baseURL: '/api',
 	withCredentials: true,
 });
 

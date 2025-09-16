@@ -1,7 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
 
 export const WelcomeNavbar = () => {
+	const navigate = useNavigate();
+
+	const handleNavigateToLoginPage = () => {
+		navigate('/login');
+	};
+
 	return (
 		<Navbar
 			maxWidth="xl"
@@ -35,12 +41,8 @@ export const WelcomeNavbar = () => {
 
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden sm:flex">
-					<Button variant="light">Вход</Button>
-				</NavbarItem>
-
-				<NavbarItem>
-					<Button color="primary" endContent={<ArrowRight size={16} />}>
-						Начать
+					<Button variant="flat" onPress={handleNavigateToLoginPage} color={'primary'}>
+						Вход
 					</Button>
 				</NavbarItem>
 			</NavbarContent>

@@ -79,6 +79,8 @@ export const CalendarPage = () => {
 			start: dateSelectArg.startStr,
 			end: dateSelectArg.endStr,
 			title: '',
+			description: '',
+			reminders: [],
 		};
 
 		setCreateEventInitialFormValues(event);
@@ -88,10 +90,13 @@ export const CalendarPage = () => {
 	const handleChangeEvent = (eventChangeArg: EventChangeArg) => {
 		const { event } = eventChangeArg;
 
+		const extendsFields = event.extendedProps;
 		const updatedEvent: UpdateCalendarEvent = {
 			start: event.startStr,
 			end: event.endStr,
 			title: event.title,
+			description: extendsFields.description,
+			reminders: extendsFields.reminders,
 		};
 
 		updateEvent({ eventId: event.id, event: updatedEvent }).then((updatedEvent) => {
@@ -116,6 +121,7 @@ export const CalendarPage = () => {
 			end: event.endStr,
 			title: event.title,
 			description: event.extendedProps.description,
+			reminders: event.extendedProps.reminders,
 		};
 
 		setUpdateEventInitialFormValues(initialFormValues);
@@ -129,7 +135,7 @@ export const CalendarPage = () => {
 
 	return (
 		<div className={'flex flex-col h-full'}>
-			{createEventInitialFormValues && (
+			{createEventInitialFormValues && isCreateEventModalOpen && (
 				<CreateCalendarEventModal
 					isOpen={isCreateEventModalOpen}
 					onOpenChange={onOpenCreateEventChange}
@@ -137,7 +143,7 @@ export const CalendarPage = () => {
 				/>
 			)}
 
-			{updateEventInitialFormValues && (
+			{updateEventInitialFormValues && isUpdateEventModalOpen && (
 				<ChangeCalendarEventModal
 					isOpen={isUpdateEventModalOpen}
 					onOpenChange={onOpenUpdateEventChange}
