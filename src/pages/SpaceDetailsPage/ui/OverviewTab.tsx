@@ -1,7 +1,17 @@
-import { Button, Card, CardBody, CardHeader } from '@heroui/react';
+import { useParams } from 'react-router-dom';
+import { Button, Card, CardBody, CardHeader, useDisclosure } from '@heroui/react';
 import { Info } from 'lucide-react';
 
+import { CreateSpaceTgLinkCodeModal } from 'features/CreateSpaceTgLinkCode';
+
 export const OverviewTab = () => {
+	const { isOpen, onOpenChange } = useDisclosure();
+	const { spaceId = '' } = useParams();
+
+	const handleSpaceTgLinkCodeModal = () => {
+		onOpenChange();
+	};
+
 	return (
 		<div className="mt-2 grid grid-cols-1 gap-3 lg:grid-cols-2">
 			<Card className="border border-neutral-200">
@@ -10,9 +20,16 @@ export const OverviewTab = () => {
 				</CardHeader>
 
 				<CardBody className="flex flex-wrap gap-2">
-					<Button variant="flat">Создать напоминание</Button>
+					<Button variant="flat" color={'primary'} onPress={handleSpaceTgLinkCodeModal}>
+						Привязать к Telegram
+					</Button>
 					<Button variant="flat">Пригласить участника</Button>
-					<Button variant="flat">Открыть в Telegram</Button>
+
+					<CreateSpaceTgLinkCodeModal
+						isOpen={isOpen}
+						onOpenChange={onOpenChange}
+						spaceId={spaceId}
+					/>
 				</CardBody>
 			</Card>
 

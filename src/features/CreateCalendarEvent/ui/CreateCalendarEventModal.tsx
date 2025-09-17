@@ -10,7 +10,6 @@ import {
 	ModalHeader,
 } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
-import { parseAbsoluteToLocal } from '@internationalized/date';
 
 import type {
 	CalendarEvent,
@@ -20,7 +19,11 @@ import type {
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, formatMinutesOffset } from 'shared/lib';
+import {
+	CurrentSpaceIdController,
+	formatMinutesOffset,
+	safeParseAbsoluteToLocal,
+} from 'shared/lib';
 
 import { useCreateCalendarEvent } from '../api/useCreateCalendarEvent';
 
@@ -150,13 +153,13 @@ export const CreateCalendarEventModal = (props: Props) => {
 
 					<DateInput
 						label={'Начало'}
-						value={parseAbsoluteToLocal(start)}
+						value={safeParseAbsoluteToLocal(start)}
 						onChange={handleChangeStart}
 						hideTimeZone
 					/>
 					<DateInput
 						label={'Конец'}
-						value={parseAbsoluteToLocal(end)}
+						value={safeParseAbsoluteToLocal(end)}
 						onChange={handleChangeEnd}
 						hideTimeZone
 					/>
