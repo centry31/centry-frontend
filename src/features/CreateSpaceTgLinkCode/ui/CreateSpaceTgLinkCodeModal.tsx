@@ -12,7 +12,9 @@ import {
 	ModalHeader,
 	Progress,
 } from '@heroui/react';
-import { AlertTriangle, Copy, Link as LinkIcon, RotateCcw } from 'lucide-react';
+import { AlertTriangle, Link as LinkIcon, RotateCcw } from 'lucide-react';
+
+import { CopyButton } from 'shared/ui';
 
 import { useCreateTgLinkCode } from '../api/useCreateTgLinkCode';
 
@@ -35,14 +37,6 @@ export const CreateSpaceTgLinkCodeModal = (props: Props) => {
 
 		if (!res) return;
 		setCode(res);
-	};
-
-	const handleCopy = async (text: string) => {
-		try {
-			await navigator.clipboard.writeText(text);
-		} catch (error) {
-			console.error(error);
-		}
 	};
 
 	const handleReset = () => {
@@ -102,14 +96,7 @@ export const CreateSpaceTgLinkCodeModal = (props: Props) => {
 												<Code className="rounded-lg px-3 py-2 truncate">
 													/link {code}
 												</Code>
-												<Button
-													size="sm"
-													startContent={<Copy size={16} />}
-													variant="flat"
-													onPress={() => handleCopy(`/link ${code}`)}
-												>
-													Скопировать
-												</Button>
+												<CopyButton text={`/link ${code}`} />
 											</li>
 
 											<li>Готово — чат будет привязан к пространству.</li>

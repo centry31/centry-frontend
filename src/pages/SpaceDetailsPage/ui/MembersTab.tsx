@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Chip, Input } from '@heroui/react';
+import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
 
 import { SpaceMembersList } from 'widgets/SpaceMembersList';
 
@@ -27,9 +27,9 @@ export const MembersTab = (props: Props) => {
 					</div>
 
 					{/* TODO: add handler */}
-					<div className="flex w-full max-w-md items-center gap-2 sm:w-auto">
-						<Input placeholder="Поиск по имени или @username" />
-					</div>
+					{/*<div className="flex w-full max-w-md items-center gap-2 sm:w-auto">*/}
+					{/*	<Input placeholder="Поиск по имени или @username" />*/}
+					{/*</div>*/}
 				</CardHeader>
 
 				<CardBody className="p-0">
