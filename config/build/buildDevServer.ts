@@ -6,5 +6,14 @@ export const BuildDevServer = ({ PORT }: BuildEnv): WebpackConfiguration['devSer
 		port: PORT,
 		historyApiFallback: true, // чтобы не падало при перезагрузке на маршруте
 		hot: true,
+		// чтобы работали сервисы для туннелирования
+		proxy: [
+			{
+				context: ['/api'],
+				target: 'http://localhost:8000',
+				changeOrigin: true,
+				secure: false,
+			},
+		],
 	};
 };

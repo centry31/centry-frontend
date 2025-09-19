@@ -6,11 +6,11 @@
 @custom-variant dark (&:is(.dark *));
 
 .App {
-	height: 100vh;
-	overflow-y: scroll;
+	height: 100svh;
+	display: flex;
+	flex-direction: column;
 }
 
-.content-page {
-	background-position: 50%;
-	background-size: cover;
+.content {
+	height: 100%;
 }

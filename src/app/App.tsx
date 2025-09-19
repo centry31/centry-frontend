@@ -1,24 +1,40 @@
-import { HeroUIProvider } from '@heroui/react';
-import classNames from 'classnames';
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useMatch } from 'react-router';
+import { HeroUIProvider, Spinner } from '@heroui/react';
+
+import { NavbarAuth } from 'widgets/NavbarAuth';
+import { NavbarGuest } from 'widgets/NavbarGuest';
+
+import { useUserStore } from 'entities/User';
+
 import { AppRouter } from './providers/AppRouter';
 
 import './styles/index.css';
-import './styles/reset.css';
 
 const App = () => {
-	// if (!_init) {
-	// 	return <LoadScreen label={'UniShare'} />;
-	// }
+	const { isInit, initAuthData, authData } = useUserStore();
+
+	useEffect(() => {
+		initAuthData();
+	}, [initAuthData]);
+
+	const isWelcomePage = Boolean(useMatch('/welcome'));
+
+	// TODO: add load screen
+	if (!isInit) {
+		return <Spinner />;
+	}
 
 	return (
-		<HeroUIProvider>
-			<BrowserRouter>
-				<div className={classNames('App', 'content-page')}>
+		<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
+			<div className={'App'}>
+				{authData && <NavbarAuth />}
+				{!isWelcomePage && !authData && <NavbarGuest />}
+
+				<div className={'content'}>
 					<AppRouter />
 				</div>
-			</BrowserRouter>
+			</div>
 		</HeroUIProvider>
 	);
 };

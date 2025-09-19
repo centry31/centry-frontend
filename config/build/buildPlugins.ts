@@ -1,5 +1,8 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 import webpack from 'webpack';
 import type { WebpackConfiguration } from 'webpack-cli';
 import type { BuildOptions } from './types/config';
@@ -25,5 +28,7 @@ export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins
 		new webpack.ProgressPlugin(),
 		//
 		new webpack.HotModuleReplacementPlugin(),
+		//
+		// new BundleAnalyzerPlugin({ analyzerPort: 10000 }),
 	];
 };

@@ -1,8 +1,11 @@
 import * as process from 'node:process';
 import path from 'path';
+
 import webpack from 'webpack';
+
 import { BuildWebpackConfig } from './config/build/buildWebpackConfig';
 import type { BuildMode, BuildPaths } from './config/build/types/config';
+
 import 'dotenv-defaults/config';
 
 export default () => {
