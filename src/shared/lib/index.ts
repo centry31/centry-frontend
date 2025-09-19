@@ -9,3 +9,4 @@ export { CurrentSpaceIdController } from './currentSpaceIdController';
 export { formatMinutesOffset } from './formatMinutesOffset';
 export { getApiResponseErrorMessage } from './getApiResponseErrorMessage';
 export { safeParseAbsoluteToLocal } from './safeParseAbsoluteToLocal';
+export { useGetParamFromUrl } from './useGetParamFromUrl';

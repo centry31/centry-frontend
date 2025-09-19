@@ -5,6 +5,7 @@ import { CreateSpacePage } from 'pages/CreateSpacePage';
 import { LoginWithTelegramPage } from 'pages/LoginWithTelegramPage';
 import { MagicLinkPage } from 'pages/MagicLinkPage';
 import { SpaceDetailsPage } from 'pages/SpaceDetailsPage';
+import { SpaceInvitePage } from 'pages/SpaceInvitePage';
 import { SpacesPage } from 'pages/SpacesPage';
 import { WelcomePage } from 'pages/WelcomePage';
 
@@ -21,6 +22,7 @@ export enum Routes {
 	SPACES = 'spaces',
 	SPACE_DETAILS = 'spaceDetails',
 	CREATE_SPACE = 'createSpace',
+	JOIN_SPACE_WITH_LINK = 'joinSpaceWithLink',
 }
 
 export type Path =
@@ -30,7 +32,8 @@ export type Path =
 	| '/welcome'
 	| '/spaces'
 	| '/spaces/:spaceId'
-	| '/spaces/create';
+	| '/spaces/create'
+	| '/spaces/join';
 
 export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.MAGIC_LINK]: '/auth/magic-link',
@@ -40,6 +43,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.SPACES]: '/spaces',
 	[Routes.SPACE_DETAILS]: '/spaces/:spaceId',
 	[Routes.CREATE_SPACE]: '/spaces/create',
+	[Routes.JOIN_SPACE_WITH_LINK]: '/spaces/join',
 	// // 404
 	// [Routes.NOT_FOUND]: '*',
 };
@@ -75,6 +79,11 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	[Routes.CREATE_SPACE]: {
 		path: RoutesPaths.createSpace,
 		element: <CreateSpacePage />,
+		authOnly: true,
+	},
+	[Routes.JOIN_SPACE_WITH_LINK]: {
+		path: RoutesPaths.joinSpaceWithLink,
+		element: <SpaceInvitePage />,
 		authOnly: true,
 	},
 	// [Routes.NOT_FOUND]: {

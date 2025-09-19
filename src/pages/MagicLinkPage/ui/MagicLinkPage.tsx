@@ -15,7 +15,8 @@ import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 
 import { useLoginWithMagicLink } from 'features/LoginWithMagicLink';
 
-import { useGetLoginCodeFromUrl } from '../lib/useGetLoginCodeFromUrl';
+import { useGetParamFromUrl } from 'shared/lib';
+
 import { EmptyStateNoCode } from './EmptyStateNoCode';
 import { ErrorBlock } from './ErrorBlock';
 import { HelpBlock } from './HelpBlock';
@@ -27,7 +28,7 @@ export const MagicLinkPage = () => {
 	const [redirectIn, setRedirectIn] = useState<number>(REDIRECT_IN_SECONDS); // секунды до редиректа после успеха
 
 	const navigate = useNavigate();
-	const { code } = useGetLoginCodeFromUrl();
+	const { param: code } = useGetParamFromUrl({ name: 'code' });
 
 	const { request: loginWithMagicLink, isLoading, error } = useLoginWithMagicLink();
 
