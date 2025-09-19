@@ -13,8 +13,8 @@ export const useDeleteCalendarEvent = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const request = async (Props: Props) => {
-		const { eventId } = Props;
+	const request = async (props: Props) => {
+		const { eventId } = props;
 
 		setIsLoading(true);
 		setError('');

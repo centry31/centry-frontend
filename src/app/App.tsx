@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { useMatch } from 'react-router';
 import { HeroUIProvider, Spinner } from '@heroui/react';
 
-import { Navbar } from 'widgets/Navbar';
+import { NavbarAuth } from 'widgets/NavbarAuth';
+import { NavbarGuest } from 'widgets/NavbarGuest';
 
 import { useUserStore } from 'entities/User';
 
@@ -17,23 +18,24 @@ const App = () => {
 		initAuthData();
 	}, [initAuthData]);
 
+	const isWelcomePage = Boolean(useMatch('/welcome'));
+
 	// TODO: add load screen
 	if (!isInit) {
 		return <Spinner />;
 	}
 
 	return (
-		<BrowserRouter>
-			<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
-				<div className={'App'}>
-					{authData && <Navbar />}
+		<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
+			<div className={'App'}>
+				{authData && <NavbarAuth />}
+				{!isWelcomePage && !authData && <NavbarGuest />}
 
-					<div className={'content'}>
-						<AppRouter />
-					</div>
+				<div className={'content'}>
+					<AppRouter />
 				</div>
-			</HeroUIProvider>
-		</BrowserRouter>
+			</div>
+		</HeroUIProvider>
 	);
 };
 

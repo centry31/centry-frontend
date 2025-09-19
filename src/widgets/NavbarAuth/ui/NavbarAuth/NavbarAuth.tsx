@@ -24,7 +24,7 @@ const MENU_ITEMS: MenuItem[] = [
 	{ title: 'Календарь', to: '/calendar' },
 ];
 
-export const Navbar = () => {
+export const NavbarAuth = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import { useController, useForm } from 'react-hook-form';
+import { useController, useFieldArray, useForm } from 'react-hook-form';
 import {
 	Button,
 	DateInput,
@@ -10,15 +10,22 @@ import {
 	ModalHeader,
 } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
-import { parseAbsoluteToLocal } from '@internationalized/date';
 
 import type { CalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
+import { useGetSpace } from 'entities/Space';
+
+import {
+	CurrentSpaceIdController,
+	formatMinutesOffset,
+	safeParseAbsoluteToLocal,
+} from 'shared/lib';
 
 import { useDeleteCalendarEvent } from '../api/useDeleteCalendarEvent';
 import { useUpdateCalendarEvent } from '../api/useUpdateCalendarEvent';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
+const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440]; // 1m, 5m, 15m, 30m, 1h, 2h, 1d
 
 type Props = {
 	isOpen: boolean;
@@ -31,11 +38,16 @@ type Props = {
 export const ChangeCalendarEventModal = (props: Props) => {
 	const { eventId, initialFormValues, isOpen, onOpenChange } = props;
 
-	const { control } = useForm<UpdateCalendarEvent>({ defaultValues: initialFormValues });
+	const { control, getValues } = useForm<UpdateCalendarEvent>({
+		defaultValues: initialFormValues,
+	});
+
+	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
 
 	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
 	const { request: updateCalendarEvent, isLoading: isCreating } = useUpdateCalendarEvent();
 	const { request: deleteCalendarEvent, isLoading: isDeleting } = useDeleteCalendarEvent();
+	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 
 	const {
 		field: { value: title, onChange: onChangeTitle },
@@ -52,6 +64,15 @@ export const ChangeCalendarEventModal = (props: Props) => {
 	const {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
+
+	const {
+		fields: reminderFields,
+		append: appendReminder,
+		remove: removeReminder,
+	} = useFieldArray({
+		control,
+		name: 'reminders',
+	});
 
 	/**
 	 * @summary <DateInput /> работает с ZoneDateTime типом, нужно это учитывать
@@ -73,6 +94,18 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 		const absoluteString = end.toAbsoluteString();
 		onChangeEnd(absoluteString);
+	};
+
+	const handleAddReminder = (minutes: number) => {
+		const existsReminders = (getValues('reminders') ?? []).some(
+			(r) => r.offsetMinutes === minutes,
+		);
+
+		if (!existsReminders) appendReminder({ offsetMinutes: minutes });
+	};
+
+	const handleRemoveReminder = (idx: number) => {
+		removeReminder(idx);
 	};
 
 	/**
@@ -107,6 +140,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 			description,
 			start,
 			end,
+			reminders: reminderFields.map((r) => ({ offsetMinutes: r.offsetMinutes })),
 		};
 
 		updateCalendarEvent({ eventId, event }).then(handleSuccessUpdatingEvent);
@@ -115,6 +149,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 	const handleDeleteCalendarEvent = () => {
 		deleteCalendarEvent({ eventId }).then(handleSuccessDeletingEvent);
 	};
+
+	const isRemindersActive = currentSpace?.hasActiveTgChats;
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
@@ -127,16 +163,65 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 					<DateInput
 						label={'Начало'}
-						value={parseAbsoluteToLocal(start)}
+						value={safeParseAbsoluteToLocal(start)}
 						onChange={handleChangeStart}
 						hideTimeZone
 					/>
 					<DateInput
 						label={'Конец'}
-						value={parseAbsoluteToLocal(end)}
+						value={safeParseAbsoluteToLocal(end)}
 						onChange={handleChangeEnd}
 						hideTimeZone
 					/>
+
+					<div className="flex flex-col gap-2">
+						<div className="text-sm font-medium">Напоминания</div>
+
+						{!isRemindersActive && (
+							<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
+								Чтобы добавлять напоминания, привяжите Telegram-чат в настройках
+								пространства.
+							</div>
+						)}
+
+						{/* Пресеты */}
+						<div className="flex flex-wrap gap-2">
+							{REMINDERS_PRESETS.map((minutes) => (
+								<Button
+									key={minutes}
+									size="sm"
+									variant="flat"
+									onPress={() => handleAddReminder(minutes)}
+									disabled={!isRemindersActive}
+								>
+									{formatMinutesOffset(minutes)}
+								</Button>
+							))}
+						</div>
+
+						{/* Текущий список */}
+						<div className="flex flex-wrap gap-2">
+							{reminderFields.length === 0 && (
+								<span className="text-sm text-neutral-500">Нет напоминаний</span>
+							)}
+
+							{reminderFields.length != 0 &&
+								reminderFields.map((f, idx) => (
+									<Button
+										key={f.id}
+										size="sm"
+										variant="flat"
+										color="primary"
+										onPress={() => handleRemoveReminder(idx)}
+									>
+										{formatMinutesOffset(
+											getValues(`reminders.${idx}.offsetMinutes`),
+										)}
+										&nbsp;×
+									</Button>
+								))}
+						</div>
+					</div>
 				</ModalBody>
 
 				<ModalFooter className={'flex-col'}>

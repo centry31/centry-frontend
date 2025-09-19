@@ -4,6 +4,7 @@ export type Space = {
 	id: string;
 	name: string;
 	description?: string;
+	hasActiveTgChats?: boolean;
 
 	// TODO: add createdBy field (User)
 };

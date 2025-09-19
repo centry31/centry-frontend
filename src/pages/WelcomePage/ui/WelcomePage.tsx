@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardHeader, Chip, Link } from '@heroui/react';
 import { ArrowRight, Bell, Calendar, ShieldCheck, Smartphone, Sparkles, Users } from 'lucide-react';
 
@@ -11,6 +11,12 @@ import { WelcomeNavbar } from './WelcomeNavbar';
 export const WelcomePage = () => {
 	const { authData } = useUserStore();
 
+	const navigate = useNavigate();
+
+	const handleNavigateToLoginPage = () => {
+		navigate('/login');
+	};
+
 	if (authData) {
 		return <Navigate to={'/calendar'} />;
 	}
@@ -22,7 +28,7 @@ export const WelcomePage = () => {
 			<section className="relative overflow-hidden">
 				<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_-10%,rgba(0,0,0,0.06),rgba(255,255,255,0))]" />
 
-				<div className="mx-auto max-w-7xl px-4 pt-20 pb-14 sm:pt-28 sm:pb-20 lg:px-8">
+				<div className="mx-auto max-w-7xl px-4 pt-20 pb-4 sm:pt-28 lg:px-8">
 					<div className="mx-auto max-w-2xl text-center">
 						<Chip color="default" variant="flat" className="mb-4">
 							Alpha • Бесплатно для студентов
@@ -37,8 +43,7 @@ export const WelcomePage = () => {
 
 						<p className="mt-6 text-base leading-7 text-neutral-600 sm:text-lg">
 							Универсальный календарь для учебных групп: пространства, напоминания в
-							Telegram и мобильный интерфейс. Всё просто, без перегруза. Lorem ipsum
-							dolor sit amet, consectetur adipiscing elit.
+							Telegram и мобильный интерфейс. Всё просто, без перегруза.
 						</p>
 
 						<div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -92,8 +97,7 @@ export const WelcomePage = () => {
 						icon={<Calendar className="h-5 w-5" />}
 						title="Мобильный календарь"
 					>
-						Сосредоточен на списке и дне. Быстрое добавление. Без лишних кликов. Lorem
-						ipsum dolor sit amet.
+						Сосредоточен на списке и дне. Быстрое добавление. Без лишних кликов.
 					</FeatureCard>
 
 					<FeatureCard icon={<Bell className="h-5 w-5" />} title="Напоминания в Telegram">
@@ -184,7 +188,11 @@ export const WelcomePage = () => {
 							</div>
 
 							<div className="flex gap-3 flex-wrap">
-								<Button color="primary" endContent={<ArrowRight size={18} />}>
+								<Button
+									color="primary"
+									endContent={<ArrowRight size={18} />}
+									onPress={handleNavigateToLoginPage}
+								>
 									Войти через Telegram
 								</Button>
 
