@@ -6,7 +6,7 @@ import { SpaceCard, useGetPersonalUserSpaces } from 'entities/Space';
 import { SpaceActionsList } from './SpaceActionsList';
 import { SpacesListSkeleton } from './SpacesListSkeleton';
 
-export const SpacesList = () => {
+export const PersonalUserSpacesList = () => {
 	const { data: spaces, isLoading, error } = useGetPersonalUserSpaces();
 
 	if (isLoading) return <SpacesListSkeleton />;

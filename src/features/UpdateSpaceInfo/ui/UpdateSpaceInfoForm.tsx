@@ -7,7 +7,7 @@ import { useUpdateSpaceInfo } from '../api/useUpdateSpaceInfo';
 
 type Props = {
 	spaceId: string;
-	initialFormValues: UpdateSpace;
+	initialFormValues?: UpdateSpace;
 };
 
 export const UpdateSpaceInfoForm = (props: Props) => {

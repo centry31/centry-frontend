@@ -1,4 +1,4 @@
-import { Avatar, Button } from '@heroui/react';
+import { Avatar } from '@heroui/react';
 
 import type { Space } from 'entities/Space';
 
@@ -6,7 +6,7 @@ type Props = {
 	space: Space;
 };
 
-export const Header = (props: Props) => {
+export const SpaceInfo = (props: Props) => {
 	const { space } = props;
 
 	return (
@@ -20,11 +20,6 @@ export const Header = (props: Props) => {
 						<p className="text-sm text-neutral-600">{space.description}</p>
 					)}
 				</div>
-			</div>
-
-			<div className="hidden gap-2 sm:flex">
-				<Button variant="flat">Открыть календарь</Button>
-				<Button color="primary">Добавить событие</Button>
 			</div>
 		</div>
 	);
