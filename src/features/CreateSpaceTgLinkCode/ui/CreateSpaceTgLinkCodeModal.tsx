@@ -44,7 +44,7 @@ export const CreateSpaceTgLinkCodeModal = (props: Props) => {
 	};
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={'inside'}>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
 			<ModalContent>
 				<ModalHeader className="flex items-center gap-3">
 					<div className="grid h-10 w-10 place-items-center rounded-2xl bg-neutral-100">
