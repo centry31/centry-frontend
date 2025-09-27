@@ -11,7 +11,7 @@ export const SpaceTgChatCard = (props: Props) => {
 	return (
 		<Card shadow="none" className="border border-neutral-200">
 			<CardHeader className="flex items-start justify-between gap-2">
-				<Avatar name={chat.chatTitle} />
+				<Avatar name={chat.chatTitle} className="bg-neutral-100 text-neutral-900" />
 
 				{actionsSlot}
 			</CardHeader>

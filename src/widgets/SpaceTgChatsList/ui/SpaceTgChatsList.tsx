@@ -22,7 +22,7 @@ export const SpaceTgChatsList = (props: Props) => {
 			</div>
 		);
 
-	if (!tgChats.length) {
+	if (!isLoading && !tgChats.length) {
 		return (
 			<Card shadow="none" className="border border-neutral-200">
 				<CardBody className="flex flex-col items-center gap-2 py-8 text-center">

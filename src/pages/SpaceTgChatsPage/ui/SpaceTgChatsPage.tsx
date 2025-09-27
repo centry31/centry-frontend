@@ -15,7 +15,7 @@ export const SpaceTgChatsPage = () => {
 	const { spaceId = '' } = useParams();
 
 	const { data: space } = useGetSpace({ spaceId });
-	const { data: spaceTgChats } = useGetSpaceTgChats({ spaceId });
+	const { data: spaceTgChats, isLoading: isChatsLoading } = useGetSpaceTgChats({ spaceId });
 
 	const { isOpen, onOpenChange } = useDisclosure();
 
@@ -38,7 +38,11 @@ export const SpaceTgChatsPage = () => {
 				spaceId={spaceId}
 			/>
 
-			<SpaceTgChatsList spaceId={spaceId} tgChats={spaceTgChats || []} />
+			<SpaceTgChatsList
+				spaceId={spaceId}
+				tgChats={spaceTgChats || []}
+				isLoading={isChatsLoading}
+			/>
 		</div>
 	);
 };

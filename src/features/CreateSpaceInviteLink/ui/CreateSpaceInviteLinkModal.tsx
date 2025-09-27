@@ -14,9 +14,8 @@ const DEFAULT_EXPIRES = addMinutes(new Date(), 15).toISOString();
 const getLinkUrl = (code: string) => {
 	if (!code) return null;
 
-	// TODO: финальная ссылка, заменить на свою!
 	const host = window.location.origin;
-	return `${host}/magic-link?code=${code}`;
+	return `${host}/spaces/join?code=${code}`;
 };
 
 type Props = {
