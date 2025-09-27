@@ -6,11 +6,11 @@ import { JoinSpaceInvitePage } from 'pages/JoinSpaceInvitePage';
 import { LoginWithTelegramPage } from 'pages/LoginWithTelegramPage';
 import { MagicLinkPage } from 'pages/MagicLinkPage';
 import { SpaceInviteLinksPage } from 'pages/SpaceInviteLinksPage';
-import { SpaceLinkedTgChatsPage } from 'pages/SpaceLinkedTgChatsPage';
 import { SpaceMembersPage } from 'pages/SpaceMembersPage';
 import { SpaceSettingsListPage } from 'pages/SpaceSettingsListPage';
 import { SpaceSettingsPage } from 'pages/SpaceSettingsPage';
 import { SpacesPage } from 'pages/SpacesPage';
+import { SpaceTgChatsPage } from 'pages/SpaceTgChatsPage';
 import { WelcomePage } from 'pages/WelcomePage';
 
 export type AppRoutesProps = RouteProps & {
@@ -29,7 +29,7 @@ export enum Routes {
 	SPACE_SETTINGS = 'spaceSettings',
 	SPACE_MEMBERS = 'spaceMembers',
 	SPACE_INVITE_LINKS = 'spaceInviteLinks',
-	SPACE_LINKED_TG_CHATS = 'spaceLinkedTgChats',
+	SPACE_TG_CHATS = 'spaceTgChats',
 
 	CREATE_SPACE = 'createSpace',
 	JOIN_SPACE_WITH_LINK = 'joinSpaceWithLink',
@@ -46,7 +46,7 @@ export type Path =
 	| '/spaces/:spaceId/members'
 	| '/spaces/:spaceId/settings'
 	| '/spaces/:spaceId/invite-links'
-	| '/spaces/:spaceId/linked-tg-chats'
+	| '/spaces/:spaceId/tg-chats'
 	//
 	| '/spaces/create'
 	| '/spaces/join';
@@ -62,7 +62,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.SPACE_MEMBERS]: '/spaces/:spaceId/members',
 	[Routes.SPACE_SETTINGS]: '/spaces/:spaceId/settings',
 	[Routes.SPACE_INVITE_LINKS]: '/spaces/:spaceId/invite-links',
-	[Routes.SPACE_LINKED_TG_CHATS]: '/spaces/:spaceId/linked-tg-chats',
+	[Routes.SPACE_TG_CHATS]: '/spaces/:spaceId/tg-chats',
 
 	[Routes.CREATE_SPACE]: '/spaces/create',
 	[Routes.JOIN_SPACE_WITH_LINK]: '/spaces/join',
@@ -114,9 +114,9 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <SpaceInviteLinksPage />,
 		authOnly: true,
 	},
-	[Routes.SPACE_LINKED_TG_CHATS]: {
-		path: RoutesPaths.spaceLinkedTgChats,
-		element: <SpaceLinkedTgChatsPage />,
+	[Routes.SPACE_TG_CHATS]: {
+		path: RoutesPaths.spaceTgChats,
+		element: <SpaceTgChatsPage />,
 		authOnly: true,
 	},
 

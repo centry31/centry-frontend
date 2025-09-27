@@ -2,16 +2,20 @@ import { useParams } from 'react-router-dom';
 import { Button, useDisclosure } from '@heroui/react';
 
 import { SpaceInfo } from 'widgets/SpaceInfo';
+import { SpaceTgChatsList } from 'widgets/SpaceTgChatsList';
 
 import { CreateSpaceTgLinkCodeModal } from 'features/CreateSpaceTgLinkCode';
 
 import { useGetSpace } from 'entities/Space';
+import { useGetSpaceTgChats } from 'entities/SpaceTgChat';
 
 import { PageHeader } from 'shared/ui/PageHeader';
 
-export const SpaceLinkedTgChatsPage = () => {
+export const SpaceTgChatsPage = () => {
 	const { spaceId = '' } = useParams();
+
 	const { data: space } = useGetSpace({ spaceId });
+	const { data: spaceTgChats } = useGetSpaceTgChats({ spaceId });
 
 	const { isOpen, onOpenChange } = useDisclosure();
 
@@ -33,6 +37,8 @@ export const SpaceLinkedTgChatsPage = () => {
 				onOpenChange={onOpenChange}
 				spaceId={spaceId}
 			/>
+
+			<SpaceTgChatsList spaceId={spaceId} tgChats={spaceTgChats || []} />
 		</div>
 	);
 };

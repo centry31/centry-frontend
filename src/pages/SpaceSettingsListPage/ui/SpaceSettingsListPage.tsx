@@ -81,7 +81,7 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-integrations',
 			items: [
 				{
-					key: 'linked-tg-chats',
+					key: 'tg-chats',
 					title: 'Привязанные чаты',
 					description: 'Группы, каналы, синхронизация',
 					icon: <MessageSquare size={18} className="text-neutral-600 shrink-0" />,
