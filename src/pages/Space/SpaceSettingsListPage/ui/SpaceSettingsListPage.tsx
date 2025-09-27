@@ -5,7 +5,7 @@ import { ChevronRight, Link2, MessageSquare, Settings, Trash2, Users } from 'luc
 
 import { SpaceInfo } from 'widgets/SpaceInfo';
 
-import { DeleteSpaceModal } from 'features/DeleteSpace';
+import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
 
 import { useGetSpace } from 'entities/Space';
 

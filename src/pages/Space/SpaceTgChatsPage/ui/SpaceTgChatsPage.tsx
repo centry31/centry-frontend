@@ -4,7 +4,7 @@ import { Button, useDisclosure } from '@heroui/react';
 import { SpaceInfo } from 'widgets/SpaceInfo';
 import { SpaceTgChatsList } from 'widgets/SpaceTgChatsList';
 
-import { CreateSpaceTgLinkCodeModal } from 'features/CreateSpaceTgLinkCode';
+import { CreateSpaceTgLinkCodeModal } from 'features/Space/CreateSpaceTgLinkCode';
 
 import { useGetSpace } from 'entities/Space';
 import { useGetSpaceTgChats } from 'entities/SpaceTgChat';

@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardHeader, Divider, Link as UiLink, Spacer } from '@heroui/react';
 import { ArrowLeft, MessageCircle, Shield } from 'lucide-react';
 
-import { TelegramLoginButton } from 'features/LoginWithTelegram';
+import { TelegramLoginButton } from 'features/Auth/LoginWithTelegram';
 
 import { useUserStore } from 'entities/User';
 

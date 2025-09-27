@@ -3,7 +3,7 @@ import { Button, useDisclosure } from '@heroui/react';
 
 import { SpaceInfo } from 'widgets/SpaceInfo';
 
-import { CreateSpaceInviteLinkModal } from 'features/CreateSpaceInviteLink';
+import { CreateSpaceInviteLinkModal } from 'features/Space/CreateSpaceInviteLink';
 
 import { useGetSpace } from 'entities/Space';
 

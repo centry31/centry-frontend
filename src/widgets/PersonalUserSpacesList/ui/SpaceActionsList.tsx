@@ -8,7 +8,7 @@ import {
 } from '@heroui/react';
 import { Ellipsis, Trash2 } from 'lucide-react';
 
-import { DeleteSpaceModal } from 'features/DeleteSpace';
+import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
 
 type Props = {
 	spaceId: string;

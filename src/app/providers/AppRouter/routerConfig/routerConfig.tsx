@@ -1,17 +1,17 @@
 import type { RouteProps } from 'react-router-dom';
 
-import { CalendarPage } from 'pages/CalendarPage';
-import { CreateSpacePage } from 'pages/CreateSpacePage';
-import { JoinSpaceInvitePage } from 'pages/JoinSpaceInvitePage';
-import { LoginWithTelegramPage } from 'pages/LoginWithTelegramPage';
-import { MagicLinkPage } from 'pages/MagicLinkPage';
-import { SpaceInviteLinksPage } from 'pages/SpaceInviteLinksPage';
-import { SpaceMembersPage } from 'pages/SpaceMembersPage';
-import { SpaceSettingsListPage } from 'pages/SpaceSettingsListPage';
-import { SpaceSettingsPage } from 'pages/SpaceSettingsPage';
-import { SpacesPage } from 'pages/SpacesPage';
-import { SpaceTgChatsPage } from 'pages/SpaceTgChatsPage';
-import { WelcomePage } from 'pages/WelcomePage';
+import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
+import { MagicLinkPage } from 'pages/Auth/MagicLinkPage';
+import { CalendarPage } from 'pages/Calendar/CalendarPage';
+import { WelcomePage } from 'pages/Landing/WelcomePage';
+import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
+import { JoinSpaceInvitePage } from 'pages/Space/JoinSpaceInvitePage';
+import { SpaceInviteLinksPage } from 'pages/Space/SpaceInviteLinksPage';
+import { SpaceMembersPage } from 'pages/Space/SpaceMembersPage';
+import { SpaceSettingsListPage } from 'pages/Space/SpaceSettingsListPage';
+import { SpaceSettingsPage } from 'pages/Space/SpaceSettingsPage';
+import { SpacesPage } from 'pages/Space/SpacesPage';
+import { SpaceTgChatsPage } from 'pages/Space/SpaceTgChatsPage';
 
 export type AppRoutesProps = RouteProps & {
 	authOnly?: boolean;

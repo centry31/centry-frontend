@@ -8,7 +8,7 @@ import {
 } from '@heroui/react';
 import { Ellipsis, Trash2 } from 'lucide-react';
 
-import { RemoveTgChatFromSpaceModal } from 'features/RemoveTgChatFromSpace';
+import { RemoveTgChatFromSpaceModal } from 'features/Space/RemoveTgChatFromSpace';
 
 type Props = {
 	spaceId: string;

@@ -3,7 +3,7 @@ import { Spinner } from '@heroui/react';
 
 import { SpaceInfo } from 'widgets/SpaceInfo';
 
-import { UpdateSpaceInfoForm } from 'features/UpdateSpaceInfo';
+import { UpdateSpaceInfoForm } from 'features/Space/UpdateSpaceInfo';
 
 import { useGetSpace } from 'entities/Space';
 

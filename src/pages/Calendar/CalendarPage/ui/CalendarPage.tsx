@@ -11,8 +11,11 @@ import classNames from 'classnames';
 
 import { CalendarToolbar } from 'widgets/CalendarToolbar';
 
-import { ChangeCalendarEventModal, useUpdateCalendarEvent } from 'features/ChangeCalendarEvent';
-import { CreateCalendarEventModal } from 'features/CreateCalendarEvent';
+import {
+	ChangeCalendarEventModal,
+	useUpdateCalendarEvent,
+} from 'features/Calendar/ChangeCalendarEvent';
+import { CreateCalendarEventModal } from 'features/Calendar/CreateCalendarEvent';
 
 import type { CreateCalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
