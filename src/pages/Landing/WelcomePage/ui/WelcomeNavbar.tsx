@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react';
 
+import { RoutesPaths } from 'shared/configs';
+
 export const WelcomeNavbar = () => {
 	const navigate = useNavigate();
 
 	const handleNavigateToLoginPage = () => {
-		navigate('/login');
+		navigate(RoutesPaths.loginWithTelegram);
 	};
 
 	return (

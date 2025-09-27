@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@heroui/react';
 import { TriangleAlert } from 'lucide-react';
 
+import { RoutesPaths } from 'shared/configs';
+
 type Props = {
 	message: string;
 	onRetry: () => void;
@@ -13,7 +15,7 @@ export const ErrorBlock = (props: Props) => {
 	const navigate = useNavigate();
 
 	const handleNavigateToLoginPage = () => {
-		navigate('/login');
+		navigate(RoutesPaths.loginWithTelegram);
 	};
 
 	return (

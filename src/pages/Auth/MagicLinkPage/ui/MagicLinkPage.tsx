@@ -15,6 +15,7 @@ import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 
 import { useLoginWithMagicLink } from 'features/Auth/LoginWithMagicLink';
 
+import { RoutesPaths } from 'shared/configs';
 import { useGetParamFromUrl } from 'shared/lib';
 
 import { EmptyStateNoCode } from './EmptyStateNoCode';
@@ -36,7 +37,7 @@ export const MagicLinkPage = () => {
 		const interval = setInterval(() => setRedirectIn((prev) => prev - 1), 1000);
 
 		const to = setTimeout(() => {
-			navigate('/spaces');
+			navigate(RoutesPaths.spaces);
 		}, 3000);
 
 		// TODO: memory leak! fix (https://uniteam31.atlassian.net/browse/US-14)
@@ -119,7 +120,7 @@ export const MagicLinkPage = () => {
 								<Button
 									color="primary"
 									endContent={<ArrowRight size={16} />}
-									onPress={() => navigate('/calendar')}
+									onPress={() => navigate(RoutesPaths.calendar)}
 									isDisabled={Boolean(error)}
 								>
 									Перейти в приложение

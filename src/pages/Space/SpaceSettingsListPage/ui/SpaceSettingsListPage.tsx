@@ -1,5 +1,5 @@
 import type { Key, ReactNode } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, Listbox, ListboxItem, Spinner, useDisclosure } from '@heroui/react';
 import { ChevronRight, Link2, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
 
@@ -9,8 +9,12 @@ import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
 
 import { useGetSpace } from 'entities/Space';
 
+import type { Path } from 'shared/configs';
+
+type Action = 'DELETE_SPACE';
+
 type Item = {
-	key: string;
+	key: Path | Action;
 	title: string;
 	description?: string;
 	icon: ReactNode;
@@ -38,7 +42,9 @@ export const SpaceSettingsListPage = () => {
 	const handleAction = (key: Key) => {
 		if (typeof key !== 'string') return;
 		if (key === 'DELETE_SPACE') return; // на onPress
-		navigate(key);
+
+		const path = generatePath(key, { spaceId });
+		navigate(path);
 	};
 
 	const sections: Section[] = [
@@ -48,7 +54,7 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-overview',
 			items: [
 				{
-					key: 'members',
+					key: '/spaces/:spaceId/members',
 					title: 'Участники',
 					description: 'Список, роли и приглашения',
 					icon: <Users size={18} className="text-neutral-600 shrink-0" />,
@@ -61,14 +67,14 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-manage',
 			items: [
 				{
-					key: 'settings',
+					key: '/spaces/:spaceId/settings',
 					title: 'Основные настройки',
 					description: 'Название, описание, приватность',
 					icon: <Settings size={18} className="text-neutral-600 shrink-0" />,
 					showDivider: true,
 				},
 				{
-					key: 'invite-links',
+					key: '/spaces/:spaceId/invite-links',
 					title: 'Ссылки для вступления',
 					description: 'Публичная ссылка, срок действия, лимиты',
 					icon: <Link2 size={18} className="text-neutral-600 shrink-0" />,
@@ -81,7 +87,7 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-integrations',
 			items: [
 				{
-					key: 'tg-chats',
+					key: '/spaces/:spaceId/tg-chats',
 					title: 'Привязанные чаты',
 					description: 'Группы, каналы, синхронизация',
 					icon: <MessageSquare size={18} className="text-neutral-600 shrink-0" />,

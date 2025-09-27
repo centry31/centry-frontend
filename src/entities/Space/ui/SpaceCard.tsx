@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip } from '@heroui/react';
 import { ArrowRight } from 'lucide-react';
+
+import { RoutesPaths } from 'shared/configs';
 
 import type { Space } from '../model/types';
 
@@ -16,7 +18,8 @@ export const SpaceCard = (props: Props) => {
 	const navigate = useNavigate();
 
 	const handleOpenSpaceDetails = () => {
-		navigate(`/spaces/${space.id}`);
+		const path = generatePath(RoutesPaths.spaceSettingsList, { spaceId: space.id });
+		navigate(path);
 	};
 
 	return (

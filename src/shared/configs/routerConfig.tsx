@@ -1,3 +1,5 @@
+/* eslint-disable @conarti/feature-sliced/layers-slices */
+
 import type { RouteProps } from 'react-router-dom';
 
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';

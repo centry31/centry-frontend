@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, CardBody, CardHeader, Divider, Spinner } from '@heroui/react';
 import { Users } from 'lucide-react';
 
 import type { Space } from 'entities/Space';
 import { useGetSpaceMembers } from 'entities/Space';
 
+import { RoutesPaths } from 'shared/configs';
 import { useGetParamFromUrl } from 'shared/lib';
 
 import { useGetSpaceInviteInfo } from '../api/useGetSpaceInviteInfo';
@@ -29,7 +30,9 @@ export const SpaceInviteCard = () => {
 
 	const handleJoin = () => {
 		if (!code) return;
-		joinSpace({ code }).then(() => navigate(`/spaces/${spaceInfo?.id}`));
+
+		const path = generatePath(RoutesPaths.spaceSettingsList, { spaceId: spaceInfo?.id || '' });
+		joinSpace({ code }).then(() => navigate(path));
 	};
 
 	if (isLoadingSpaceInfo || isJoining) {

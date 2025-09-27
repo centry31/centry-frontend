@@ -4,6 +4,8 @@ import { ArrowRight, Bell, Calendar, ShieldCheck, Smartphone, Sparkles, Users } 
 
 import { useUserStore } from 'entities/User';
 
+import { RoutesPaths } from 'shared/configs';
+
 import { FeatureCard } from './FeatureCard';
 import { WelcomeFooter } from './WelcomeFooter';
 import { WelcomeNavbar } from './WelcomeNavbar';
@@ -14,7 +16,7 @@ export const WelcomePage = () => {
 	const navigate = useNavigate();
 
 	const handleNavigateToLoginPage = () => {
-		navigate('/login');
+		navigate(RoutesPaths.loginWithTelegram);
 	};
 
 	if (authData) {

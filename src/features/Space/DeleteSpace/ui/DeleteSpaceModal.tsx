@@ -3,6 +3,8 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from
 
 import { useGetPersonalUserSpaces } from 'entities/Space';
 
+import { RoutesPaths } from 'shared/configs';
+
 import { useDeleteSpace } from '../api/useDeleteSpace';
 
 type Props = {
@@ -21,7 +23,7 @@ export const DeleteSpaceModal = (props: Props) => {
 
 	const handleSuccessDeleteSpace = () => {
 		mutateSpaces();
-		navigate('/spaces');
+		navigate(RoutesPaths.spaces);
 	};
 
 	const handleDeleteSpace = () => {
