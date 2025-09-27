@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@heroui/react';
 
-import { PersonalUserSpacesList } from 'widgets/PersonalUserSpacesList';
+import { PersonalUserSpacesList } from 'widgets/Space/PersonalUserSpacesList';
 
 export const SpacesPage = () => {
 	const navigate = useNavigate();

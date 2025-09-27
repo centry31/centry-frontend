@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
 
-import { SpaceInfo } from 'widgets/SpaceInfo';
-import { SpaceMembersList } from 'widgets/SpaceMembersList';
+import { SpaceInfo } from 'widgets/Space/SpaceInfo';
+import { SpaceMembersList } from 'widgets/Space/SpaceMembersList';
 
 import { useGetSpace, useGetSpaceMembers } from 'entities/Space';
 

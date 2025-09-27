@@ -9,7 +9,7 @@ import timeGridPlugin from '@fullcalendar/timeGrid';
 import { Spinner, useDisclosure } from '@heroui/react';
 import classNames from 'classnames';
 
-import { CalendarToolbar } from 'widgets/CalendarToolbar';
+import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 
 import {
 	ChangeCalendarEventModal,

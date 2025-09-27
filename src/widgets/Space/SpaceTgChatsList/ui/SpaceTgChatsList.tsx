@@ -4,7 +4,7 @@ import { MessageSquare } from 'lucide-react';
 import type { SpaceTgChat } from 'entities/SpaceTgChat';
 import { SpaceTgChatCard } from 'entities/SpaceTgChat';
 
-import { SpaceTgChatActionsList } from '../ui/SpaceTgCardActionsList';
+import { SpaceTgChatActionsList } from './SpaceTgCardActionsList';
 
 type Props = {
 	spaceId: string;

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, Listbox, ListboxItem, Spinner, useDisclosure } from '@heroui/react';
 import { ChevronRight, Link2, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
 
-import { SpaceInfo } from 'widgets/SpaceInfo';
+import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
 import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
 

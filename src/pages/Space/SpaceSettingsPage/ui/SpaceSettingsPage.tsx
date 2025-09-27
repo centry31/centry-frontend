@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@heroui/react';
 
-import { SpaceInfo } from 'widgets/SpaceInfo';
+import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
 import { UpdateSpaceInfoForm } from 'features/Space/UpdateSpaceInfo';
 

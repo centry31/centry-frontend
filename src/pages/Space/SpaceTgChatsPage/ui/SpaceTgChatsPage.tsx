@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { Button, useDisclosure } from '@heroui/react';
 
-import { SpaceInfo } from 'widgets/SpaceInfo';
-import { SpaceTgChatsList } from 'widgets/SpaceTgChatsList';
+import { SpaceInfo } from 'widgets/Space/SpaceInfo';
+import { SpaceTgChatsList } from 'widgets/Space/SpaceTgChatsList';
 
 import { CreateSpaceTgLinkCodeModal } from 'features/Space/CreateSpaceTgLinkCode';
 

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Button, useDisclosure } from '@heroui/react';
 
-import { SpaceInfo } from 'widgets/SpaceInfo';
+import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
 import { CreateSpaceInviteLinkModal } from 'features/Space/CreateSpaceInviteLink';
 
