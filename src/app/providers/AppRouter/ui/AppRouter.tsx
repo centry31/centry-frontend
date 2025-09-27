@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import type { AppRoutesProps } from '../routerConfig/routerConfig';
-import { routerConfig } from '../routerConfig/routerConfig';
+import type { AppRoutesProps } from 'shared/configs';
+import { routerConfig } from 'shared/configs';
+
 import { CheckRequirements } from '../ui/CheckRequirements';
 
 /**

@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useMatch } from 'react-router';
 import { HeroUIProvider, Spinner } from '@heroui/react';
 
-import { NavbarAuth } from 'widgets/NavbarAuth';
-import { NavbarGuest } from 'widgets/NavbarGuest';
+import { NavbarAuth } from 'widgets/Auth/NavbarAuth';
+import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
 
 import { useUserStore } from 'entities/User';
 

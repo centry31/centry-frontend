@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { useUserStore } from 'entities/User';
 
-import { RoutesPaths } from '../routerConfig/routerConfig';
+import { RoutesPaths } from 'shared/configs';
 
 type Props = {
 	children: ReactNode;
