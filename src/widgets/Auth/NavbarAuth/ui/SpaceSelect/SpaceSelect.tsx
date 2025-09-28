@@ -46,6 +46,7 @@ export const SpaceSelect = () => {
 			isLoading={isSpacesLoading}
 			onSelectionChange={(selected) => handleSelectSpace(selected.currentKey)}
 			selectedKeys={[selectedSpaceId]}
+			className={'max-w-xs'}
 		>
 			{(space) => <SelectItem key={space.id}>{space.name}</SelectItem>}
 		</Select>
