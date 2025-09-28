@@ -1,7 +1,8 @@
-import { Avatar, Button, Spinner, Tooltip } from '@heroui/react';
+import { Avatar, Chip, Spinner } from '@heroui/react';
 import { Info } from 'lucide-react';
 
 import type { SpaceMember } from 'entities/Space';
+import { useUserStore } from 'entities/User';
 
 type Props = {
 	members: SpaceMember[];
@@ -10,6 +11,8 @@ type Props = {
 
 export const SpaceMembersList = (props: Props) => {
 	const { members, isLoading } = props;
+
+	const { authData } = useUserStore();
 
 	if (isLoading)
 		return (
@@ -43,20 +46,19 @@ export const SpaceMembersList = (props: Props) => {
 					</div>
 
 					<div className="flex items-center gap-2">
-						{/*<Chip*/}
-						{/*	size="sm"*/}
-						{/*	variant="flat"*/}
-						{/*	color={m.role === 'owner' ? 'primary' : 'default'}*/}
-						{/*>*/}
-						{/*	{m.role === 'owner' ? 'Владелец' : 'Участник'}*/}
-						{/*</Chip>*/}
+						{/* TODO: https://uniteam31.atlassian.net/browse/US-17 */}
+						{/*{member.id !== authData?.id && (*/}
+						{/*	// TODO: add handler*/}
+						{/*	<Button size="sm" variant="light" color="danger">*/}
+						{/*		Удалить*/}
+						{/*	</Button>*/}
+						{/*)}*/}
 
-						{/* TODO: add handler */}
-						<Tooltip content="Удалить">
-							<Button size="sm" variant="light" color="danger">
-								Удалить
-							</Button>
-						</Tooltip>
+						{member.id === authData?.id && (
+							<Chip size="sm" variant="flat" color={'primary'}>
+								Это вы
+							</Chip>
+						)}
 					</div>
 				</li>
 			))}

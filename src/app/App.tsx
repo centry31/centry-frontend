@@ -7,6 +7,8 @@ import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
 
 import { useUserStore } from 'entities/User';
 
+import { RoutesPaths } from 'shared/configs';
+
 import { AppRouter } from './providers/AppRouter';
 
 import './styles/index.css';
@@ -18,7 +20,7 @@ const App = () => {
 		initAuthData();
 	}, [initAuthData]);
 
-	const isWelcomePage = Boolean(useMatch('/welcome'));
+	const isWelcomePage = Boolean(useMatch(RoutesPaths.welcome));
 
 	// TODO: add load screen
 	if (!isInit) {
