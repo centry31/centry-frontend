@@ -13,8 +13,8 @@ export const useDeleteSpace = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const request = async (Props: Props) => {
-		const { spaceId } = Props;
+	const request = async (props: Props) => {
+		const { spaceId } = props;
 
 		setIsLoading(true);
 		setError('');

@@ -7,8 +7,8 @@ import { MagicLinkPage } from 'pages/Auth/MagicLinkPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
-import { JoinSpaceInvitePage } from 'pages/Space/JoinSpaceInvitePage';
-import { SpaceInviteLinksPage } from 'pages/Space/SpaceInviteLinksPage';
+import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
+import { SpaceInviteCodesPage } from 'pages/Space/SpaceInviteCodesPage';
 import { SpaceMembersPage } from 'pages/Space/SpaceMembersPage';
 import { SpaceSettingsListPage } from 'pages/Space/SpaceSettingsListPage';
 import { SpaceSettingsPage } from 'pages/Space/SpaceSettingsPage';
@@ -30,11 +30,11 @@ export enum Routes {
 	SPACE_SETTINGS_LIST = 'spaceSettingsList',
 	SPACE_SETTINGS = 'spaceSettings',
 	SPACE_MEMBERS = 'spaceMembers',
-	SPACE_INVITE_LINKS = 'spaceInviteLinks',
+	SPACE_INVITE_CODES = 'spaceInviteCodes',
 	SPACE_TG_CHATS = 'spaceTgChats',
 
 	CREATE_SPACE = 'createSpace',
-	JOIN_SPACE_WITH_LINK = 'joinSpaceWithLink',
+	JOIN_SPACE_WITH_INVITE_CODE = 'joinSpaceWithInviteCode',
 }
 
 export type Path =
@@ -47,7 +47,7 @@ export type Path =
 	| '/spaces/:spaceId'
 	| '/spaces/:spaceId/members'
 	| '/spaces/:spaceId/settings'
-	| '/spaces/:spaceId/invite-links'
+	| '/spaces/:spaceId/invite-codes'
 	| '/spaces/:spaceId/tg-chats'
 	//
 	| '/spaces/create'
@@ -63,11 +63,11 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.SPACE_SETTINGS_LIST]: '/spaces/:spaceId',
 	[Routes.SPACE_MEMBERS]: '/spaces/:spaceId/members',
 	[Routes.SPACE_SETTINGS]: '/spaces/:spaceId/settings',
-	[Routes.SPACE_INVITE_LINKS]: '/spaces/:spaceId/invite-links',
+	[Routes.SPACE_INVITE_CODES]: '/spaces/:spaceId/invite-codes',
 	[Routes.SPACE_TG_CHATS]: '/spaces/:spaceId/tg-chats',
 
 	[Routes.CREATE_SPACE]: '/spaces/create',
-	[Routes.JOIN_SPACE_WITH_LINK]: '/spaces/join',
+	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: '/spaces/join',
 	// // 404
 	// [Routes.NOT_FOUND]: '*',
 };
@@ -111,9 +111,9 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <SpaceSettingsPage />,
 		authOnly: true,
 	},
-	[Routes.SPACE_INVITE_LINKS]: {
-		path: RoutesPaths.spaceInviteLinks,
-		element: <SpaceInviteLinksPage />,
+	[Routes.SPACE_INVITE_CODES]: {
+		path: RoutesPaths.spaceInviteCodes,
+		element: <SpaceInviteCodesPage />,
 		authOnly: true,
 	},
 	[Routes.SPACE_TG_CHATS]: {
@@ -127,9 +127,9 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <CreateSpacePage />,
 		authOnly: true,
 	},
-	[Routes.JOIN_SPACE_WITH_LINK]: {
-		path: RoutesPaths.joinSpaceWithLink,
-		element: <JoinSpaceInvitePage />,
+	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: {
+		path: RoutesPaths.joinSpaceWithInviteCode,
+		element: <JoinSpaceInviteCodePage />,
 		authOnly: true,
 	},
 	// [Routes.NOT_FOUND]: {

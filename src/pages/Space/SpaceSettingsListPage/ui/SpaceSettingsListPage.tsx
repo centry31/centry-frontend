@@ -74,7 +74,7 @@ export const SpaceSettingsListPage = () => {
 					showDivider: true,
 				},
 				{
-					key: '/spaces/:spaceId/invite-links',
+					key: '/spaces/:spaceId/invite-codes',
 					title: 'Ссылки для вступления',
 					description: 'Публичная ссылка, срок действия, лимиты',
 					icon: <Link2 size={18} className="text-neutral-600 shrink-0" />,
