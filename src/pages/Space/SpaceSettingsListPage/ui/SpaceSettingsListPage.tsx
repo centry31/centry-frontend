@@ -1,17 +1,19 @@
-import type { Key, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, Listbox, ListboxItem, Spinner, useDisclosure } from '@heroui/react';
-import { ChevronRight, Link2, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
+import classNames from 'classnames';
+import { ChevronRight, Link2, LogOut, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
 
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
 import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
+import { LeaveSpaceModal } from 'features/Space/LeaveSpace';
 
 import { useGetSpace } from 'entities/Space';
 
 import type { Path } from 'shared/configs';
 
-type Action = 'DELETE_SPACE';
+type Action = 'DELETE_SPACE' | 'LEAVE_SPACE';
 
 type Item = {
 	key: Path | Action;
@@ -20,7 +22,7 @@ type Item = {
 	icon: ReactNode;
 	danger?: boolean;
 	showDivider?: boolean;
-	onPress?: () => void; // для кастомного клика (удаление)
+	onPress: () => void;
 };
 
 type Section = {
@@ -34,17 +36,16 @@ export const SpaceSettingsListPage = () => {
 	const { spaceId = '' } = useParams();
 	const { data: space, isLoading } = useGetSpace({ spaceId });
 
-	const { isOpen, onOpenChange } = useDisclosure();
+	const { isOpen: isDeleteOpen, onOpenChange: onDeleteOpenChange } = useDisclosure();
+	const { isOpen: isLeaveOpen, onOpenChange: onLeaveOpenChange } = useDisclosure();
+
 	const navigate = useNavigate();
 
 	const endChevron = <ChevronRight size={16} className="text-neutral-300 shrink-0" />;
 
-	const handleAction = (key: Key) => {
-		if (typeof key !== 'string') return;
-		if (key === 'DELETE_SPACE') return; // на onPress
-
-		const path = generatePath(key, { spaceId });
-		navigate(path);
+	const handleNavigate = (path: string) => {
+		const generatedPath = generatePath(path, { spaceId });
+		navigate(generatedPath);
 	};
 
 	const sections: Section[] = [
@@ -55,6 +56,7 @@ export const SpaceSettingsListPage = () => {
 			items: [
 				{
 					key: '/spaces/:spaceId/members',
+					onPress: () => handleNavigate('/spaces/:spaceId/members'),
 					title: 'Участники',
 					description: 'Список, роли и приглашения',
 					icon: <Users size={18} className="text-neutral-600 shrink-0" />,
@@ -68,6 +70,7 @@ export const SpaceSettingsListPage = () => {
 			items: [
 				{
 					key: '/spaces/:spaceId/settings',
+					onPress: () => handleNavigate('/spaces/:spaceId/settings'),
 					title: 'Основные настройки',
 					description: 'Название, описание, приватность',
 					icon: <Settings size={18} className="text-neutral-600 shrink-0" />,
@@ -75,6 +78,7 @@ export const SpaceSettingsListPage = () => {
 				},
 				{
 					key: '/spaces/:spaceId/invite-codes',
+					onPress: () => handleNavigate('/spaces/:spaceId/invite-codes'),
 					title: 'Ссылки для вступления',
 					description: 'Публичная ссылка, срок действия, лимиты',
 					icon: <Link2 size={18} className="text-neutral-600 shrink-0" />,
@@ -88,6 +92,7 @@ export const SpaceSettingsListPage = () => {
 			items: [
 				{
 					key: '/spaces/:spaceId/tg-chats',
+					onPress: () => handleNavigate('/spaces/:spaceId/tg-chats'),
 					title: 'Привязанные чаты',
 					description: 'Группы, каналы, синхронизация',
 					icon: <MessageSquare size={18} className="text-neutral-600 shrink-0" />,
@@ -96,15 +101,25 @@ export const SpaceSettingsListPage = () => {
 		},
 		{
 			id: 'danger',
+			title: 'DANGER ZONE',
 			ariaLabel: 'space-danger',
 			items: [
 				{
+					key: 'LEAVE_SPACE',
+					onPress: onLeaveOpenChange,
+					title: 'Выйти из пространства',
+					description: 'После выхода доступ будет ограничен',
+					icon: <LogOut size={18} className="text-red-600 shrink-0" />,
+					danger: true,
+					showDivider: true,
+				},
+				{
 					key: 'DELETE_SPACE',
+					onPress: onDeleteOpenChange,
 					title: 'Удалить пространство',
 					description: 'Действие необратимо',
 					icon: <Trash2 size={18} className="text-red-600 shrink-0" />,
 					danger: true,
-					onPress: () => onOpenChange(),
 				},
 			],
 		},
@@ -133,7 +148,6 @@ export const SpaceSettingsListPage = () => {
 					<Card shadow="none" className="border border-neutral-200 p-1">
 						<CardBody className="p-0">
 							<Listbox
-								onAction={handleAction}
 								aria-label={section.ariaLabel}
 								selectionMode="none"
 								className="p-0"
@@ -147,9 +161,9 @@ export const SpaceSettingsListPage = () => {
 										description={item.description}
 										endContent={endChevron}
 										showDivider={item.showDivider}
-										classNames={
-											item.danger ? { title: 'text-red-600' } : undefined
-										}
+										classNames={{
+											title: classNames(item.danger && 'text-red-600'),
+										}}
 									>
 										{item.title}
 									</ListboxItem>
@@ -160,7 +174,17 @@ export const SpaceSettingsListPage = () => {
 				</section>
 			))}
 
-			<DeleteSpaceModal spaceId={spaceId} isOpen={isOpen} onOpenChange={onOpenChange} />
+			<LeaveSpaceModal
+				spaceId={spaceId}
+				isOpen={isLeaveOpen}
+				onOpenChange={onLeaveOpenChange}
+			/>
+
+			<DeleteSpaceModal
+				spaceId={spaceId}
+				isOpen={isDeleteOpen}
+				onOpenChange={onDeleteOpenChange}
+			/>
 		</div>
 	);
 };

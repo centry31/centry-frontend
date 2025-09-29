@@ -3,7 +3,6 @@ import { Plus } from 'lucide-react';
 
 import { SpaceCard, useGetPersonalUserSpaces } from 'entities/Space';
 
-import { SpaceActionsList } from './SpaceActionsList';
 import { SpacesListSkeleton } from './SpacesListSkeleton';
 
 export const PersonalUserSpacesList = () => {
@@ -40,11 +39,7 @@ export const PersonalUserSpacesList = () => {
 	return (
 		<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 			{spaces.map((space) => (
-				<SpaceCard
-					key={space.id}
-					space={space}
-					actionsSlot={<SpaceActionsList spaceId={space.id} />}
-				/>
+				<SpaceCard key={space.id} space={space} />
 			))}
 		</div>
 	);
