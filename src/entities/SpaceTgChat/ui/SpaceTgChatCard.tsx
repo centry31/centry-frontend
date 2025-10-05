@@ -1,19 +1,19 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Avatar, Card, CardBody, CardHeader } from '@heroui/react';
 
 import type { SpaceTgChat } from '../model/types';
 
-type Props = { chat: SpaceTgChat; actionsSlot?: ReactNode };
+type Props = { chat: SpaceTgChat; actions?: ReactNode };
 
 export const SpaceTgChatCard = (props: Props) => {
-	const { chat, actionsSlot } = props;
+	const { chat, actions } = props;
 
 	return (
 		<Card shadow="none" className="border border-neutral-200">
 			<CardHeader className="flex items-start justify-between gap-2">
 				<Avatar name={chat.chatTitle} className="bg-neutral-100 text-neutral-900" />
 
-				{actionsSlot}
+				{actions}
 			</CardHeader>
 
 			<CardBody className={'pt-0'}>

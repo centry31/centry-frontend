@@ -1,13 +1,13 @@
 import { Button, Card, CardBody } from '@heroui/react';
 import { Plus } from 'lucide-react';
 
-import { SpaceCard, useGetPersonalUserSpaces } from 'entities/Space';
+import { SpaceCard, useGetUserSpaces } from 'entities/Space';
 
 import { SpaceActionButtons } from './SpaceActionButtons';
 import { SpacesListSkeleton } from './SpacesListSkeleton';
 
 export const UserSpacesList = () => {
-	const { data: spaces, isLoading, error } = useGetPersonalUserSpaces();
+	const { data: spaces, isLoading, error } = useGetUserSpaces();
 
 	if (isLoading) return <SpacesListSkeleton />;
 	if (error)
@@ -43,7 +43,7 @@ export const UserSpacesList = () => {
 				<SpaceCard
 					key={space.id}
 					space={space}
-					actionButtons={<SpaceActionButtons space={space} />}
+					actions={<SpaceActionButtons space={space} />}
 				/>
 			))}
 		</div>

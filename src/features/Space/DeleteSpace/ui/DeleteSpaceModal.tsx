@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 
-import { useGetPersonalUserSpaces } from 'entities/Space';
+import { useGetUserSpaces } from 'entities/Space';
 
 import { RoutesPaths } from 'shared/configs';
 
@@ -18,7 +18,7 @@ export const DeleteSpaceModal = (props: Props) => {
 
 	const navigate = useNavigate();
 
-	const { mutate: mutateSpaces } = useGetPersonalUserSpaces();
+	const { mutate: mutateSpaces } = useGetUserSpaces();
 	const { request: deleteSpace, isLoading } = useDeleteSpace();
 
 	const handleSuccessDeleteSpace = () => {

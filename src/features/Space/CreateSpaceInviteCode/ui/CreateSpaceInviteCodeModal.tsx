@@ -48,18 +48,14 @@ export const CreateSpaceInviteCodeModal = (props: Props) => {
 
 	const linkUrl = getSpaceInviteLinkUrl(createdCode);
 
-	const handleSuccessCreateCode = () => {
-		mutateSpaceCodes();
-	};
-
 	const handleCreateInviteLink = async () => {
 		const formValues = form.getValues();
 
-		const link = await createInviteCode({ ...formValues, spaceId });
-		if (!link) return;
+		const code = await createInviteCode({ ...formValues, spaceId });
+		if (!code) return;
 
-		handleSuccessCreateCode();
-		setCreatedCode(link);
+		mutateSpaceCodes().finally();
+		setCreatedCode(code);
 	};
 
 	return (

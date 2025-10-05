@@ -47,7 +47,7 @@ export const SpaceTgChatsList = (props: Props) => {
 				<SpaceTgChatCard
 					key={chat.id}
 					chat={chat}
-					actionsSlot={<SpaceTgChatActionsList spaceId={spaceId} chatId={chat.id} />}
+					actions={<SpaceTgChatActionsList spaceId={spaceId} chatId={chat.id} />}
 				/>
 			))}
 		</div>

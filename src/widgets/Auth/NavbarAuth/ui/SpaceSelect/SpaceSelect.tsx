@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { Select, SelectItem } from '@heroui/react';
 import { mutate } from 'swr';
 
-import { useGetPersonalUserSpaces } from 'entities/Space';
+import { useGetUserSpaces } from 'entities/Space';
 
 import { CurrentSpaceIdController } from 'shared/lib';
 
 export const SpaceSelect = () => {
 	const [selectedSpaceId, setSelectedSpaceId] = useState<string>('');
 
-	const { data: spaces, isLoading: isSpacesLoading } = useGetPersonalUserSpaces();
+	const { data: spaces, isLoading: isSpacesLoading } = useGetUserSpaces();
 
 	const handleSelectSpace = (spaceId?: string) => {
 		if (!spaceId) return;
