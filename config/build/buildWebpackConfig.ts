@@ -19,7 +19,7 @@ export const BuildWebpackConfig = (options: BuildOptions): WebpackConfiguration 
 			path: paths.build,
 			clean: true,
 			publicPath: '/',
-			uniqueName: 'unishare',
+			uniqueName: 'centry',
 		},
 		mode: env.MODE,
 		plugins: BuildPlugins(options),
