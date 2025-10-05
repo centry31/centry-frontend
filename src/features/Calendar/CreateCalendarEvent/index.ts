@@ -1,2 +1,2 @@
 export { useCreateCalendarEvent } from './api/useCreateCalendarEvent';
-export { CreateCalendarEventModal } from './ui/CreateCalendarEventModal';
+export { CreateCalendarEventForm } from './ui/CreateCalendarEventForm';

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { DateSelectArg, DatesSetArg, EventChangeArg, EventClickArg } from '@fullcalendar/core';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -6,226 +6,275 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
-import { Spinner, useDisclosure } from '@heroui/react';
+import { Modal, ModalContent, Spinner, useDisclosure } from '@heroui/react';
 import classNames from 'classnames';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
+import { EventDetails } from 'widgets/Calendar/EventDetails';
 
 import {
-	ChangeCalendarEventModal,
+	ChangeCalendarEventForm,
 	useUpdateCalendarEvent,
 } from 'features/Calendar/ChangeCalendarEvent';
-import { CreateCalendarEventModal } from 'features/Calendar/CreateCalendarEvent';
+import { CreateCalendarEventForm } from 'features/Calendar/CreateCalendarEvent';
 
-import type { CreateCalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
+import type {
+	CalendarEvent,
+	CreateCalendarEvent,
+	UpdateCalendarEvent,
+} from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
-import { useGetPersonalUserSpaces } from 'entities/Space';
+import { useGetPersonalUserSpaces, useGetSpace } from 'entities/Space';
 
-import { getInitialDate, getInitialView, saveView, syncUrlParams } from 'shared/lib';
+import {
+	CurrentSpaceIdController,
+	getInitialDate,
+	getInitialView,
+	saveView,
+	syncUrlParams,
+} from 'shared/lib';
 
 import './styles.css';
 
 const SELECT_LONG_PRESS_DELAY = 400;
 
-// TODO: decompose and fix naming
+const DEFAULT_EVENT_DATA = {
+	id: '',
+	title: '',
+	description: '',
+	start: new Date().toISOString(),
+	end: new Date().toISOString(),
+	reminders: [],
+};
+
 export const CalendarPage = () => {
-	const [updateEventInitialFormValues, setUpdateEventInitialFormValues] =
-		useState<UpdateCalendarEvent>();
-	const [updateEventId, setUpdateEventId] = useState<string>('');
+	const [eventDetails, setEventDetails] = useState<CalendarEvent>();
+	const [createDefaults, setCreateDefaults] = useState<CreateCalendarEvent>();
+	const [editDefaults, setEditDefaults] = useState<CalendarEvent>();
 
-	const [createEventInitialFormValues, setCreateEventInitialFormValues] =
-		useState<CreateCalendarEvent>();
+	const { isOpen: isCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
+	const { isOpen: isDetailsOpen, onOpenChange: onDetailsOpenChange } = useDisclosure();
+	const { isOpen: isEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
 
-	const { isOpen: isCreateEventModalOpen, onOpenChange: onOpenCreateEventChange } =
-		useDisclosure();
-	const { isOpen: isUpdateEventModalOpen, onOpenChange: onOpenUpdateEventChange } =
-		useDisclosure();
+	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId();
+	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId || '' });
 
 	const calendarRef = useRef<FullCalendar | null>(null);
 	const [currentView, setCurrentView] = useState(getInitialView());
 	const [currentDate, setCurrentDate] = useState(getInitialDate());
 
-	const api = calendarRef.current?.getApi();
-
-	const onPrev = () => api?.prev();
-	const onNext = () => api?.next();
-	const onToday = () => api?.today();
-	const onChangeView = (v: string) => {
-		api?.changeView(v);
-		setCurrentView(v);
-		saveView(v);
-	};
-
-	const onDatesSet = (arg: DatesSetArg) => {
-		setCurrentView(arg.view.type);
-		setCurrentDate(arg.view.currentStart);
-		syncUrlParams(arg.view.type, arg.view.currentStart);
-	};
-
 	const {
 		data: events,
 		mutate: mutateEvents,
 		isLoading: isEventsLoading,
-		error: eventError,
 	} = useGetCalendarEvents();
 
-	const {
-		data: userSpaces,
-		isLoading: isUserSpacesLoading,
-		error: spacesError,
-	} = useGetPersonalUserSpaces();
+	const { data: userSpaces, isLoading: isSpacesLoading } = useGetPersonalUserSpaces();
 
 	const { request: updateEvent } = useUpdateCalendarEvent();
 
-	const handleCreateEvent = (dateSelectArg: DateSelectArg) => {
-		const event: CreateCalendarEvent = {
-			start: dateSelectArg.startStr,
-			end: dateSelectArg.endStr,
+	// ------------ helpers ------------
+	const calendarApi = () => calendarRef.current?.getApi();
+
+	const handlePrev = useCallback(() => calendarApi()?.prev(), []);
+	const handleNext = useCallback(() => calendarApi()?.next(), []);
+	const handleToday = useCallback(() => calendarApi()?.today(), []);
+	const handleChangeView = useCallback((v: string) => {
+		const api = calendarApi();
+		api?.changeView(v);
+		setCurrentView(v);
+		saveView(v);
+	}, []);
+
+	const onDatesSet = useCallback((arg: DatesSetArg) => {
+		setCurrentView(arg.view.type);
+		setCurrentDate(arg.view.currentStart);
+		syncUrlParams(arg.view.type, arg.view.currentStart);
+	}, []);
+
+	// ------------ handlers ------------
+	const onSelectSlot = useCallback((arg: DateSelectArg) => {
+		setCreateDefaults({
 			title: '',
 			description: '',
+			start: arg.startStr,
+			end: arg.endStr,
 			reminders: [],
-		};
-
-		setCreateEventInitialFormValues(event);
-		onOpenCreateEventChange();
-	};
-
-	const handleChangeEvent = (eventChangeArg: EventChangeArg) => {
-		const { event } = eventChangeArg;
-
-		const extendsFields = event.extendedProps;
-		const updatedEvent: UpdateCalendarEvent = {
-			start: event.startStr,
-			end: event.endStr,
-			title: event.title,
-			description: extendsFields.description,
-			reminders: extendsFields.reminders,
-		};
-
-		updateEvent({ eventId: event.id, event: updatedEvent }).then((updatedEvent) => {
-			mutateEvents(
-				(events) => {
-					if (!events || !updatedEvent) return;
-
-					const filteredEvents = events.filter((event) => event.id !== updatedEvent.id);
-					return [...filteredEvents, updatedEvent];
-				},
-				// TODO: fix (https://uniteam31.atlassian.net/browse/US-7)
-				{ revalidate: false },
-			);
 		});
+		onCreateOpenChange();
+	}, []);
+
+	const patchEventsList = useCallback(
+		(updated: CalendarEvent | undefined) =>
+			mutateEvents(
+				(prev) => {
+					if (!prev || !updated) return prev;
+
+					const idx = prev.findIndex((e) => e.id === updated.id);
+					if (idx === -1) return [...prev, updated];
+
+					const next = prev.slice();
+					next[idx] = updated;
+
+					return next;
+				},
+				{ revalidate: false },
+			),
+		[mutateEvents],
+	);
+
+	const handleChangeEvent = useCallback(
+		(arg: EventChangeArg) => {
+			const { event } = arg;
+			const ext = event.extendedProps;
+
+			const dto: UpdateCalendarEvent = {
+				start: event.startStr,
+				end: event.endStr,
+				title: event.title,
+				description: ext.description,
+				reminders: ext.reminders,
+			};
+
+			updateEvent({ eventId: event.id, event: dto }).then(patchEventsList);
+		},
+		[patchEventsList, updateEvent],
+	);
+
+	const handleClickEvent = useCallback(
+		(arg: EventClickArg) => {
+			const e = arg.event;
+
+			setEventDetails({
+				id: e.id,
+				start: e.startStr,
+				end: e.endStr,
+				title: e.title,
+				description: e.extendedProps.description,
+				reminders: e.extendedProps.reminders,
+			});
+
+			onDetailsOpenChange();
+		},
+		[onDetailsOpenChange],
+	);
+
+	const handleEditEventModal = (event: CalendarEvent) => {
+		setEditDefaults(event);
+
+		onEditOpenChange();
+		onDetailsOpenChange();
 	};
 
-	const handleOpenChangeEventModal = (eventClickArg: EventClickArg) => {
-		const { event } = eventClickArg;
+	const dayHeaderContent = useCallback((arg: any) => {
+		const d: Date = arg.date;
+		const isToday = d.toDateString() === new Date().toDateString();
+		const dow = d.toLocaleDateString('ru', { weekday: 'short' });
+		const day = d.toLocaleDateString('ru', { day: '2-digit' });
+		const isMonthView = arg.view.type === 'dayGridMonth';
 
-		const initialFormValues: UpdateCalendarEvent = {
-			start: event.startStr,
-			end: event.endStr,
-			title: event.title,
-			description: event.extendedProps.description,
-			reminders: event.extendedProps.reminders,
-		};
+		return (
+			<div className="dayhead">
+				<span className="dow">{dow}</span>
+				{!isMonthView && (
+					<span className={classNames('day', isToday && 'is-today')}>{day}</span>
+				)}
+			</div>
+		);
+	}, []);
 
-		setUpdateEventInitialFormValues(initialFormValues);
-		setUpdateEventId(event.id);
-		onOpenUpdateEventChange();
-	};
+	const slotLabelContent = useCallback((arg: any) => {
+		const h = String(arg.date.getHours()).padStart(2, '0');
+		const m = String(arg.date.getMinutes()).padStart(2, '0');
+		return (
+			<div className="dayhead">
+				<span className="dow">
+					{h}:{m}
+				</span>
+			</div>
+		);
+	}, []);
 
-	if (isEventsLoading || isUserSpacesLoading) return <Spinner />;
+	const plugins = useMemo(
+		() => [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
+		[],
+	);
 
+	const isEditable = currentSpace?.access === 'owner';
+
+	if (isEventsLoading || isSpacesLoading) return <Spinner />;
 	if (!userSpaces?.length) return <div>У вас нет пространств</div>;
 
 	return (
-		<div className={'flex flex-col h-full'}>
-			{createEventInitialFormValues && isCreateEventModalOpen && (
-				<CreateCalendarEventModal
-					isOpen={isCreateEventModalOpen}
-					onOpenChange={onOpenCreateEventChange}
-					initialFormValues={createEventInitialFormValues}
-				/>
-			)}
+		<div className="flex h-full flex-col">
+			<Modal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange}>
+				<ModalContent>
+					<CreateCalendarEventForm
+						initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
+						onSuccess={onCreateOpenChange}
+					/>
+				</ModalContent>
+			</Modal>
 
-			{updateEventInitialFormValues && isUpdateEventModalOpen && (
-				<ChangeCalendarEventModal
-					isOpen={isUpdateEventModalOpen}
-					onOpenChange={onOpenUpdateEventChange}
-					eventId={updateEventId}
-					initialFormValues={updateEventInitialFormValues}
-				/>
-			)}
+			<Modal isOpen={isDetailsOpen} onOpenChange={onDetailsOpenChange}>
+				<ModalContent>
+					<EventDetails
+						isEditable={isEditable}
+						event={eventDetails ?? DEFAULT_EVENT_DATA}
+						onEdit={handleEditEventModal}
+					/>
+				</ModalContent>
+			</Modal>
+
+			<Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange}>
+				<ModalContent>
+					<ChangeCalendarEventForm
+						eventId={editDefaults?.id ?? ''}
+						initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
+						onSuccess={onEditOpenChange}
+					/>
+				</ModalContent>
+			</Modal>
 
 			<CalendarToolbar
 				view={currentView}
 				date={currentDate}
-				onPrev={onPrev}
-				onNext={onNext}
-				onToday={onToday}
-				onChangeView={onChangeView}
+				onPrev={handlePrev}
+				onNext={handleNext}
+				onToday={handleToday}
+				onChangeView={handleChangeView}
 			/>
 
 			<FullCalendar
 				ref={calendarRef}
-				headerToolbar={false}
 				initialView={currentView}
 				initialDate={currentDate}
-				datesSet={(arg) => onDatesSet(arg)} // синк в URL
-				events={events || []}
-				selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
-				//
-				plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+				datesSet={onDatesSet}
+				events={events ?? []}
+				plugins={plugins}
 				locale={ruLocale}
 				firstDay={1}
-				allDaySlot={false}
-				expandRows
 				dayMaxEventRows={3}
-				// общие настройки
-				selectable
-				selectMirror
-				editable
-				height={'100%'}
-				// contentHeight={"auto"}
+				// settings
+				selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
+				editable={isEditable}
+				selectable={isEditable}
+				expandRows={true}
+				allDaySlot={false}
+				selectMirror={true}
+				headerToolbar={false}
+				// styles
+				height="100%"
 				themeSystem="standard"
-				slotLabelFormat={{ hour: '2-digit', minute: '2-digit' }} // метки времени 09:00
+				slotLabelFormat={{ hour: '2-digit', minute: '2-digit' }}
 				eventClassNames={() => ['us-event']}
-				// кастомизация
-				dayHeaderContent={(arg) => {
-					const d = arg.date;
-					const isToday = d.toDateString() === new Date().toDateString();
-					const dow = d.toLocaleDateString('ru', { weekday: 'short' }); // пн
-					const day = d.toLocaleDateString('ru', { day: '2-digit' }); // 01
-
-					const isMonthView = arg.view.type === 'dayGridMonth';
-
-					return (
-						<div className="dayhead">
-							<span className="dow">{dow}</span>
-
-							{!isMonthView && (
-								<span className={classNames('day', isToday && 'is-today')}>
-									{day}
-								</span>
-							)}
-						</div>
-					);
-				}}
-				slotLabelContent={(arg) => {
-					const h = arg.date.getHours().toString();
-					const m = arg.date.getMinutes().toString();
-
-					return (
-						<div className="dayhead">
-							<span className="dow">
-								{h.length < 2 ? '0' + h : h}:{m.length < 2 ? '0' + m : m}
-							</span>
-						</div>
-					);
-				}}
-				// обработчики
-				select={handleCreateEvent}
+				dayHeaderContent={dayHeaderContent}
+				slotLabelContent={slotLabelContent}
+				// handlers
+				select={onSelectSlot}
 				eventDrop={handleChangeEvent}
 				eventResize={handleChangeEvent}
-				eventClick={handleOpenChangeEventModal}
+				eventClick={handleClickEvent}
 			/>
 		</div>
 	);
