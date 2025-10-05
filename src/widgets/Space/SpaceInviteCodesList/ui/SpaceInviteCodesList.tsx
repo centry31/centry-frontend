@@ -49,9 +49,7 @@ export const SpaceInviteCodesList = (props: Props) => {
 				<SpaceInviteCodeCard
 					key={invite.code}
 					invite={invite}
-					actionsSlot={
-						<SpaceInviteCodesActionsList spaceId={spaceId} code={invite.code} />
-					}
+					actions={<SpaceInviteCodesActionsList spaceId={spaceId} code={invite.code} />}
 				/>
 			))}
 		</div>

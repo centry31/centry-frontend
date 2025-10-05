@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { useUserStore } from 'entities/User';
-
 import { axiosInstance } from 'shared/api';
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
 import type { AccessToken, ApiResponse } from 'shared/types';

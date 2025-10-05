@@ -8,7 +8,7 @@ import type { Space } from '../model/types';
 /**
  * Получает конкретные пространства, в которых пользователь состоит.
  * */
-export const useGetPersonalUserSpaces = () => {
+export const useGetUserSpaces = () => {
 	const fetcher = () =>
 		axiosInstance.get<ApiResponse<Space[]>>('/spaces').then((res) => res.data.data);
 

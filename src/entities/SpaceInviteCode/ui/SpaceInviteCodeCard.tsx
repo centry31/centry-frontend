@@ -1,17 +1,17 @@
 import type { ReactNode } from 'react';
 import { Card, CardBody, CardHeader, Progress, Snippet } from '@heroui/react';
-import { Clock, Link2, Users } from 'lucide-react';
+import { ClockIcon, Link2Icon, UsersIcon } from 'lucide-react';
 
 import { getSpaceInviteLinkUrl } from '../lib/getSpaceInviteLinkUrl';
 import type { SpaceInviteCode } from '../model/types';
 
 type Props = {
 	invite: SpaceInviteCode;
-	actionsSlot?: ReactNode;
+	actions?: ReactNode;
 };
 
 export const SpaceInviteCodeCard = (props: Props) => {
-	const { invite, actionsSlot } = props;
+	const { invite, actions } = props;
 
 	const used = invite.usedCount ?? 0;
 	const max = invite.maxUses ?? 0;
@@ -24,7 +24,7 @@ export const SpaceInviteCodeCard = (props: Props) => {
 		<Card shadow="none" className="border border-neutral-200">
 			<CardHeader className="flex items-start gap-3">
 				<div className="mt-0.5 rounded-xl bg-neutral-100 p-2">
-					<Link2 size={18} className="text-neutral-700" />
+					<Link2Icon size={18} className="text-neutral-700" />
 				</div>
 
 				<div className="min-w-0 flex-1">
@@ -34,17 +34,16 @@ export const SpaceInviteCodeCard = (props: Props) => {
 
 					<div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500">
 						<span className="inline-flex items-center gap-1">
-							<Users size={14} /> Использовано: {used}/{max}
+							<UsersIcon size={14} /> Использовано: {used}/{max}
 						</span>
 
 						<span className="inline-flex items-center gap-1">
-							<Clock size={14} /> Истекает: {expiresAt}
+							<ClockIcon size={14} /> Истекает: {expiresAt}
 						</span>
 					</div>
 				</div>
 
-				{/* actions */}
-				{actionsSlot}
+				{actions}
 			</CardHeader>
 
 			<CardBody className="pt-0">

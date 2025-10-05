@@ -31,7 +31,7 @@ export const SpaceInviteCodeInfoCard = () => {
 	const handleJoin = () => {
 		if (!code) return;
 
-		const path = generatePath(RoutesPaths.spaceSettingsList, { spaceId: spaceInfo?.id || '' });
+		const path = generatePath(RoutesPaths.spaceDetails, { spaceId: spaceInfo?.id || '' });
 		joinSpace({ code }).then(() => navigate(path));
 	};
 

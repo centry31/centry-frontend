@@ -24,7 +24,7 @@ import type {
 	UpdateCalendarEvent,
 } from 'entities/CalendarEvent';
 import { useGetCalendarEvents } from 'entities/CalendarEvent';
-import { useGetPersonalUserSpaces, useGetSpace } from 'entities/Space';
+import { useGetSpace, useGetUserSpaces } from 'entities/Space';
 
 import {
 	CurrentSpaceIdController,
@@ -69,7 +69,7 @@ export const CalendarPage = () => {
 		isLoading: isEventsLoading,
 	} = useGetCalendarEvents();
 
-	const { data: userSpaces, isLoading: isSpacesLoading } = useGetPersonalUserSpaces();
+	const { data: userSpaces, isLoading: isSpacesLoading } = useGetUserSpaces();
 
 	const { request: updateEvent } = useUpdateCalendarEvent();
 

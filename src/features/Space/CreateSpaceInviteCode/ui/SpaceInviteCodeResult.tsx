@@ -15,9 +15,6 @@ export const SpaceInviteCodeResult = (props: Props) => {
 			<CardHeader>
 				<div className="flex items-center gap-2">
 					<h3 className="text-base font-medium">Ссылка создана</h3>
-					<Chip size="sm" variant="flat" color="success" className="uppercase">
-						Ready
-					</Chip>
 				</div>
 			</CardHeader>
 

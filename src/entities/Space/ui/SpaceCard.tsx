@@ -5,11 +5,11 @@ import type { Space } from '../model/types';
 
 type Props = {
 	space: Space;
-	actionButtons?: ReactNode;
+	actions?: ReactNode;
 };
 
 export const SpaceCard = (props: Props) => {
-	const { space, actionButtons } = props;
+	const { space, actions } = props;
 
 	return (
 		<Card className="group border border-neutral-200 transition hover:shadow-md">
@@ -44,10 +44,8 @@ export const SpaceCard = (props: Props) => {
 				</div>
 			</CardBody>
 
-			{actionButtons && (
-				<CardFooter className="flex items-center justify-between">
-					{actionButtons}
-				</CardFooter>
+			{actions && (
+				<CardFooter className="flex items-center justify-between">{actions}</CardFooter>
 			)}
 		</Card>
 	);
