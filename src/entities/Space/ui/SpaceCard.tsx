@@ -1,26 +1,15 @@
 import type { ReactNode } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
-
-import { RoutesPaths } from 'shared/configs';
+import { Avatar, Card, CardBody, CardFooter, CardHeader, Chip } from '@heroui/react';
 
 import type { Space } from '../model/types';
 
 type Props = {
 	space: Space;
-	actionsSlot?: ReactNode;
+	actionButtons?: ReactNode;
 };
 
 export const SpaceCard = (props: Props) => {
-	const { space, actionsSlot } = props;
-
-	const navigate = useNavigate();
-
-	const handleOpenSpaceDetails = () => {
-		const path = generatePath(RoutesPaths.spaceSettingsList, { spaceId: space.id });
-		navigate(path);
-	};
+	const { space, actionButtons } = props;
 
 	return (
 		<Card className="group border border-neutral-200 transition hover:shadow-md">
@@ -41,8 +30,6 @@ export const SpaceCard = (props: Props) => {
 						</p>
 					)}
 				</div>
-
-				{actionsSlot}
 			</CardHeader>
 
 			<CardBody>
@@ -57,15 +44,11 @@ export const SpaceCard = (props: Props) => {
 				</div>
 			</CardBody>
 
-			<CardFooter className="flex items-center justify-between">
-				<Button
-					onPress={handleOpenSpaceDetails}
-					variant="flat"
-					endContent={<ArrowRight size={16} />}
-				>
-					Открыть
-				</Button>
-			</CardFooter>
+			{actionButtons && (
+				<CardFooter className="flex items-center justify-between">
+					{actionButtons}
+				</CardFooter>
+			)}
 		</Card>
 	);
 };

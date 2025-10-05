@@ -11,7 +11,7 @@ import { useGetSpaceTgChats } from 'entities/SpaceTgChat';
 
 import { PageHeader } from 'shared/ui/PageHeader';
 
-export const SpaceTgChatsPage = () => {
+export const SpaceSettingsTgChatsPage = () => {
 	const { spaceId = '' } = useParams();
 
 	const { data: space } = useGetSpace({ spaceId });

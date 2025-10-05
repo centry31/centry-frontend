@@ -11,7 +11,7 @@ import { useGetSpaceInviteCodes } from 'entities/SpaceInviteCode';
 
 import { PageHeader } from 'shared/ui/PageHeader';
 
-export const SpaceInviteCodesPage = () => {
+export const SpaceSettingsInviteCodesPage = () => {
 	const { spaceId = '' } = useParams();
 
 	const { data: space } = useGetSpace({ spaceId });

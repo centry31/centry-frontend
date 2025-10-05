@@ -8,12 +8,13 @@ import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
 import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
-import { SpaceInviteCodesPage } from 'pages/Space/SpaceInviteCodesPage';
-import { SpaceMembersPage } from 'pages/Space/SpaceMembersPage';
+import { SpaceDetailsPage } from 'pages/Space/SpaceDetailsPage';
+import { SpaceSettingsInviteCodesPage } from 'pages/Space/SpaceSettingsInviteCodesPage';
 import { SpaceSettingsListPage } from 'pages/Space/SpaceSettingsListPage';
+import { SpaceSettingsMembersPage } from 'pages/Space/SpaceSettingsMembersPage';
 import { SpaceSettingsPage } from 'pages/Space/SpaceSettingsPage';
+import { SpaceSettingsTgChatsPage } from 'pages/Space/SpaceSettingsTgChatsPage';
 import { SpacesPage } from 'pages/Space/SpacesPage';
-import { SpaceTgChatsPage } from 'pages/Space/SpaceTgChatsPage';
 
 export type AppRoutesProps = RouteProps & {
 	authOnly?: boolean;
@@ -27,6 +28,7 @@ export enum Routes {
 	LOGIN_WITH_TELEGRAM = 'loginWithTelegram',
 
 	SPACES = 'spaces',
+	SPACE_DETAILS = 'spaceDetails',
 	SPACE_SETTINGS_LIST = 'spaceSettingsList',
 	SPACE_SETTINGS = 'spaceSettings',
 	SPACE_MEMBERS = 'spaceMembers',
@@ -44,11 +46,13 @@ export type Path =
 	| '/welcome'
 	//
 	| '/spaces'
-	| '/spaces/:spaceId'
-	| '/spaces/:spaceId/members'
-	| '/spaces/:spaceId/settings'
-	| '/spaces/:spaceId/invite-codes'
-	| '/spaces/:spaceId/tg-chats'
+	| '/spaces/settings/:spaceId'
+	| '/spaces/settings/:spaceId/members'
+	| '/spaces/settings/:spaceId/settings'
+	| '/spaces/settings/:spaceId/invite-codes'
+	| '/spaces/settings/:spaceId/tg-chats'
+	//
+	| '/spaces/details/:spaceId'
 	//
 	| '/spaces/create'
 	| '/spaces/join';
@@ -60,11 +64,13 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.WELCOME]: '/welcome',
 
 	[Routes.SPACES]: '/spaces',
-	[Routes.SPACE_SETTINGS_LIST]: '/spaces/:spaceId',
-	[Routes.SPACE_MEMBERS]: '/spaces/:spaceId/members',
-	[Routes.SPACE_SETTINGS]: '/spaces/:spaceId/settings',
-	[Routes.SPACE_INVITE_CODES]: '/spaces/:spaceId/invite-codes',
-	[Routes.SPACE_TG_CHATS]: '/spaces/:spaceId/tg-chats',
+	[Routes.SPACE_SETTINGS_LIST]: '/spaces/settings/:spaceId',
+	[Routes.SPACE_MEMBERS]: '/spaces/settings/:spaceId/members',
+	[Routes.SPACE_SETTINGS]: '/spaces/settings/:spaceId/settings',
+	[Routes.SPACE_INVITE_CODES]: '/spaces/settings/:spaceId/invite-codes',
+	[Routes.SPACE_TG_CHATS]: '/spaces/settings/:spaceId/tg-chats',
+
+	[Routes.SPACE_DETAILS]: '/spaces/details/:spaceId',
 
 	[Routes.CREATE_SPACE]: '/spaces/create',
 	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: '/spaces/join',
@@ -103,7 +109,7 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	},
 	[Routes.SPACE_MEMBERS]: {
 		path: RoutesPaths.spaceMembers,
-		element: <SpaceMembersPage />,
+		element: <SpaceSettingsMembersPage />,
 		authOnly: true,
 	},
 	[Routes.SPACE_SETTINGS]: {
@@ -113,12 +119,18 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	},
 	[Routes.SPACE_INVITE_CODES]: {
 		path: RoutesPaths.spaceInviteCodes,
-		element: <SpaceInviteCodesPage />,
+		element: <SpaceSettingsInviteCodesPage />,
 		authOnly: true,
 	},
 	[Routes.SPACE_TG_CHATS]: {
 		path: RoutesPaths.spaceTgChats,
-		element: <SpaceTgChatsPage />,
+		element: <SpaceSettingsTgChatsPage />,
+		authOnly: true,
+	},
+
+	[Routes.SPACE_DETAILS]: {
+		path: RoutesPaths.spaceDetails,
+		element: <SpaceDetailsPage />,
 		authOnly: true,
 	},
 

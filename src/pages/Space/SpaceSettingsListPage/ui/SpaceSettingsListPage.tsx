@@ -43,7 +43,7 @@ export const SpaceSettingsListPage = () => {
 
 	const endChevron = <ChevronRight size={16} className="text-neutral-300 shrink-0" />;
 
-	const handleNavigate = (path: string) => {
+	const handleNavigate = (path: Path) => {
 		const generatedPath = generatePath(path, { spaceId });
 		navigate(generatedPath);
 	};
@@ -55,8 +55,8 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-overview',
 			items: [
 				{
-					key: '/spaces/:spaceId/members',
-					onPress: () => handleNavigate('/spaces/:spaceId/members'),
+					key: '/spaces/settings/:spaceId/members',
+					onPress: () => handleNavigate('/spaces/settings/:spaceId/members'),
 					title: 'Участники',
 					description: 'Список, роли и приглашения',
 					icon: <Users size={18} className="text-neutral-600 shrink-0" />,
@@ -69,16 +69,16 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-manage',
 			items: [
 				{
-					key: '/spaces/:spaceId/settings',
-					onPress: () => handleNavigate('/spaces/:spaceId/settings'),
+					key: '/spaces/settings/:spaceId/settings',
+					onPress: () => handleNavigate('/spaces/settings/:spaceId/settings'),
 					title: 'Основные настройки',
 					description: 'Название, описание, приватность',
 					icon: <Settings size={18} className="text-neutral-600 shrink-0" />,
 					showDivider: true,
 				},
 				{
-					key: '/spaces/:spaceId/invite-codes',
-					onPress: () => handleNavigate('/spaces/:spaceId/invite-codes'),
+					key: '/spaces/settings/:spaceId/invite-codes',
+					onPress: () => handleNavigate('/spaces/settings/:spaceId/invite-codes'),
 					title: 'Ссылки для вступления',
 					description: 'Публичная ссылка, срок действия, лимиты',
 					icon: <Link2 size={18} className="text-neutral-600 shrink-0" />,
@@ -91,8 +91,8 @@ export const SpaceSettingsListPage = () => {
 			ariaLabel: 'space-integrations',
 			items: [
 				{
-					key: '/spaces/:spaceId/tg-chats',
-					onPress: () => handleNavigate('/spaces/:spaceId/tg-chats'),
+					key: '/spaces/settings/:spaceId/tg-chats',
+					onPress: () => handleNavigate('/spaces/settings/:spaceId/tg-chats'),
 					title: 'Привязанные чаты',
 					description: 'Группы, каналы, синхронизация',
 					icon: <MessageSquare size={18} className="text-neutral-600 shrink-0" />,
