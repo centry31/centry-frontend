@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { axiosInstance } from 'shared/api';
+import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
 import { CurrentSpaceIdController } from 'shared/lib';
 import type { ApiResponse } from 'shared/types';
 
@@ -48,6 +49,7 @@ export const useUserStore = create<Store>((set) => ({
 
 	logout: () => {
 		CurrentSpaceIdController.clearCurrentSpaceId();
+		localStorage.removeItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
 
 		set({ authData: undefined });
 	},
