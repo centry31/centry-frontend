@@ -34,6 +34,8 @@ import {
 	syncUrlParams,
 } from 'shared/lib';
 
+import { useIsMobile } from '../lib/useIsMobile';
+
 import './styles.css';
 
 const SELECT_LONG_PRESS_DELAY = 400;
@@ -73,6 +75,8 @@ export const CalendarPage = () => {
 
 	const { request: updateEvent } = useUpdateCalendarEvent();
 
+	const isMobile = useIsMobile();
+
 	// ------------ helpers ------------
 	const calendarApi = () => calendarRef.current?.getApi();
 
@@ -103,6 +107,17 @@ export const CalendarPage = () => {
 		});
 		onCreateOpenChange();
 	}, []);
+
+	const handleDateClick = useCallback(
+		(arg: { date: Date; dateStr: string; view: any }) => {
+			// если мобильный и сейчас month — не создаём событие, а переходим к дню
+			if (isMobile && arg.view?.type === 'dayGridMonth') {
+				calendarApi()?.changeView('timeGridDay', arg.date);
+				return;
+			}
+		},
+		[isMobile, onCreateOpenChange],
+	);
 
 	const patchEventsList = useCallback(
 		(updated: CalendarEvent | undefined) =>
@@ -270,6 +285,7 @@ export const CalendarPage = () => {
 				eventDrop={handleChangeEvent}
 				eventResize={handleChangeEvent}
 				eventClick={handleClickEvent}
+				dateClick={handleDateClick}
 			/>
 		</div>
 	);
