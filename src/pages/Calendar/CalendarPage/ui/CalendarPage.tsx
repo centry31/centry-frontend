@@ -207,7 +207,11 @@ export const CalendarPage = () => {
 
 	return (
 		<div className="flex h-full flex-col">
-			<Modal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange}>
+			<Modal
+				isOpen={isCreateOpen}
+				onOpenChange={onCreateOpenChange}
+				shouldBlockScroll={false}
+			>
 				<ModalContent>
 					<CreateCalendarEventForm
 						initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
@@ -216,7 +220,11 @@ export const CalendarPage = () => {
 				</ModalContent>
 			</Modal>
 
-			<Modal isOpen={isDetailsOpen} onOpenChange={onDetailsOpenChange}>
+			<Modal
+				isOpen={isDetailsOpen}
+				onOpenChange={onDetailsOpenChange}
+				shouldBlockScroll={false}
+			>
 				<ModalContent>
 					<EventDetails
 						isEditable={isEditable}
@@ -226,7 +234,7 @@ export const CalendarPage = () => {
 				</ModalContent>
 			</Modal>
 
-			<Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange}>
+			<Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange} shouldBlockScroll={false}>
 				<ModalContent>
 					<ChangeCalendarEventForm
 						eventId={editDefaults?.id ?? ''}
@@ -243,6 +251,7 @@ export const CalendarPage = () => {
 				onNext={handleNext}
 				onToday={handleToday}
 				onChangeView={handleChangeView}
+				onCreateEvent={onCreateOpenChange}
 			/>
 
 			<FullCalendar

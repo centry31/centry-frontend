@@ -8,10 +8,12 @@ type Props = {
 	onNext: () => void;
 	onToday: () => void;
 	onChangeView: (v: string) => void;
+
+	onCreateEvent: () => void;
 };
 
 export const CalendarToolbar = (props: Props) => {
-	const { view, date, onPrev, onNext, onToday, onChangeView } = props;
+	const { view, date, onPrev, onNext, onToday, onChangeView, onCreateEvent } = props;
 	const isToday = new Date().toDateString() === date.toDateString();
 
 	return (
@@ -47,8 +49,14 @@ export const CalendarToolbar = (props: Props) => {
 				</Button>
 			</div>
 
-			<div className="text-medium sm:text-2xl w-full font-medium">
-				{date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
+			<div className={'flex justify-between align-middle w-full'}>
+				<div className="text-medium sm:text-2xl font-medium">
+					{date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
+				</div>
+
+				<Button className={'h-5 sm:h-auto'} color={'primary'} onPress={onCreateEvent}>
+					+
+				</Button>
 			</div>
 		</div>
 	);
