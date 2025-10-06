@@ -6,17 +6,17 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
-import { Modal, ModalContent, Spinner, useDisclosure } from '@heroui/react';
+import { Spinner, useDisclosure } from '@heroui/react';
 import classNames from 'classnames';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
-import { EventDetails } from 'widgets/Calendar/EventDetails';
+import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
 import {
-	ChangeCalendarEventForm,
+	ChangeCalendarEventModal,
 	useUpdateCalendarEvent,
 } from 'features/Calendar/ChangeCalendarEvent';
-import { CreateCalendarEventForm } from 'features/Calendar/CreateCalendarEvent';
+import { CreateCalendarEventModal } from 'features/Calendar/CreateCalendarEvent';
 
 import type {
 	CalendarEvent,
@@ -207,42 +207,28 @@ export const CalendarPage = () => {
 
 	return (
 		<div className="flex h-full flex-col">
-			<Modal
+			<CreateCalendarEventModal
+				initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
+				onSuccess={onCreateOpenChange}
 				isOpen={isCreateOpen}
 				onOpenChange={onCreateOpenChange}
-				shouldBlockScroll={false}
-			>
-				<ModalContent>
-					<CreateCalendarEventForm
-						initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
-						onSuccess={onCreateOpenChange}
-					/>
-				</ModalContent>
-			</Modal>
+			/>
 
-			<Modal
+			<EventDetailsModal
+				isEditable={isEditable}
+				event={eventDetails ?? DEFAULT_EVENT_DATA}
+				onEdit={handleEditEventModal}
 				isOpen={isDetailsOpen}
 				onOpenChange={onDetailsOpenChange}
-				shouldBlockScroll={false}
-			>
-				<ModalContent>
-					<EventDetails
-						isEditable={isEditable}
-						event={eventDetails ?? DEFAULT_EVENT_DATA}
-						onEdit={handleEditEventModal}
-					/>
-				</ModalContent>
-			</Modal>
+			/>
 
-			<Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange} shouldBlockScroll={false}>
-				<ModalContent>
-					<ChangeCalendarEventForm
-						eventId={editDefaults?.id ?? ''}
-						initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
-						onSuccess={onEditOpenChange}
-					/>
-				</ModalContent>
-			</Modal>
+			<ChangeCalendarEventModal
+				isOpen={isEditOpen}
+				onOpenChange={onEditOpenChange}
+				eventId={editDefaults?.id ?? ''}
+				initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
+				onSuccess={onEditOpenChange}
+			/>
 
 			<CalendarToolbar
 				view={currentView}
