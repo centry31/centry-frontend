@@ -6,17 +6,17 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
-import { Modal, ModalContent, Spinner, useDisclosure } from '@heroui/react';
+import { Spinner, useDisclosure } from '@heroui/react';
 import classNames from 'classnames';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
-import { EventDetails } from 'widgets/Calendar/EventDetails';
+import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
 import {
-	ChangeCalendarEventForm,
+	ChangeCalendarEventModal,
 	useUpdateCalendarEvent,
 } from 'features/Calendar/ChangeCalendarEvent';
-import { CreateCalendarEventForm } from 'features/Calendar/CreateCalendarEvent';
+import { CreateCalendarEventModal } from 'features/Calendar/CreateCalendarEvent';
 
 import type {
 	CalendarEvent,
@@ -33,6 +33,8 @@ import {
 	saveView,
 	syncUrlParams,
 } from 'shared/lib';
+
+import { useIsMobile } from '../lib/useIsMobile';
 
 import './styles.css';
 
@@ -73,6 +75,8 @@ export const CalendarPage = () => {
 
 	const { request: updateEvent } = useUpdateCalendarEvent();
 
+	const isMobile = useIsMobile();
+
 	// ------------ helpers ------------
 	const calendarApi = () => calendarRef.current?.getApi();
 
@@ -103,6 +107,17 @@ export const CalendarPage = () => {
 		});
 		onCreateOpenChange();
 	}, []);
+
+	const handleDateClick = useCallback(
+		(arg: { date: Date; dateStr: string; view: any }) => {
+			// если мобильный и сейчас month — не создаём событие, а переходим к дню
+			if (isMobile && arg.view?.type === 'dayGridMonth') {
+				calendarApi()?.changeView('timeGridDay', arg.date);
+				return;
+			}
+		},
+		[isMobile, onCreateOpenChange],
+	);
 
 	const patchEventsList = useCallback(
 		(updated: CalendarEvent | undefined) =>
@@ -207,34 +222,28 @@ export const CalendarPage = () => {
 
 	return (
 		<div className="flex h-full flex-col">
-			<Modal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange}>
-				<ModalContent>
-					<CreateCalendarEventForm
-						initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
-						onSuccess={onCreateOpenChange}
-					/>
-				</ModalContent>
-			</Modal>
+			<CreateCalendarEventModal
+				initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
+				onSuccess={onCreateOpenChange}
+				isOpen={isCreateOpen}
+				onOpenChange={onCreateOpenChange}
+			/>
 
-			<Modal isOpen={isDetailsOpen} onOpenChange={onDetailsOpenChange}>
-				<ModalContent>
-					<EventDetails
-						isEditable={isEditable}
-						event={eventDetails ?? DEFAULT_EVENT_DATA}
-						onEdit={handleEditEventModal}
-					/>
-				</ModalContent>
-			</Modal>
+			<EventDetailsModal
+				isEditable={isEditable}
+				event={eventDetails ?? DEFAULT_EVENT_DATA}
+				onEdit={handleEditEventModal}
+				isOpen={isDetailsOpen}
+				onOpenChange={onDetailsOpenChange}
+			/>
 
-			<Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange}>
-				<ModalContent>
-					<ChangeCalendarEventForm
-						eventId={editDefaults?.id ?? ''}
-						initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
-						onSuccess={onEditOpenChange}
-					/>
-				</ModalContent>
-			</Modal>
+			<ChangeCalendarEventModal
+				isOpen={isEditOpen}
+				onOpenChange={onEditOpenChange}
+				eventId={editDefaults?.id ?? ''}
+				initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
+				onSuccess={onEditOpenChange}
+			/>
 
 			<CalendarToolbar
 				view={currentView}
@@ -243,6 +252,7 @@ export const CalendarPage = () => {
 				onNext={handleNext}
 				onToday={handleToday}
 				onChangeView={handleChangeView}
+				onCreateEvent={onCreateOpenChange}
 			/>
 
 			<FullCalendar
@@ -275,6 +285,7 @@ export const CalendarPage = () => {
 				eventDrop={handleChangeEvent}
 				eventResize={handleChangeEvent}
 				eventClick={handleClickEvent}
+				dateClick={handleDateClick}
 			/>
 		</div>
 	);

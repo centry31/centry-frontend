@@ -13,6 +13,7 @@ export const UserDropdown = () => {
 		<Dropdown placement="bottom-start">
 			<DropdownTrigger>
 				<User
+					className={'cursor-pointer'}
 					as="button"
 					avatarProps={{
 						name: authData?.displayName,
@@ -23,7 +24,13 @@ export const UserDropdown = () => {
 			</DropdownTrigger>
 
 			<DropdownMenu aria-label="User Actions">
-				<DropdownItem onPress={handleLogout} key="logout" color="danger" variant={'flat'}>
+				<DropdownItem
+					className={'text-danger'}
+					onPress={handleLogout}
+					key="logout"
+					color="danger"
+					variant={'flat'}
+				>
 					Выйти
 				</DropdownItem>
 			</DropdownMenu>

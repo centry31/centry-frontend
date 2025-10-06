@@ -1,5 +1,5 @@
 import { useController, useFieldArray, useForm } from 'react-hook-form';
-import { Button, DateInput, Input } from '@heroui/react';
+import { Button, DatePicker, Input } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import type { CalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
@@ -126,13 +126,13 @@ export const ChangeCalendarEventForm = (props: Props) => {
 				<Input label="Название" value={title} onChange={onChangeTitle} />
 				<Input label="Описание" value={description} onChange={onChangeDescription} />
 
-				<DateInput
+				<DatePicker
 					label="Начало"
 					value={safeParseAbsoluteToLocal(start)}
 					onChange={handleChangeStart}
 					hideTimeZone
 				/>
-				<DateInput
+				<DatePicker
 					label="Конец"
 					value={safeParseAbsoluteToLocal(end)}
 					onChange={handleChangeEnd}

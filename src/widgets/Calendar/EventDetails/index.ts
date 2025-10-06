@@ -1,1 +1,1 @@
-export { EventDetails } from './ui/EventDetails';
+export { EventDetailsModal } from './ui/EventDetailtsModal';
