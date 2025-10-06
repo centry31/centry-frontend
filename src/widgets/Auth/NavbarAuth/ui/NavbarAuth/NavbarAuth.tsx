@@ -16,6 +16,7 @@ import { CalendarDays, LayoutGrid } from 'lucide-react';
 import { RoutesPaths } from 'shared/configs';
 
 import { SpaceSelect } from '../SpaceSelect/SpaceSelect';
+import { UserDropdown } from '../UserDropdown/UserDropdown';
 
 type MenuItem = {
 	title: string;
@@ -87,12 +88,9 @@ export const NavbarAuth = () => {
 			</NavbarContent>
 
 			{/* ПРАВАЯ ЗОНА */}
-			{/* TODO: https://uniteam31.atlassian.net/browse/US-19 */}
-			{/*<NavbarContent justify="end" className="gap-2">*/}
-			{/*	<Button size="sm" as={Link} color="primary" href="#" variant="flat">*/}
-			{/*		Выйти*/}
-			{/*	</Button>*/}
-			{/*</NavbarContent>*/}
+			<NavbarContent justify="end" className="gap-2">
+				<UserDropdown />
+			</NavbarContent>
 
 			{/* МОБИЛЬНОЕ МЕНЮ */}
 			<NavbarMenu className="pt-2">
