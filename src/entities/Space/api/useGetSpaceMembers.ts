@@ -15,17 +15,12 @@ type Props = {
 export const useGetSpaceMembers = (props: Props) => {
 	const { spaceId } = props;
 
-	const fetcher = () =>
-		axiosInstance
-			.get<ApiResponse<SpaceMember[]>>(`/spaces/users/${spaceId}`)
-			.then((res) => res.data.data);
-
-	const { data, mutate, isLoading, error } = useSWR(`api/spaces/members/${spaceId}`, fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
+	const fetcher = async () => {
+		const res = await axiosInstance.get<ApiResponse<SpaceMember[]>>(
+			`/space-members/${spaceId}`,
+		);
+		return res.data.data;
 	};
+
+	return useSWR(`api/spaces/members/${spaceId}`, fetcher);
 };

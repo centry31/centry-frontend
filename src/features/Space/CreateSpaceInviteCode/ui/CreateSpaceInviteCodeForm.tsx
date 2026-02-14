@@ -1,168 +1,99 @@
-import React, { useState } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	Chip,
-	DateInput,
-	Input,
-	Radio,
-	RadioGroup,
-} from '@heroui/react';
+import { Button } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
-import { addMinutes } from 'date-fns';
+import { Link as LinkIcon } from 'lucide-react';
 
-import { safeParseAbsoluteToLocal } from 'shared/lib';
+import { CreateSpaceInviteCodeOptionsForm } from './CreateSpaceInviteCodeOptionsForm';
+import { SpaceInviteCodeResult } from './SpaceInviteCodeResult';
 
-import type { CreateSpaceInviteCodeFormValues } from '../model/types';
+type Mode = 'preset' | 'custom';
 
-const USES_PRESETS = [
-	{ label: '1 раз', value: 1 },
-	{ label: '5 раз', value: 5 },
-	{ label: '20 раз', value: 20 },
-];
+type Props = {
+	linkUrl: string | null;
+	createdCode: string;
+	maxUses: number;
+	expiresAtIso: string;
+	usesMode: Mode;
+	timeMode: Mode;
 
-const PRESET_BUMPS = [
-	{ label: '15 мин', minutes: 15 },
-	{ label: '1 час', minutes: 60 },
-	{ label: '1 день', minutes: 1440 },
-];
+	onClose: () => void;
+	onChangeMaxUses: (value: number) => void;
+	onChangeExpiresAt: (value?: ZonedDateTime | null) => void;
+	onPickExpiresAtBump: (minutes: number) => void;
+	onChangeUsesMode: (mode: Mode) => void;
+	onChangeTimeMode: (mode: Mode) => void;
+	onCreateInviteLink: () => void;
 
-export const CreateSpaceInviteCodeForm = () => {
-	const { control, setValue } = useFormContext<CreateSpaceInviteCodeFormValues>();
+	isLoading: boolean;
+};
 
+export const CreateSpaceInviteCodeForm = (props: Props) => {
 	const {
-		field: { value: maxUses, onChange: onChangeMaxUses },
-	} = useController({ control, name: 'maxUses' });
+		linkUrl,
+		createdCode,
+		maxUses,
+		expiresAtIso,
+		usesMode,
+		timeMode,
 
-	const {
-		field: { value: expiresAtIso, onChange: onChangeExpiresAtIso },
-	} = useController({ control, name: 'expiresAt' });
+		onClose,
+		onChangeMaxUses,
+		onChangeExpiresAt,
+		onPickExpiresAtBump,
+		onChangeUsesMode,
+		onChangeTimeMode,
+		onCreateInviteLink,
 
-	const [usesMode, setUsesMode] = useState<'preset' | 'custom'>('preset');
-	const [timeMode, setTimeMode] = useState<'preset' | 'custom'>('preset');
-
-	const handlePickExpiresAtBump = (minutes: number) => {
-		const iso = addMinutes(new Date(), minutes).toISOString();
-		setValue('expiresAt', iso, { shouldValidate: true });
-		setTimeMode('preset');
-	};
-
-	/**
-	 * @summary <DateInput /> работает с ZoneDateTime типом, нужно это учитывать
-	 *
-	 * Работа с DateInput - компонент возвращает и принимает ZoneDateTime, поэтому для корректной работы
-	 * нужно форматировать полученное значение, конвертируя в строку (ISO).
-	 *
-	 * Все передаваемые значения в компонент в качестве value также должны быть конвертированы в ZoneDateTime
-	 * */
-	const handleChangeExpiresAt = (expiresAt?: ZonedDateTime | null) => {
-		if (!expiresAt) return;
-
-		const absoluteString = expiresAt.toAbsoluteString();
-		onChangeExpiresAtIso(absoluteString);
-	};
-
-	const handleChangeMaxUses = (uses: number) => {
-		onChangeMaxUses(uses);
-	};
+		isLoading,
+	} = props;
 
 	return (
-		<Card>
-			<CardHeader>
-				<h3 className="text-base font-medium">Параметры ссылки</h3>
-			</CardHeader>
+		<div className="p-4">
+			<div className="mb-4 flex items-center gap-3">
+				<div className="grid h-10 w-10 place-items-center rounded-2xl bg-neutral-100">
+					<LinkIcon size={18} />
+				</div>
+				<div>
+					<h2 className="text-lg font-semibold">Пригласить в пространство</h2>
+					<p className="text-sm font-normal text-neutral-500">
+						Создайте одноразовую ссылку с ограничением по сроку и использованиям
+					</p>
+				</div>
+			</div>
 
-			<CardBody className={'flex flex-col gap-4'}>
-				{/* Лимит использований */}
-				<div className="flex flex-col gap-2">
-					<div className="text-sm font-medium">Лимит использований</div>
+			{!createdCode && (
+				<CreateSpaceInviteCodeOptionsForm
+					maxUses={maxUses}
+					expiresAtIso={expiresAtIso}
+					usesMode={usesMode}
+					timeMode={timeMode}
+					onChangeMaxUses={onChangeMaxUses}
+					onChangeExpiresAt={onChangeExpiresAt}
+					onPickExpiresAtBump={onPickExpiresAtBump}
+					onChangeUsesMode={onChangeUsesMode}
+					onChangeTimeMode={onChangeTimeMode}
+				/>
+			)}
 
-					<RadioGroup
-						orientation="horizontal"
-						value={usesMode}
-						onValueChange={(v) => setUsesMode(v as 'preset' | 'custom')}
-						size={'sm'}
-					>
-						<Radio value="preset">Пресет</Radio>
-						<Radio value="custom">Своё число</Radio>
-					</RadioGroup>
+			{linkUrl && <SpaceInviteCodeResult linkUrl={linkUrl} />}
 
-					{usesMode === 'preset' && (
-						<div className="flex flex-wrap gap-2">
-							{USES_PRESETS.map((p) => (
-								<Button
-									key={p.value}
-									size="sm"
-									variant={maxUses === p.value ? 'solid' : 'flat'}
-									color={maxUses === p.value ? 'primary' : 'default'}
-									onPress={() => handleChangeMaxUses(p.value)}
-								>
-									{p.label}
-								</Button>
-							))}
-						</div>
-					)}
-
-					{usesMode === 'custom' && (
-						<Input
-							type="number"
-							label="Количество"
-							min={1}
-							value={String(maxUses ?? '')}
-							onChange={(e) => onChangeMaxUses(Number(e.target.value))}
-						/>
-					)}
+			<div className="mt-4 space-y-3">
+				<div className="text-xs text-neutral-500">
+					Только владельцы/админы пространства могут создавать инвайт-ссылки.
 				</div>
 
-				{/* Срок действия */}
-				<div className="flex flex-col gap-2">
-					<div className="text-sm font-medium">Срок действия</div>
+				<Button variant="light" onPress={onClose} fullWidth>
+					Закрыть
+				</Button>
 
-					<RadioGroup
-						orientation="horizontal"
-						value={timeMode}
-						onValueChange={(v) => setTimeMode(v as 'preset' | 'custom')}
-						size={'sm'}
-					>
-						<Radio value="preset">Пресет</Radio>
-						<Radio value="custom">Дата и время</Radio>
-					</RadioGroup>
-
-					{timeMode === 'preset' && (
-						<div className="flex flex-wrap gap-2">
-							{PRESET_BUMPS.map((b) => (
-								<Button
-									key={b.minutes}
-									size="sm"
-									variant="flat"
-									onPress={() => handlePickExpiresAtBump(b.minutes)}
-								>
-									{b.label}
-								</Button>
-							))}
-						</div>
-					)}
-
-					{timeMode === 'custom' && (
-						<DateInput
-							label="Истекает"
-							value={safeParseAbsoluteToLocal(expiresAtIso)}
-							onChange={handleChangeExpiresAt}
-							hideTimeZone
-						/>
-					)}
-
-					<div className="text-xs text-neutral-500 flex gap-1 items-center">
-						<div>Текущее значение:</div>
-						<Chip size="sm" variant="flat" className="align-middle">
-							{new Date(expiresAtIso).toLocaleString()}
-						</Chip>
-					</div>
-				</div>
-			</CardBody>
-		</Card>
+				<Button
+					color="primary"
+					onPress={onCreateInviteLink}
+					isLoading={isLoading}
+					fullWidth
+				>
+					Создать ссылку
+				</Button>
+			</div>
+		</div>
 	);
 };

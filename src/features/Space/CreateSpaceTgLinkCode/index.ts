@@ -1,1 +1,2 @@
-export { CreateSpaceTgLinkCodeModal } from './ui/CreateSpaceTgLinkCodeModal';
+export { useCreateSpaceTgLinkCodeForm } from './model/useCreateSpaceTgLinkCodeForm';
+export { CreateSpaceTgLinkCodeForm } from './ui/CreateSpaceTgLinkCodeForm';

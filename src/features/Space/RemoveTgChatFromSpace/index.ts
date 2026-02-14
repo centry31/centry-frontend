@@ -1,1 +1,2 @@
-export { RemoveTgChatFromSpaceModal } from './ui/RemoveTgChatFromSpaceModal';
+export { useRemoveTgChatFromSpaceForm } from './model/useRemoveTgChatFromSpaceForm';
+export { RemoveTgChatFromSpaceForm } from './ui/RemoveTgChatFromSpaceForm';

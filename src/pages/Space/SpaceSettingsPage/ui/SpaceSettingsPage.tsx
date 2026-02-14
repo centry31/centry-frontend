@@ -4,6 +4,7 @@ import { Spinner } from '@heroui/react';
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
 import { UpdateSpaceInfoForm } from 'features/Space/UpdateSpaceInfo';
+import { useUpdateSpaceInfoForm } from 'features/Space/UpdateSpaceInfo/model/useUpdateSpaceInfoForm';
 
 import { useGetSpace } from 'entities/Space';
 
@@ -11,9 +12,19 @@ import { PageHeader } from 'shared/ui/PageHeader';
 
 export const SpaceSettingsPage = () => {
 	const { spaceId = '' } = useParams();
-	const { data: space, isLoading } = useGetSpace({ spaceId });
+	const { data: space, isLoading: isSpaceLoading } = useGetSpace({ spaceId });
 
-	if (isLoading) {
+	const {
+		name,
+		description,
+		isLoading,
+		handleUpdateSpaceInfo,
+		handleResetForm,
+		onChangeName,
+		onChangeDescription,
+	} = useUpdateSpaceInfoForm({ spaceId, defaultValues: space });
+
+	if (isSpaceLoading) {
 		return (
 			<div className="flex min-h-[50dvh] items-center justify-center">
 				<Spinner />
@@ -31,7 +42,16 @@ export const SpaceSettingsPage = () => {
 			{space && (
 				<>
 					<SpaceInfo space={space} />
-					<UpdateSpaceInfoForm spaceId={spaceId} initialFormValues={space} />
+
+					<UpdateSpaceInfoForm
+						name={name}
+						description={description}
+						isLoading={isLoading}
+						onChangeName={onChangeName}
+						onChangeDescription={onChangeDescription}
+						onUpdateSpaceInfo={handleUpdateSpaceInfo}
+						onResetForm={handleResetForm}
+					/>
 				</>
 			)}
 		</div>

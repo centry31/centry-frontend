@@ -1,2 +1,2 @@
-export { useUpdateCalendarEvent } from './api/useUpdateCalendarEvent';
-export { ChangeCalendarEventModal } from './ui/ChangeCalendarEventModal';
+export { useChangeCalendarEventForm } from './model/useChangeCalendarEventForm';
+export { ChangeCalendarEventForm } from './ui/ChangeCalendarEventForm';

@@ -4,14 +4,13 @@ import { Avatar, Button, Card, CardBody, CardHeader, Divider, Spinner } from '@h
 import { Users } from 'lucide-react';
 
 import type { Space } from 'entities/Space';
-import { useGetSpaceMembers } from 'entities/Space';
+import { useGetSpaceMembers, useJoinSpaceWithInviteCode } from 'entities/Space';
+import { useGetSpaceInviteCodeInfo } from 'entities/SpaceInviteCode';
 
 import { RoutesPaths } from 'shared/configs';
 import { useGetParamFromUrl } from 'shared/lib';
 
-import { useGetSpaceInviteCodeInfo } from '../api/useGetSpaceInviteCodeInfo';
-import { useJoinSpaceWithInviteCode } from '../api/useJoinSpaceWithInviteCode';
-
+// TODO: refactoring
 export const SpaceInviteCodeInfoCard = () => {
 	const [spaceInfo, setSpaceInfo] = useState<Space>();
 

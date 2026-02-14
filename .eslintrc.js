@@ -96,7 +96,7 @@ module.exports = {
 			{
 				prefer: 'type-imports',
 				disallowTypeAnnotations: false,
-				fixStyle: 'inline-type-imports',
+				fixStyle: 'separate-type-imports',
 			},
 		],
 	},

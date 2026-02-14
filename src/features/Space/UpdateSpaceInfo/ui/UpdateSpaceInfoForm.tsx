@@ -1,61 +1,53 @@
-import { useController, useForm } from 'react-hook-form';
 import { Button, Input, Textarea } from '@heroui/react';
 
-import { type UpdateSpace, useGetSpace } from 'entities/Space';
-
-import { useUpdateSpaceInfo } from '../api/useUpdateSpaceInfo';
-
 type Props = {
-	spaceId: string;
-	initialFormValues?: UpdateSpace;
+	name: string;
+	description: string;
+	isLoading: boolean;
+
+	onChangeName: (name: string) => void;
+	onChangeDescription: (description: string) => void;
+	onUpdateSpaceInfo: () => void;
+	onResetForm: () => void;
 };
 
 export const UpdateSpaceInfoForm = (props: Props) => {
-	const { spaceId, initialFormValues } = props;
-
-	const { mutate: mutateSpace } = useGetSpace({ spaceId });
-	const { request: updateSpace, isLoading } = useUpdateSpaceInfo();
-
-	const { control, reset } = useForm({ defaultValues: initialFormValues });
-
 	const {
-		field: { value: name, onChange: onChangeName },
-	} = useController({ control, name: 'name' });
+		name,
+		description,
+		isLoading,
 
-	const {
-		field: { value: description, onChange: onChangeDescription },
-	} = useController({ control, name: 'description' });
-
-	const handleUpdateSpaceInfo = () => {
-		const space: UpdateSpace = {
-			name,
-			description,
-		};
-
-		updateSpace({ spaceId, space }).then(() => mutateSpace());
-	};
-
-	const handleResetForm = () => {
-		reset();
-	};
+		onChangeName,
+		onChangeDescription,
+		onUpdateSpaceInfo,
+		onResetForm,
+	} = props;
 
 	return (
 		<>
-			<Input label="Название" value={name} onChange={onChangeName} />
+			<Input
+				label="Название"
+				value={name}
+				onChange={(event) => onChangeName(event.target.value)}
+			/>
 
-			<Textarea label="Описание" value={description} onChange={onChangeDescription} />
+			<Textarea
+				label="Описание"
+				value={description}
+				onChange={(event) => onChangeDescription(event.target.value)}
+			/>
 
 			<div className="flex gap-2">
 				<Button
 					color="primary"
-					onPress={handleUpdateSpaceInfo}
+					onPress={onUpdateSpaceInfo}
 					isLoading={isLoading}
 					disabled={isLoading}
 				>
 					Сохранить
 				</Button>
 
-				<Button variant="flat" onPress={handleResetForm}>
+				<Button variant="flat" onPress={onResetForm}>
 					Отмена
 				</Button>
 			</div>

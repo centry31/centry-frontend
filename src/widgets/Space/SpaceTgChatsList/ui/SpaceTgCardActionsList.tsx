@@ -4,11 +4,16 @@ import {
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
+	Modal,
+	ModalContent,
 	useDisclosure,
 } from '@heroui/react';
 import { Ellipsis, Trash2 } from 'lucide-react';
 
-import { RemoveTgChatFromSpaceModal } from 'features/Space/RemoveTgChatFromSpace';
+import {
+	RemoveTgChatFromSpaceForm,
+	useRemoveTgChatFromSpaceForm,
+} from 'features/Space/RemoveTgChatFromSpace';
 
 type Props = {
 	spaceId: string;
@@ -19,6 +24,10 @@ export const SpaceTgChatActionsList = (props: Props) => {
 	const { spaceId, chatId } = props;
 
 	const { isOpen, onOpenChange } = useDisclosure();
+	const { isLoading, handleRemoveTgChat } = useRemoveTgChatFromSpaceForm({
+		spaceId,
+		chatId,
+	});
 
 	const handleOpenRemoveChatModal = () => {
 		onOpenChange();
@@ -46,12 +55,15 @@ export const SpaceTgChatActionsList = (props: Props) => {
 				</DropdownMenu>
 			</Dropdown>
 
-			<RemoveTgChatFromSpaceModal
-				spaceId={spaceId}
-				chatId={chatId}
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-			/>
+			<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+				<ModalContent>
+					<RemoveTgChatFromSpaceForm
+						isLoading={isLoading}
+						onRemoveTgChat={handleRemoveTgChat}
+						onClose={() => onOpenChange()}
+					/>
+				</ModalContent>
+			</Modal>
 		</>
 	);
 };

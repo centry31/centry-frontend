@@ -3,8 +3,8 @@ import { Card, CardBody, Spinner } from '@heroui/react';
 import { Link2 } from 'lucide-react';
 
 import type { SpaceInviteCode } from 'entities/SpaceInviteCode';
-import { SpaceInviteCodeCard } from 'entities/SpaceInviteCode';
 
+import { SpaceInviteCodeCard } from './SpaceInviteCodeCard';
 import { SpaceInviteCodesActionsList } from './SpaceInviteCodesActionsList';
 
 type Props = {

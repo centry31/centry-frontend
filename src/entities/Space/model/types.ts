@@ -2,18 +2,27 @@ import type { User } from 'entities/User';
 
 type Access = 'owner' | 'member';
 
-export type Space = {
+type Space = {
 	id: string;
 	name: string;
 	description?: string;
 
-	hasActiveTgChats?: boolean;
+	hasActiveTgChats: boolean;
 	access: Access;
 
 	// TODO: add createdBy field (User)
 };
 
-export type SpaceMember = User;
+type CreateSpace = {
+	name: string;
+	description: string;
+};
 
-export type CreateSpace = Omit<Space, 'id' | 'access'>;
-export type UpdateSpace = Omit<Space, 'id' | 'access'>;
+type UpdateSpace = {
+	name: string;
+	description?: string;
+};
+
+type SpaceMember = User;
+
+export { CreateSpace, Space, SpaceMember, UpdateSpace };

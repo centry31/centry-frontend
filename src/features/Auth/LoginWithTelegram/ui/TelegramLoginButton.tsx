@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 
-import { useUserStore } from 'entities/User';
+import { useTelegramLogin, useUserStore } from 'entities/User';
 
-import { useTelegramLogin } from '../api/useTelegramLogin';
 import type { TelegramUserPayload } from '../model/types';
 
 type Props = {
 	botName: string;
 };
 
+// TODO: refactoring
 export const TelegramLoginButton = (props: Props) => {
 	const { botName } = props;
 	const _containerRef = useRef<HTMLDivElement | null>(null);

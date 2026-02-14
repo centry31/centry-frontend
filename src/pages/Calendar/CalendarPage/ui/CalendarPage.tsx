@@ -12,18 +12,8 @@ import classNames from 'classnames';
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
-import {
-	ChangeCalendarEventModal,
-	useUpdateCalendarEvent,
-} from 'features/Calendar/ChangeCalendarEvent';
-import { CreateCalendarEventModal } from 'features/Calendar/CreateCalendarEvent';
-
-import type {
-	CalendarEvent,
-	CreateCalendarEvent,
-	UpdateCalendarEvent,
-} from 'entities/CalendarEvent';
-import { useGetCalendarEvents } from 'entities/CalendarEvent';
+import type { CalendarEvent, UpdateCalendarEvent } from 'entities/CalendarEvent';
+import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetSpace, useGetUserSpaces } from 'entities/Space';
 
 import {
@@ -35,6 +25,8 @@ import {
 } from 'shared/lib';
 
 import { useIsMobile } from '../lib/useIsMobile';
+import { ChangeCalendarEventModal } from './ChangeCalendarEventModal';
+import { CreateCalendarEventModal } from './CreateCalendarEventModal';
 
 import './styles.css';
 
@@ -51,7 +43,7 @@ const DEFAULT_EVENT_DATA = {
 
 export const CalendarPage = () => {
 	const [eventDetails, setEventDetails] = useState<CalendarEvent>();
-	const [createDefaults, setCreateDefaults] = useState<CreateCalendarEvent>();
+	const [createDefaults, setCreateDefaults] = useState<UpdateCalendarEvent>();
 	const [editDefaults, setEditDefaults] = useState<CalendarEvent>();
 
 	const { isOpen: isCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
@@ -143,15 +135,14 @@ export const CalendarPage = () => {
 			const { event } = arg;
 			const ext = event.extendedProps;
 
-			const dto: UpdateCalendarEvent = {
+			updateEvent({
+				id: event.id,
 				start: event.startStr,
 				end: event.endStr,
 				title: event.title,
 				description: ext.description,
 				reminders: ext.reminders,
-			};
-
-			updateEvent({ eventId: event.id, event: dto }).then(patchEventsList);
+			}).then(patchEventsList);
 		},
 		[patchEventsList, updateEvent],
 	);
@@ -223,7 +214,7 @@ export const CalendarPage = () => {
 	return (
 		<div className="flex h-full flex-col">
 			<CreateCalendarEventModal
-				initialFormValues={createDefaults ?? DEFAULT_EVENT_DATA}
+				defaultValues={createDefaults ?? DEFAULT_EVENT_DATA}
 				onSuccess={onCreateOpenChange}
 				isOpen={isCreateOpen}
 				onOpenChange={onCreateOpenChange}
@@ -241,7 +232,7 @@ export const CalendarPage = () => {
 				isOpen={isEditOpen}
 				onOpenChange={onEditOpenChange}
 				eventId={editDefaults?.id ?? ''}
-				initialFormValues={editDefaults ?? DEFAULT_EVENT_DATA}
+				defaultValues={editDefaults ?? DEFAULT_EVENT_DATA}
 				onSuccess={onEditOpenChange}
 			/>
 

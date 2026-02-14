@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { Button, useDisclosure } from '@heroui/react';
+import { Button, Modal, ModalContent, useDisclosure } from '@heroui/react';
 
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 import { SpaceMembersList } from 'widgets/Space/SpaceMembersList';
 
-import { LeaveSpaceModal } from 'features/Space/LeaveSpace';
+import { LeaveSpaceForm, useLeaveSpaceForm } from 'features/Space/LeaveSpace';
 
 import { useGetSpace, useGetSpaceMembers } from 'entities/Space';
 
@@ -12,6 +12,7 @@ export const SpaceDetailsPage = () => {
 	const { spaceId = '' } = useParams();
 
 	const { isOpen: isLeaveOpen, onOpenChange: onLeaveOpenChange } = useDisclosure();
+	const { isLeaving, handleLeaveSpace } = useLeaveSpaceForm({ spaceId });
 
 	const { data: space } = useGetSpace({ spaceId });
 	const { data: members, isLoading: isMembersLoading } = useGetSpaceMembers({ spaceId });
@@ -25,11 +26,15 @@ export const SpaceDetailsPage = () => {
 				Выйти из пространства
 			</Button>
 
-			<LeaveSpaceModal
-				spaceId={spaceId}
-				isOpen={isLeaveOpen}
-				onOpenChange={onLeaveOpenChange}
-			/>
+			<Modal isOpen={isLeaveOpen} onOpenChange={onLeaveOpenChange} placement="center">
+				<ModalContent>
+					<LeaveSpaceForm
+						isLeaving={isLeaving}
+						onLeaveSpace={handleLeaveSpace}
+						onClose={() => onLeaveOpenChange()}
+					/>
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 };

@@ -1,29 +1,29 @@
-import { useController, useForm } from 'react-hook-form';
 import { Button, Card, CardBody, CardHeader, Input } from '@heroui/react';
 
-import type { CreateSpace } from 'entities/Space';
+type Props = {
+	name: string;
+	description: string;
 
-import { useCreateSpace } from '../api/useCreateSpace';
+	isSubmitting: boolean;
+	isSubmitDisabled: boolean;
 
-export const CreateSpaceForm = () => {
-	const { request: createSpace, isLoading } = useCreateSpace();
-	const { control } = useForm<CreateSpace>();
+	onChangeName: (name: string) => void;
+	onChangeDescription: (description: string) => void;
+	onCreateSpace: () => void;
+};
 
+export const CreateSpaceForm = (props: Props) => {
 	const {
-		field: { value: name, onChange: onChangeName },
-	} = useController({ control, name: 'name' });
+		name,
+		description,
 
-	const {
-		field: { value: description, onChange: onChangeDescription },
-	} = useController({ control, name: 'description' });
+		isSubmitting,
+		isSubmitDisabled,
 
-	const handleCreateSpace = () => {
-		const space: CreateSpace = {
-			name,
-			description,
-		};
-		createSpace({ space }).finally();
-	};
+		onChangeName,
+		onChangeDescription,
+		onCreateSpace,
+	} = props;
 
 	return (
 		<Card shadow={'none'}>
@@ -36,17 +36,22 @@ export const CreateSpaceForm = () => {
 					label={'Название'}
 					placeholder={'Введите название пространства'}
 					value={name}
-					onChange={onChangeName}
+					onChange={(event) => onChangeName(event.target.value)}
 				/>
 
 				<Input
 					label={'Описание'}
 					placeholder={'Введите описание пространства'}
 					value={description}
-					onChange={onChangeDescription}
+					onChange={(event) => onChangeDescription(event.target.value)}
 				/>
 
-				<Button color={'primary'} onPress={handleCreateSpace} disabled={isLoading}>
+				<Button
+					color={'primary'}
+					onPress={onCreateSpace}
+					isLoading={isSubmitting}
+					isDisabled={isSubmitDisabled}
+				>
 					Создать
 				</Button>
 			</CardBody>

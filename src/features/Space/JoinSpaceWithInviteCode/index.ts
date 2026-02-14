@@ -1,3 +1,3 @@
-export { useGetSpaceInviteCodeInfo } from './api/useGetSpaceInviteCodeInfo';
-export { useJoinSpaceWithInviteCode } from './api/useJoinSpaceWithInviteCode';
 export { SpaceInviteCodeInfoCard } from './ui/SpaceInviteCodeInfoCard';
+export { useJoinSpaceWithInviteCode } from 'entities/Space';
+export { useGetSpaceInviteCodeInfo } from 'entities/SpaceInviteCode';

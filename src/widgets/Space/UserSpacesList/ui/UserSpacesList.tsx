@@ -1,9 +1,10 @@
 import { Button, Card, CardBody } from '@heroui/react';
 import { Plus } from 'lucide-react';
 
-import { SpaceCard, useGetUserSpaces } from 'entities/Space';
+import { useGetUserSpaces } from 'entities/Space';
 
 import { SpaceActionButtons } from './SpaceActionButtons';
+import { SpaceCard } from './SpaceCard';
 import { SpacesListSkeleton } from './SpacesListSkeleton';
 
 export const UserSpacesList = () => {
