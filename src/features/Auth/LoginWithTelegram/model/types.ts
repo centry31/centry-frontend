@@ -1,4 +1,4 @@
-export type TelegramUserPayload = {
+type TelegramUserPayload = {
 	id: number;
 	username?: string;
 	photo_url?: string;
@@ -7,3 +7,5 @@ export type TelegramUserPayload = {
 	auth_date: number;
 	hash: string;
 };
+
+export { TelegramUserPayload };

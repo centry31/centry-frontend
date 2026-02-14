@@ -38,7 +38,7 @@ export const CreateCalendarEventModal = (props: Props) => {
 
 		getReminderOffset,
 		parseDateValue,
-	} = useCreateCalendarEventForm({ defaultValues });
+	} = useCreateCalendarEventForm({ defaultValues, onSuccess });
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>

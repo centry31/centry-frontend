@@ -12,17 +12,12 @@ type Props = {
 export const useGetSpaceInviteCodes = (props: Props) => {
 	const { spaceId } = props;
 
-	const fetcher = () =>
-		axiosInstance
-			.get<ApiResponse<SpaceInviteCode[]>>(`/space-invite-codes/${spaceId}`)
-			.then((res) => res.data.data);
-
-	const { data, mutate, isLoading, error } = useSWR(`/spaces/${spaceId}`, fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
+	const fetcher = async () => {
+		const res = await axiosInstance.get<ApiResponse<SpaceInviteCode[]>>(
+			`/space-invite-codes/${spaceId}`,
+		);
+		return res.data.data;
 	};
+
+	return useSWR(`/spaces/${spaceId}`, fetcher);
 };

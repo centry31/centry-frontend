@@ -12,17 +12,12 @@ type Props = {
 export const useGetSpaceTgChats = (props: Props) => {
 	const { spaceId } = props;
 
-	const fetcher = () =>
-		axiosInstance
-			.get<ApiResponse<SpaceTgChat[]>>(`/space-tg-chats/${spaceId}`)
-			.then((res) => res.data.data);
-
-	const { data, isLoading, error, mutate } = useSWR(`/space-tg-chats/${spaceId}`, fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
+	const fetcher = async () => {
+		const res = await axiosInstance.get<ApiResponse<SpaceTgChat[]>>(
+			`/space-tg-chats/${spaceId}`,
+		);
+		return res.data.data;
 	};
+
+	return useSWR(`/space-tg-chats/${spaceId}`, fetcher);
 };

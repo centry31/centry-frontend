@@ -100,7 +100,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 	);
 
 	const handleUpdateCalendarEvent = useCallback(async () => {
-		const updatedEvent = await updateCalendarEvent({
+		await updateCalendarEvent({
 			id: eventId,
 			title: title,
 			description: description,
@@ -108,14 +108,8 @@ export const useChangeCalendarEventForm = (props: Props) => {
 			end: end || DEFAULT_TIME_ISO_VALUE,
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
 		});
-		if (!updatedEvent) return;
 
-		mutateCalendarEvents((events) => {
-			if (!events) return;
-			return events.map((calendarEvent) =>
-				calendarEvent.id === updatedEvent.id ? updatedEvent : calendarEvent,
-			);
-		});
+		mutateCalendarEvents();
 		onSuccess?.();
 	}, [
 		description,

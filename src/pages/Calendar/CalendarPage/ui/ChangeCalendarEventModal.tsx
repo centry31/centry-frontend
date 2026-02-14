@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const ChangeCalendarEventModal = (props: Props) => {
-	const { isOpen, onOpenChange, defaultValues, eventId } = props;
+	const { isOpen, onOpenChange, defaultValues, eventId, onSuccess } = props;
 
 	const {
 		title,
@@ -43,7 +43,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 		getReminderOffset,
 		parseDateValue,
-	} = useChangeCalendarEventForm({ eventId, defaultValues });
+	} = useChangeCalendarEventForm({ eventId, defaultValues, onSuccess });
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>

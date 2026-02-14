@@ -14,12 +14,5 @@ export const useGetCalendarEvents = () => {
 	const fetcher = () =>
 		axiosInstance.get<ApiResponse<CalendarEvent[]>>('/events').then((res) => res.data.data);
 
-	const { data, mutate, isLoading, error } = useSWR('/api/events', fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
-	};
+	return useSWR('/api/events', fetcher);
 };
