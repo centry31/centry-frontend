@@ -8,7 +8,7 @@ type Payload = {
 export const useCreateTgLinkCode = () => {
 	const fetcher = async (payload: Payload) => {
 		const response = await axiosInstance.post<ApiResponse<string>>(
-			'/tg-link-codes/create',
+			'/space-tg-chat-links/create',
 			payload,
 		);
 		return response.data.data;

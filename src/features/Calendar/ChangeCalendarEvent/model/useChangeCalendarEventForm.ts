@@ -142,7 +142,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		end: end || DEFAULT_TIME_ISO_VALUE,
 
 		reminderFields,
-		isRemindersActive: Boolean(currentSpace?.hasActiveTgChats),
+		isRemindersActive: Boolean(currentSpace?.hasTelegramChats),
 
 		isUpdating,
 		isDeleting,

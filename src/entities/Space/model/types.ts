@@ -7,8 +7,8 @@ type Space = {
 	name: string;
 	description?: string;
 
-	hasActiveTgChats: boolean;
-	access: Access;
+	hasTelegramChats?: boolean;
+	access?: Access;
 
 	// TODO: add createdBy field (User)
 };
