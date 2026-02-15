@@ -38,11 +38,11 @@ export const CreateCalendarEventForm = (props: Props) => {
 		description,
 		start,
 		end,
-		//
+
 		reminderFields,
 		isRemindersActive,
 		isCreating,
-		//
+
 		onChangeTitle,
 		onChangeDescription,
 		onChangeStart,
@@ -50,7 +50,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 		onAddReminder,
 		onRemoveReminder,
 		onCreateCalendarEvent,
-		//
+
 		getReminderOffset,
 		parseDateValue,
 	} = props;

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useTelegramLoginButton } from '../model/useTelegramLogin';
+import { useTelegramLoginButton } from '../model/useTelegramLoginButton';
 
 type Props = {
 	botName: string;
