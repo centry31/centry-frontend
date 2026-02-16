@@ -5,6 +5,8 @@ import { HeroUIProvider, Spinner } from '@heroui/react';
 import { NavbarAuth } from 'widgets/Auth/NavbarAuth';
 import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
 
+import { useTelegramMiniApp } from 'features/Auth/LoginWithTelegramMiniApp';
+
 import { useUserStore } from 'entities/User';
 
 import { RoutesPaths } from 'shared/configs';
@@ -14,11 +16,13 @@ import { AppRouter } from './providers/AppRouter';
 import './styles/index.css';
 
 const App = () => {
-	const { isInit, initAuthData, authData } = useUserStore();
+	const { isInit, authData } = useUserStore();
+	const { initTelegramMiniApp } = useTelegramMiniApp();
 
 	useEffect(() => {
-		initAuthData();
-	}, [initAuthData]);
+		const callback = initTelegramMiniApp();
+		return callback;
+	}, []);
 
 	const isWelcomePage = Boolean(useMatch(RoutesPaths.welcome));
 

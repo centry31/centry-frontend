@@ -1,12 +1,12 @@
 import type { RefObject } from 'react';
 
-import { useTelegramLogin, useUserStore } from 'entities/User';
+import { useLoginTelegramWidget as useTelegramLoginWidgetApi, useUserStore } from 'entities/User';
 
 import type { TelegramUserPayload } from './types';
 
-export const useTelegramLoginButton = () => {
+export const useTelegramWidget = () => {
 	const { initAuthData } = useUserStore();
-	const { request: loginWithTelegram } = useTelegramLogin();
+	const { request: loginWithTelegram } = useTelegramLoginWidgetApi();
 
 	const handleLogin = (userPayload: TelegramUserPayload) => {
 		loginWithTelegram(userPayload).then(initAuthData);

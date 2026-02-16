@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react';
 
-import { useTelegramLoginButton } from '../model/useTelegramLoginButton';
+import { useTelegramWidget } from '../model/useTelegramWidget';
 
 type Props = {
 	botName: string;
 };
 
-export const TelegramLoginButton = (props: Props) => {
+export const TelegramLoginWidget = (props: Props) => {
 	const { botName } = props;
 
 	const _containerRef = useRef<HTMLDivElement | null>(null);
 
-	const { initLoginWidget } = useTelegramLoginButton();
+	const { initLoginWidget } = useTelegramWidget();
 
 	useEffect(() => {
 		initLoginWidget(botName, _containerRef);
