@@ -1,10 +1,13 @@
 import { useParams } from 'react-router-dom';
-import { Button, useDisclosure } from '@heroui/react';
+import { Button, Modal, ModalContent, useDisclosure } from '@heroui/react';
 
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 import { SpaceTgChatsList } from 'widgets/Space/SpaceTgChatsList';
 
-import { CreateSpaceTgLinkCodeModal } from 'features/Space/CreateSpaceTgLinkCode';
+import {
+	CreateSpaceTgLinkCodeForm,
+	useCreateSpaceTgLinkCodeForm,
+} from 'features/Space/CreateSpaceTgLinkCode';
 
 import { useGetSpace } from 'entities/Space';
 import { useGetSpaceTgChats } from 'entities/SpaceTgChat';
@@ -18,6 +21,8 @@ export const SpaceSettingsTgChatsPage = () => {
 	const { data: spaceTgChats, isLoading: isChatsLoading } = useGetSpaceTgChats({ spaceId });
 
 	const { isOpen, onOpenChange } = useDisclosure();
+	const { code, error, isLoading, handleCreate, handleReset } =
+		useCreateSpaceTgLinkCodeForm({ spaceId });
 
 	return (
 		<div className={'p-3 flex gap-5 max-w-2xl flex-col m-auto'}>
@@ -32,11 +37,18 @@ export const SpaceSettingsTgChatsPage = () => {
 				Привязать к Telegram
 			</Button>
 
-			<CreateSpaceTgLinkCodeModal
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				spaceId={spaceId}
-			/>
+			<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+				<ModalContent>
+					<CreateSpaceTgLinkCodeForm
+						onClose={() => onOpenChange()}
+						code={code}
+						error={error}
+						isLoading={isLoading}
+						onCreate={handleCreate}
+						onReset={handleReset}
+					/>
+				</ModalContent>
+			</Modal>
 
 			<SpaceTgChatsList
 				spaceId={spaceId}

@@ -1,141 +1,86 @@
-import { useController, useFieldArray, useForm } from 'react-hook-form';
 import { Button, DatePicker, Input } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import type {
-	CalendarEvent,
-	CreateCalendarEvent,
-	UpdateCalendarEvent,
-} from 'entities/CalendarEvent';
-import { useGetCalendarEvents } from 'entities/CalendarEvent';
-import { useGetSpace } from 'entities/Space';
+import { formatMinutesOffset } from 'shared/lib';
 
-import {
-	CurrentSpaceIdController,
-	formatMinutesOffset,
-	safeParseAbsoluteToLocal,
-} from 'shared/lib';
+const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
 
-import { useCreateCalendarEvent } from '../api/useCreateCalendarEvent';
-
-const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
-const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440]; // 1m, 5m, 15m, 30m, 1h, 1d
+type ReminderField = {
+	id: string;
+	offsetMinutes: number;
+};
 
 type Props = {
-	initialFormValues: Partial<UpdateCalendarEvent>;
-	onSuccess?: () => void;
+	title: string;
+	description: string;
+	start: string;
+	end: string;
+
+	reminderFields: ReminderField[];
+	isRemindersActive: boolean;
+	isCreating: boolean;
+
+	onChangeTitle: (value: string) => void;
+	onChangeDescription: (value: string) => void;
+	onChangeStart: (value?: ZonedDateTime | null) => void;
+	onChangeEnd: (value?: ZonedDateTime | null) => void;
+	onAddReminder: (minutes: number) => void;
+	onRemoveReminder: (index: number) => void;
+	onCreateCalendarEvent: () => void;
+
+	getReminderOffset: (index: number) => number;
+	parseDateValue: (value: string) => ZonedDateTime | null;
 };
 
 export const CreateCalendarEventForm = (props: Props) => {
-	const { initialFormValues, onSuccess } = props;
-
-	const defaultFormValues: CreateCalendarEvent = {
-		title: '',
-		description: '',
-		start: DEFAULT_TIME_ISO_VALUE,
-		end: DEFAULT_TIME_ISO_VALUE,
-		reminders: [],
-		...initialFormValues,
-	};
-
-	const { control, getValues } = useForm<CreateCalendarEvent>({
-		defaultValues: defaultFormValues,
-	});
-
-	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
-
-	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
-	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
-	const { request: createCalendarEvent, isLoading: isCreating } = useCreateCalendarEvent();
-
 	const {
-		field: { value: title, onChange: onChangeTitle },
-	} = useController({ control, name: 'title' });
+		title,
+		description,
+		start,
+		end,
 
-	const {
-		field: { value: description, onChange: onChangeDescription },
-	} = useController({ control, name: 'description' });
+		reminderFields,
+		isRemindersActive,
+		isCreating,
 
-	const {
-		field: { value: start, onChange: onChangeStart },
-	} = useController({ control, name: 'start', defaultValue: DEFAULT_TIME_ISO_VALUE });
+		onChangeTitle,
+		onChangeDescription,
+		onChangeStart,
+		onChangeEnd,
+		onAddReminder,
+		onRemoveReminder,
+		onCreateCalendarEvent,
 
-	const {
-		field: { value: end, onChange: onChangeEnd },
-	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
-
-	const {
-		fields: reminderFields,
-		append: appendReminder,
-		remove: removeReminder,
-	} = useFieldArray({
-		control,
-		name: 'reminders',
-	});
-
-	/**
-	 * @summary <DateInput /> работает с ZoneDateTime типом, нужно это учитывать
-	 *
-	 * Работа с DateInput - компонент возвращает и принимает ZoneDateTime, поэтому для корректной работы
-	 * нужно форматировать полученное значение, конвертируя в строку (ISO).
-	 *
-	 * Все передаваемые значения в компонент в качестве value также должны быть конвертированы в ZoneDateTime
-	 * */
-	const handleChangeStart = (zdt?: ZonedDateTime | null) => {
-		if (!zdt) return;
-		onChangeStart(zdt.toAbsoluteString());
-	};
-	const handleChangeEnd = (zdt?: ZonedDateTime | null) => {
-		if (!zdt) return;
-		onChangeEnd(zdt.toAbsoluteString());
-	};
-
-	const handleAddReminder = (minutes: number) => {
-		const exists = (getValues('reminders') ?? []).some((r) => r.offsetMinutes === minutes);
-		if (!exists) appendReminder({ offsetMinutes: minutes });
-	};
-	const handleRemoveReminder = (idx: number) => removeReminder(idx);
-
-	const handleSuccessCreatingEvent = (created?: CalendarEvent) => {
-		mutateCalendarEvents((events) => {
-			if (!created || !events) return;
-			return [...events, created];
-		});
-
-		onSuccess?.();
-	};
-
-	const handleCreateCalendarEvent = () => {
-		const event: CreateCalendarEvent = {
-			title,
-			description,
-			start,
-			end,
-			reminders: reminderFields.map((r) => ({ offsetMinutes: r.offsetMinutes })),
-		};
-		createCalendarEvent({ event }).then(handleSuccessCreatingEvent);
-	};
-
-	const isRemindersActive = currentSpace?.hasActiveTgChats;
+		getReminderOffset,
+		parseDateValue,
+	} = props;
 
 	return (
 		<div className="p-4">
 			<div className="mb-2 text-lg font-semibold">Создать событие</div>
 
 			<div className="flex flex-col gap-4">
-				<Input label="Название" value={title} onChange={onChangeTitle} />
-				<Input label="Описание" value={description} onChange={onChangeDescription} />
+				<Input
+					label="Название"
+					value={title}
+					onChange={(event) => onChangeTitle(event.target.value)}
+				/>
+				<Input
+					label="Описание"
+					value={description}
+					onChange={(event) => onChangeDescription(event.target.value)}
+				/>
 
 				<DatePicker
 					label="Начало"
-					value={safeParseAbsoluteToLocal(start)}
-					onChange={handleChangeStart}
+					value={parseDateValue(start)}
+					onChange={onChangeStart}
 					hideTimeZone
 				/>
 				<DatePicker
 					label="Конец"
-					value={safeParseAbsoluteToLocal(end)}
-					onChange={handleChangeEnd}
+					value={parseDateValue(end)}
+					onChange={onChangeEnd}
 					hideTimeZone
 				/>
 
@@ -149,14 +94,13 @@ export const CreateCalendarEventForm = (props: Props) => {
 						</div>
 					)}
 
-					{/* пресеты */}
 					<div className="flex flex-wrap gap-2">
 						{REMINDERS_PRESETS.map((minutes) => (
 							<Button
 								key={minutes}
 								size="sm"
 								variant="flat"
-								onPress={() => handleAddReminder(minutes)}
+								onPress={() => onAddReminder(minutes)}
 								disabled={!isRemindersActive}
 							>
 								{formatMinutesOffset(minutes)}
@@ -164,25 +108,21 @@ export const CreateCalendarEventForm = (props: Props) => {
 						))}
 					</div>
 
-					{/* текущие */}
 					<div className="flex flex-wrap gap-2">
 						{reminderFields.length === 0 && (
 							<span className="text-sm text-neutral-500">Нет напоминаний</span>
 						)}
 
 						{reminderFields.length !== 0 &&
-							reminderFields.map((f, idx) => (
+							reminderFields.map((field, index) => (
 								<Button
-									key={f.id}
+									key={field.id}
 									size="sm"
 									variant="flat"
 									color="primary"
-									onPress={() => handleRemoveReminder(idx)}
+									onPress={() => onRemoveReminder(index)}
 								>
-									{formatMinutesOffset(
-										getValues(`reminders.${idx}.offsetMinutes`),
-									)}
-									&nbsp;×
+									{formatMinutesOffset(getReminderOffset(index))}&nbsp;×
 								</Button>
 							))}
 					</div>
@@ -192,7 +132,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 			<div className="mt-6">
 				<Button
 					color="primary"
-					onPress={handleCreateCalendarEvent}
+					onPress={onCreateCalendarEvent}
 					isLoading={isCreating}
 					disabled={isCreating}
 				>

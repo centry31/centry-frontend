@@ -4,11 +4,16 @@ import {
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
+	Modal,
+	ModalContent,
 	useDisclosure,
 } from '@heroui/react';
 import { Ellipsis, Trash2 } from 'lucide-react';
 
-import { DeleteSpaceInviteCodeModal } from 'features/Space/DeleteSpaceInviteCode';
+import {
+	DeleteSpaceInviteCodeForm,
+	useDeleteSpaceInviteCodeForm,
+} from 'features/Space/DeleteSpaceInviteCode';
 
 type Props = {
 	spaceId: string;
@@ -19,6 +24,10 @@ export const SpaceInviteCodesActionsList = (props: Props) => {
 	const { spaceId, code } = props;
 
 	const { isOpen, onOpenChange } = useDisclosure();
+	const { isLoading, handleDeleteSpaceInviteCode } = useDeleteSpaceInviteCodeForm({
+		spaceId,
+		code,
+	});
 
 	return (
 		<>
@@ -42,12 +51,15 @@ export const SpaceInviteCodesActionsList = (props: Props) => {
 				</DropdownMenu>
 			</Dropdown>
 
-			<DeleteSpaceInviteCodeModal
-				spaceId={spaceId}
-				code={code}
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-			/>
+			<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+				<ModalContent>
+					<DeleteSpaceInviteCodeForm
+						isLoading={isLoading}
+						onDeleteSpaceInviteCode={handleDeleteSpaceInviteCode}
+						onClose={() => onOpenChange()}
+					/>
+				</ModalContent>
+			</Modal>
 		</>
 	);
 };

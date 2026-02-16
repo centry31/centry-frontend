@@ -1,13 +1,22 @@
 import type { ReactNode } from 'react';
 import { generatePath, useNavigate, useParams } from 'react-router-dom';
-import { Card, CardBody, Listbox, ListboxItem, Spinner, useDisclosure } from '@heroui/react';
+import {
+	Card,
+	CardBody,
+	Listbox,
+	ListboxItem,
+	Modal,
+	ModalContent,
+	Spinner,
+	useDisclosure,
+} from '@heroui/react';
 import classNames from 'classnames';
 import { ChevronRight, Link2, LogOut, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
 
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
-import { DeleteSpaceModal } from 'features/Space/DeleteSpace';
-import { LeaveSpaceModal } from 'features/Space/LeaveSpace';
+import { DeleteSpaceForm, useDeleteSpaceForm } from 'features/Space/DeleteSpace';
+import { LeaveSpaceForm, useLeaveSpaceForm } from 'features/Space/LeaveSpace';
 
 import { useGetSpace } from 'entities/Space';
 
@@ -38,6 +47,9 @@ export const SpaceSettingsListPage = () => {
 
 	const { isOpen: isDeleteOpen, onOpenChange: onDeleteOpenChange } = useDisclosure();
 	const { isOpen: isLeaveOpen, onOpenChange: onLeaveOpenChange } = useDisclosure();
+
+	const { isLoading: isDeleting, handleDeleteSpace } = useDeleteSpaceForm({ spaceId });
+	const { isLeaving, handleLeaveSpace } = useLeaveSpaceForm({ spaceId });
 
 	const navigate = useNavigate();
 
@@ -174,17 +186,25 @@ export const SpaceSettingsListPage = () => {
 				</section>
 			))}
 
-			<LeaveSpaceModal
-				spaceId={spaceId}
-				isOpen={isLeaveOpen}
-				onOpenChange={onLeaveOpenChange}
-			/>
+			<Modal isOpen={isLeaveOpen} onOpenChange={onLeaveOpenChange} placement="center">
+				<ModalContent>
+					<LeaveSpaceForm
+						isLeaving={isLeaving}
+						onLeaveSpace={handleLeaveSpace}
+						onClose={() => onLeaveOpenChange()}
+					/>
+				</ModalContent>
+			</Modal>
 
-			<DeleteSpaceModal
-				spaceId={spaceId}
-				isOpen={isDeleteOpen}
-				onOpenChange={onDeleteOpenChange}
-			/>
+			<Modal isOpen={isDeleteOpen} onOpenChange={onDeleteOpenChange} placement="center">
+				<ModalContent>
+					<DeleteSpaceForm
+						isLoading={isDeleting}
+						onDeleteSpace={handleDeleteSpace}
+						onClose={() => onDeleteOpenChange()}
+					/>
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 };

@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 
-import { axiosInstance } from 'shared/api';
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
 import { CurrentSpaceIdController } from 'shared/lib';
-import type { ApiResponse } from 'shared/types';
 
+import { requestInitAuthData } from '../../api/requestInitAuthData';
 import type { User } from '../types/user';
 
 type Data = {
@@ -25,8 +24,7 @@ export const useUserStore = create<Store>((set) => ({
 
 	initAuthData: async () => {
 		try {
-			const response = await axiosInstance.get<ApiResponse<User>>('/auth/init');
-			const authData = response.data.data;
+			const authData = await requestInitAuthData();
 
 			if (!authData) {
 				throw new Error('Что-то пошло не так...');

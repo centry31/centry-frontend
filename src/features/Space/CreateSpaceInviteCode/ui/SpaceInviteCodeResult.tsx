@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, CardHeader, Chip, Snippet } from '@heroui/react';
+import { Card, CardBody, CardHeader, Snippet } from '@heroui/react';
 
 import { CopyButton, ShareButton } from 'shared/ui';
 

@@ -1,6 +1,6 @@
 type SpaceTgChatType = 'private' | 'group' | 'supergroup' | 'channel';
 
-export type SpaceTgChat = {
+type SpaceTgChat = {
 	id: string;
 	chatType: SpaceTgChatType;
 	chatTitle?: string;
@@ -8,3 +8,5 @@ export type SpaceTgChat = {
 	isActive: boolean;
 	createdAt: string; // ISO
 };
+
+export { SpaceTgChat };

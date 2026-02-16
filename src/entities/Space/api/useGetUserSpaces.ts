@@ -9,15 +9,10 @@ import type { Space } from '../model/types';
  * Получает конкретные пространства, в которых пользователь состоит.
  * */
 export const useGetUserSpaces = () => {
-	const fetcher = () =>
-		axiosInstance.get<ApiResponse<Space[]>>('/spaces').then((res) => res.data.data);
-
-	const { data, mutate, isLoading, error } = useSWR('api/spaces', fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
+	const fetcher = async () => {
+		const res = await axiosInstance.get<ApiResponse<Space[]>>('/spaces');
+		return res.data.data;
 	};
+
+	return useSWR('api/spaces', fetcher);
 };

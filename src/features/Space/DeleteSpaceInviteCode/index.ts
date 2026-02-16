@@ -1,1 +1,2 @@
-export { DeleteSpaceInviteCodeModal } from './ui/DeleteSpaceInviteCodeModal';
+export { useDeleteSpaceInviteCodeForm } from './model/useDeleteSpaceInviteCodeForm';
+export { DeleteSpaceInviteCodeForm } from './ui/DeleteSpaceInviteCodeForm';

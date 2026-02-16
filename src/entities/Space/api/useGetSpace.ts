@@ -15,15 +15,10 @@ type Props = {
 export const useGetSpace = (props: Props) => {
 	const { spaceId } = props;
 
-	const fetcher = () =>
-		axiosInstance.get<ApiResponse<Space>>(`/spaces/${spaceId}`).then((res) => res.data.data);
-
-	const { data, mutate, isLoading, error } = useSWR(`api/spaces/${spaceId}`, fetcher);
-
-	return {
-		data,
-		mutate,
-		isLoading,
-		error,
+	const fetcher = async () => {
+		const res = await axiosInstance.get<ApiResponse<Space>>(`/spaces/${spaceId}`);
+		return res.data.data;
 	};
+
+	return useSWR(`api/spaces/${spaceId}`, fetcher);
 };

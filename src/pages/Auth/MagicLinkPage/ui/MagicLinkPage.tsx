@@ -13,7 +13,7 @@ import {
 } from '@heroui/react';
 import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 
-import { useLoginWithMagicLink } from 'features/Auth/LoginWithMagicLink';
+import { useLoginWithMagicLink } from 'entities/User';
 
 import { RoutesPaths } from 'shared/configs';
 import { useGetParamFromUrl } from 'shared/lib';

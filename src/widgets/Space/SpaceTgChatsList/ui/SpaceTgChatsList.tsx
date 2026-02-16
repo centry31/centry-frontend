@@ -2,9 +2,9 @@ import { Card, CardBody, Spinner } from '@heroui/react';
 import { MessageSquare } from 'lucide-react';
 
 import type { SpaceTgChat } from 'entities/SpaceTgChat';
-import { SpaceTgChatCard } from 'entities/SpaceTgChat';
 
 import { SpaceTgChatActionsList } from './SpaceTgCardActionsList';
+import { SpaceTgChatCard } from './SpaceTgChatCard';
 
 type Props = {
 	spaceId: string;
