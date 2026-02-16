@@ -25,8 +25,14 @@ export const CreateCalendarEventModal = (props: Props) => {
 		end,
 
 		reminderFields,
-		isRemindersActive,
+		isSpaceHasTelegramChats,
 		isCreating,
+
+		isNotifyMessage,
+		onToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage,
 
 		onChangeTitle,
 		onChangeDescription,
@@ -50,8 +56,13 @@ export const CreateCalendarEventModal = (props: Props) => {
 					end={end}
 					//
 					reminderFields={reminderFields}
-					isRemindersActive={isRemindersActive}
+					isSpaceHasTelegramChats={isSpaceHasTelegramChats}
 					isCreating={isCreating}
+					//
+					isNotifyMessage={isNotifyMessage}
+					onToggleIsNotifyMessage={onToggleIsNotifyMessage}
+					notifyMessage={notifyMessage}
+					onChangeNotifyMessage={onChangeNotifyMessage}
 					//
 					onChangeTitle={onChangeTitle}
 					onChangeDescription={onChangeDescription}
