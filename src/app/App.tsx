@@ -5,7 +5,7 @@ import { HeroUIProvider, Spinner } from '@heroui/react';
 import { NavbarAuth } from 'widgets/Auth/NavbarAuth';
 import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
 
-import { useTelegramMiniApp } from 'features/Auth/LoginWithTelegramMiniApp';
+import { useInitTelegramMiniAppAuth } from 'features/Auth/LoginWithTelegramMiniApp';
 
 import { useUserStore } from 'entities/User';
 
@@ -17,7 +17,7 @@ import './styles/index.css';
 
 const App = () => {
 	const { isInit, authData } = useUserStore();
-	const { initTelegramMiniApp } = useTelegramMiniApp();
+	const { initTelegramMiniApp } = useInitTelegramMiniAppAuth();
 
 	useEffect(() => {
 		const callback = initTelegramMiniApp();

@@ -1,8 +1,8 @@
-import { useLoginTelegramMiniApp as useLoginTelegramMiniAppApi, useUserStore } from 'entities/User';
+import { useLoginWithTelegramMiniApp, useUserStore } from 'entities/User';
 
-export const useTelegramMiniApp = () => {
+export const useInitTelegramMiniAppAuth = () => {
 	const { initAuthData } = useUserStore();
-	const { request: loginWithTelegramMiniApp } = useLoginTelegramMiniAppApi();
+	const { request: loginWithTelegramMiniApp } = useLoginWithTelegramMiniApp();
 
 	const initTelegramMiniApp = () => {
 		const tg = window.Telegram?.WebApp;

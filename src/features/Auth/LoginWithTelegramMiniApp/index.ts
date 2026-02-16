@@ -1,1 +1,1 @@
-export { useTelegramMiniApp } from './model/useTelegramMiniApp';
+export { useInitTelegramMiniAppAuth } from './model/useInitTelegramMiniAppAuth';

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useTelegramWidget } from '../model/useTelegramWidget';
+import { useInitTelegramWidget } from '../model/useInitTelegramWidget';
 
 type Props = {
 	botName: string;
@@ -11,11 +11,12 @@ export const TelegramLoginWidget = (props: Props) => {
 
 	const _containerRef = useRef<HTMLDivElement | null>(null);
 
-	const { initLoginWidget } = useTelegramWidget();
+	const { initTelegramWidget } = useInitTelegramWidget();
 
 	useEffect(() => {
-		initLoginWidget(botName, _containerRef);
-	}, [botName, initLoginWidget]);
+		const callback = initTelegramWidget(botName, _containerRef);
+		return callback;
+	}, [botName, initTelegramWidget]);
 
 	return <div ref={_containerRef} />;
 };

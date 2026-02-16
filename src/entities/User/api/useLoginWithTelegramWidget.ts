@@ -2,15 +2,21 @@ import { axiosInstance, useApiMutation } from 'shared/api';
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
 import type { AccessToken, ApiResponse } from 'shared/types';
 
-type Payload = { initData: string };
+type Payload = {
+	id: number;
+	username?: string;
+	photo_url?: string;
+	first_name: string;
+	last_name?: string;
+	auth_date: number;
+	hash: string;
+};
 
-export const useLoginTelegramMiniApp = () => {
-	const fetcher = async ({ initData }: Payload) => {
+export const useLoginWithTelegramWidget = () => {
+	const fetcher = async (payload: Payload) => {
 		const response = await axiosInstance.post<ApiResponse<AccessToken>>(
-			'/auth/telegram-mini-app',
-			{
-				initData,
-			},
+			'/auth/telegram-widget',
+			payload,
 		);
 
 		const accessToken = response.data.data;
