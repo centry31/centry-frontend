@@ -1,4 +1,4 @@
-import { Button, DatePicker, Input } from '@heroui/react';
+import { Button, DatePicker, Input, Switch, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import { formatMinutesOffset } from 'shared/lib';
@@ -17,8 +17,14 @@ type Props = {
 	end: string;
 
 	reminderFields: ReminderField[];
-	isRemindersActive: boolean;
+	isSpaceHasTelegramChats: boolean;
 	isCreating: boolean;
+
+	isNotifyMessage?: boolean;
+	onToggleIsNotifyMessage: () => void;
+
+	notifyMessage?: string;
+	onChangeNotifyMessage: (message: string) => void;
 
 	onChangeTitle: (value: string) => void;
 	onChangeDescription: (value: string) => void;
@@ -40,8 +46,14 @@ export const CreateCalendarEventForm = (props: Props) => {
 		end,
 
 		reminderFields,
-		isRemindersActive,
+		isSpaceHasTelegramChats,
 		isCreating,
+
+		isNotifyMessage,
+		onToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage,
 
 		onChangeTitle,
 		onChangeDescription,
@@ -84,15 +96,34 @@ export const CreateCalendarEventForm = (props: Props) => {
 					hideTimeZone
 				/>
 
+				{!isSpaceHasTelegramChats && (
+					<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
+						Чтобы добавлять напоминания и сообщения к событию, привяжите Telegram-чат в
+						настройках пространства.
+					</div>
+				)}
+
+				<Switch
+					isSelected={isNotifyMessage}
+					onChange={onToggleIsNotifyMessage}
+					size={'sm'}
+					isDisabled={!isSpaceHasTelegramChats}
+				>
+					Уведомить привязанные Telegram чаты?
+				</Switch>
+
+				<Textarea
+					label="Сообщение"
+					value={notifyMessage}
+					onChange={(event) => onChangeNotifyMessage(event.target.value)}
+					placeholder={
+						'Здесь вы можете написать дополнительное сообщение к напоминанию, которое сразу отправится в привязанные Telegram чаты при создании'
+					}
+					disabled={!isSpaceHasTelegramChats || !isNotifyMessage}
+				/>
+
 				<div className="flex flex-col gap-2">
 					<div className="text-sm font-medium">Напоминания</div>
-
-					{!isRemindersActive && (
-						<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
-							Чтобы добавлять напоминания, привяжите Telegram-чат в настройках
-							пространства.
-						</div>
-					)}
 
 					<div className="flex flex-wrap gap-2">
 						{REMINDERS_PRESETS.map((minutes) => (
@@ -101,7 +132,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 								size="sm"
 								variant="flat"
 								onPress={() => onAddReminder(minutes)}
-								disabled={!isRemindersActive}
+								disabled={!isSpaceHasTelegramChats}
 							>
 								{formatMinutesOffset(minutes)}
 							</Button>

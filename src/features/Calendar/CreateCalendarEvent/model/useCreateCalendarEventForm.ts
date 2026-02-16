@@ -40,6 +40,13 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
 
 	const {
+		field: { value: isNotifyMessage, onChange: onToggleIsNotifyMessage },
+	} = useController({ control, name: 'isNotifyMessage' });
+	const {
+		field: { value: notifyMessage, onChange: onChangeNotifyMessage },
+	} = useController({ control, name: 'notifyMessage' });
+
+	const {
 		fields: reminderFields,
 		append: appendReminder,
 		remove: removeReminder,
@@ -95,6 +102,17 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		[removeReminder],
 	);
 
+	const handleToggleIsNotifyMessage = useCallback(() => {
+		onToggleIsNotifyMessage(!isNotifyMessage);
+	}, [onToggleIsNotifyMessage, isNotifyMessage]);
+
+	const handleChangeNotifyMessage = useCallback(
+		(message: string) => {
+			onChangeNotifyMessage(message);
+		},
+		[onChangeNotifyMessage],
+	);
+
 	const handleCreateCalendarEvent = useCallback(async () => {
 		const event: CreateCalendarEvent = {
 			title: title || '',
@@ -102,6 +120,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 			start: start || DEFAULT_TIME_ISO_VALUE,
 			end: end || DEFAULT_TIME_ISO_VALUE,
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
+			notifyMessage,
+			isNotifyMessage,
 		};
 
 		const createdEvent = await createCalendarEvent(event);
@@ -130,8 +150,14 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		end: end || DEFAULT_TIME_ISO_VALUE,
 
 		reminderFields,
-		isRemindersActive: Boolean(currentSpace?.hasTelegramChats),
+		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
 		isCreating,
+
+		isNotifyMessage,
+		onToggleIsNotifyMessage: handleToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage: handleChangeNotifyMessage,
 
 		onChangeTitle: handleChangeTitle,
 		onChangeDescription: handleChangeDescription,

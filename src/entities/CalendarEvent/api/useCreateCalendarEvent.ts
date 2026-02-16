@@ -10,6 +10,9 @@ type Payload = {
 	title: string;
 	description?: string;
 	reminders: CalendarEventReminder[];
+
+	isNotifyMessage?: boolean;
+	notifyMessage?: string;
 };
 
 /**
