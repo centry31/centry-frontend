@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardHeader, Divider, Link as UiLink, Spacer } from '@heroui/react';
 import { ArrowLeft, MessageCircle, Shield } from 'lucide-react';
 
-import { TelegramLoginButton } from 'features/Auth/LoginWithTelegram';
+import { TelegramLoginWidget } from 'features/Auth/LoginWithTelegramWidget';
 
 import { useUserStore } from 'entities/User';
 
@@ -35,7 +35,7 @@ export const LoginWithTelegramPage = () => {
 				<CardBody className="space-y-5">
 					{/* CTA */}
 					<div className="flex flex-col items-center gap-3">
-						<TelegramLoginButton botName={BOT_NAME} />
+						<TelegramLoginWidget botName={BOT_NAME} />
 
 						<p className="text-xs text-neutral-500 text-center">
 							Нажимая кнопку, вы соглашаетесь передать публичные данные Telegram для

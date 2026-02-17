@@ -12,10 +12,10 @@ type Payload = {
 	hash: string;
 };
 
-export const useTelegramLogin = () => {
+export const useLoginWithTelegramWidget = () => {
 	const fetcher = async (payload: Payload) => {
 		const response = await axiosInstance.post<ApiResponse<AccessToken>>(
-			'/auth/telegram',
+			'/auth/telegram-widget',
 			payload,
 		);
 

@@ -47,7 +47,12 @@ export const CreateCalendarEventModal = (props: Props) => {
 	} = useCreateCalendarEventForm({ defaultValues, onSuccess });
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
+		<Modal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			shouldBlockScroll={false}
+			scrollBehavior={'outside'}
+		>
 			<ModalContent>
 				<CreateCalendarEventForm
 					title={title}
