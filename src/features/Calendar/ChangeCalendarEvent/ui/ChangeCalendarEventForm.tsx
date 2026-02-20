@@ -1,10 +1,23 @@
-import { Button, DatePicker, Input } from '@heroui/react';
+import { Button, DatePicker, Input, Select, SelectItem } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
+
+import type { CalendarEventFrequency, UpdateCalendarEventType } from 'entities/CalendarEvent';
 
 import { formatMinutesOffset } from 'shared/lib';
 
 const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
+const FREQUENCY_PRESETS: FrequencySelectItem[] = [
+	{ key: 'NEVER', label: 'Никогда' },
+	{ key: 'DAILY', label: 'Каждый день' },
+	{ key: 'WEEKLY', label: 'Каждую неделю' },
+	{ key: 'DOUBLE_WEEKLY', label: 'Каждые 2 недели' },
+	{ key: 'MONTHLY', label: 'Каждый месяц' },
+];
 
+type FrequencySelectItem = {
+	key: CalendarEventFrequency;
+	label: string;
+};
 type ReminderField = {
 	id: string;
 	offsetMinutes: number;
@@ -16,6 +29,7 @@ type Props = {
 
 	start: string;
 	end: string;
+	frequency: CalendarEventFrequency;
 
 	reminderFields: ReminderField[];
 	isRemindersActive: boolean;
@@ -29,8 +43,9 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
+	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
 
-	onUpdateCalendarEvent: () => void;
+	onUpdateCalendarEvent: (updateType: UpdateCalendarEventType) => void;
 	onDeleteCalendarEvent: () => void;
 
 	getReminderOffset: (index: number) => number;
@@ -46,6 +61,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 
 		reminderFields,
 		isRemindersActive,
+		frequency,
 
 		isUpdating,
 		isDeleting,
@@ -56,12 +72,17 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
+		onChangeFrequency,
+
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
 		parseDateValue,
 	} = props;
+
+	const handleUpdateOneCalendarEvent = () => onUpdateCalendarEvent('ONE');
+	const handleUpdateFutureCalendarEvent = () => onUpdateCalendarEvent('FUTURE');
 
 	return (
 		<div className={'p-4'}>
@@ -91,6 +112,18 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
+
+				<Select
+					label="Повторять через"
+					placeholder="Выберите установку"
+					selectedKeys={[frequency]}
+					// @ts-expect-error иди нахуй
+					onChange={(event) => onChangeFrequency(event.target.value)}
+				>
+					{FREQUENCY_PRESETS.map((frequency) => (
+						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
+					))}
+				</Select>
 
 				<div className="flex flex-col gap-2">
 					<div className="text-sm font-medium">Напоминания</div>
@@ -140,11 +173,20 @@ export const ChangeCalendarEventForm = (props: Props) => {
 			<div className="mt-6 flex flex-col gap-2">
 				<Button
 					color="primary"
-					onPress={onUpdateCalendarEvent}
+					onPress={handleUpdateOneCalendarEvent}
 					isLoading={isUpdating}
 					disabled={isUpdating}
 				>
-					Обновить
+					Обновить только текущее событие
+				</Button>
+
+				<Button
+					color="primary"
+					onPress={handleUpdateFutureCalendarEvent}
+					isLoading={isUpdating}
+					disabled={isUpdating}
+				>
+					Обновить c будущими событиями
 				</Button>
 
 				<Button

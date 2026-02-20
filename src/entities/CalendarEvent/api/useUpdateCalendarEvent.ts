@@ -1,17 +1,28 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 import type { ApiResponse } from 'shared/types';
 
-import type { CalendarEvent, CalendarEventReminder } from '../model/types';
+import type {
+	CalendarEvent,
+	CalendarEventFrequency,
+	CalendarEventReminder,
+	UpdateCalendarEventType,
+} from '../model/types';
 
 type Props = {
 	id: string;
+	orderIndex: number;
 
 	start: string;
-	end: string;
+	originalStart?: string;
+	duration: number;
 
 	title: string;
 	description?: string;
+
 	reminders: CalendarEventReminder[];
+	frequency: CalendarEventFrequency;
+
+	updateType: UpdateCalendarEventType;
 };
 
 export const useUpdateCalendarEvent = () => {

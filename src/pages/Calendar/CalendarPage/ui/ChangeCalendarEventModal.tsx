@@ -9,6 +9,8 @@ import type { UpdateCalendarEvent } from 'entities/CalendarEvent';
 
 type Props = {
 	eventId: string;
+	eventOrderIndex: number;
+
 	defaultValues: UpdateCalendarEvent;
 	onSuccess: () => void;
 
@@ -17,7 +19,7 @@ type Props = {
 };
 
 export const ChangeCalendarEventModal = (props: Props) => {
-	const { isOpen, onOpenChange, defaultValues, eventId, onSuccess } = props;
+	const { isOpen, onOpenChange, defaultValues, eventId, eventOrderIndex, onSuccess } = props;
 
 	const {
 		title,
@@ -25,6 +27,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 		start,
 		end,
+		frequency,
 
 		reminderFields,
 		isRemindersActive,
@@ -38,12 +41,14 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
+		onChangeFrequency,
+
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
 		parseDateValue,
-	} = useChangeCalendarEventForm({ eventId, defaultValues, onSuccess });
+	} = useChangeCalendarEventForm({ eventId, eventOrderIndex, defaultValues, onSuccess });
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
@@ -54,6 +59,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					//
 					start={start}
 					end={end}
+					frequency={frequency}
 					//
 					reminderFields={reminderFields}
 					isRemindersActive={isRemindersActive}
@@ -67,6 +73,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					onChangeEnd={onChangeEnd}
 					onAddReminder={onAddReminder}
 					onRemoveReminder={onRemoveReminder}
+					onChangeFrequency={onChangeFrequency}
+					//
 					onUpdateCalendarEvent={onUpdateCalendarEvent}
 					onDeleteCalendarEvent={onDeleteCalendarEvent}
 					//

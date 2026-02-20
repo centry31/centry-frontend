@@ -2,11 +2,16 @@ import { useCallback } from 'react';
 import { useController, useFieldArray, useForm } from 'react-hook-form';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import type { CreateCalendarEvent } from 'entities/CalendarEvent';
+import { useCalendarViewStore } from 'entities/Calendar';
+import type { CalendarEventFrequency, CreateCalendarEvent } from 'entities/CalendarEvent';
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, safeParseAbsoluteToLocal } from 'shared/lib';
+import {
+	CurrentSpaceIdController,
+	getEventDurationFromStartAndEnd,
+	safeParseAbsoluteToLocal,
+} from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 
@@ -21,8 +26,12 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	const { control, getValues } = useForm<CreateCalendarEvent>({ defaultValues });
 
 	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
+	const { currentDate } = useCalendarViewStore();
 
-	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
+	const { mutate: mutateCalendarEvents } = useGetCalendarEvents({
+		start: currentDate.start,
+		end: currentDate.end,
+	});
 	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 	const { request: createCalendarEvent, isLoading: isCreating } = useCreateCalendarEvent();
 
@@ -38,6 +47,9 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	const {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
+	const {
+		field: { value: frequency, onChange: onChangeFrequency },
+	} = useController({ control, name: 'frequency', defaultValue: 'NEVER' });
 
 	const {
 		field: { value: isNotifyMessage, onChange: onToggleIsNotifyMessage },
@@ -113,18 +125,31 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		[onChangeNotifyMessage],
 	);
 
+	const handleChangeFrequency = useCallback(
+		(frequency: CalendarEventFrequency) => {
+			onChangeFrequency(frequency);
+		},
+		[onChangeFrequency],
+	);
+
 	const handleCreateCalendarEvent = useCallback(async () => {
-		const event: CreateCalendarEvent = {
+		const durationMinutes = getEventDurationFromStartAndEnd(start, end);
+
+		const payload = {
 			title: title || '',
 			description: description || '',
-			start: start || DEFAULT_TIME_ISO_VALUE,
-			end: end || DEFAULT_TIME_ISO_VALUE,
+
+			start,
+			duration: durationMinutes,
+			frequency: frequency || 'NEVER',
+
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
+
 			notifyMessage,
 			isNotifyMessage,
 		};
 
-		const createdEvent = await createCalendarEvent(event);
+		const createdEvent = await createCalendarEvent(payload);
 		if (!createdEvent) return;
 
 		mutateCalendarEvents((events) => {
@@ -136,7 +161,10 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		createCalendarEvent,
 		description,
 		end,
+		frequency,
+		isNotifyMessage,
 		mutateCalendarEvents,
+		notifyMessage,
 		onSuccess,
 		reminderFields,
 		start,
@@ -146,8 +174,10 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	return {
 		title: title || '',
 		description: description || '',
-		start: start || DEFAULT_TIME_ISO_VALUE,
-		end: end || DEFAULT_TIME_ISO_VALUE,
+
+		start,
+		end,
+		frequency,
 
 		reminderFields,
 		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
@@ -166,6 +196,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		onAddReminder: handleAddReminder,
 		onRemoveReminder: handleRemoveReminder,
 		onCreateCalendarEvent: handleCreateCalendarEvent,
+		onChangeFrequency: handleChangeFrequency,
 
 		getReminderOffset: (index: number) => getValues(`reminders.${index}.offsetMinutes`),
 		parseDateValue: safeParseAbsoluteToLocal,

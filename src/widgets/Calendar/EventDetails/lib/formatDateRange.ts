@@ -1,6 +1,8 @@
-export const formatDateRange = (startISO: string, endISO: string, locale = 'ru-RU') => {
+import { getEventEndFromStartAndDuration } from 'shared/lib';
+
+export const formatDateRange = (startISO: string, durationMinutes: number, locale = 'ru-RU') => {
 	const start = new Date(startISO);
-	const end = new Date(endISO);
+	const end = new Date(getEventEndFromStartAndDuration(startISO, durationMinutes));
 	const sameDay = start.toDateString() === end.toDateString();
 
 	const dateFmt = new Intl.DateTimeFormat(locale, {

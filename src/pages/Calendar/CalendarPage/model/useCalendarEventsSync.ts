@@ -1,61 +1,87 @@
-import { useCallback } from 'react';
-import type { EventChangeArg } from '@fullcalendar/core';
+import { useCallback, useMemo } from 'react';
+import type { EventChangeArg, EventInput } from '@fullcalendar/core';
 
 import type { CalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetSpace, useGetUserSpaces } from 'entities/Space';
 
-import { CurrentSpaceIdController } from 'shared/lib';
+import {
+	CurrentSpaceIdController,
+	getEventDurationFromStartAndEnd,
+	getEventEndFromStartAndDuration,
+	normalizeEventDurationMinutes,
+} from 'shared/lib';
 
-export const useCalendarEventsSync = () => {
+const prepareEvents = (events: CalendarEvent[]) => {
+	return events.map((event) => {
+		const id = `${event.id}.${event.orderIndex}`;
+		const fullCalendarEvent: EventInput = {
+			id,
+			title: event.title,
+
+			start: event.start,
+			duration: event.duration,
+
+			extendedProps: {
+				eventId: event.id,
+				description: event.description,
+				reminders: event.reminders,
+				frequency: event.frequency,
+				orderIndex: event.orderIndex,
+			},
+		};
+		return fullCalendarEvent;
+	});
+};
+
+type Props = {
+	start: Date;
+	end: Date;
+};
+
+export const useCalendarEventsSync = (props: Props) => {
+	const { start, end } = props;
+
 	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
 
 	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 	const { data: userSpaces, isLoading: isSpacesLoading } = useGetUserSpaces();
 	const {
-		data: events,
+		data: events = [],
 		mutate: mutateEvents,
 		isLoading: isEventsLoading,
-	} = useGetCalendarEvents();
+	} = useGetCalendarEvents({ start, end });
 	const { request: updateEvent } = useUpdateCalendarEvent();
-
-	const patchEventsList = useCallback(
-		(updated: CalendarEvent | undefined) =>
-			mutateEvents(
-				(prev) => {
-					if (!prev || !updated) return prev;
-
-					const idx = prev.findIndex((event) => event.id === updated.id);
-					if (idx === -1) return [...prev, updated];
-
-					const next = prev.slice();
-					next[idx] = updated;
-					return next;
-				},
-				{ revalidate: false },
-			),
-		[mutateEvents],
-	);
 
 	const handleChangeEvent = useCallback(
 		(arg: EventChangeArg) => {
 			const { event } = arg;
 			const ext = event.extendedProps;
+			const start = event.startStr || event.start?.toISOString() || new Date().toISOString();
+			const fallbackDuration = normalizeEventDurationMinutes(ext.duration);
+			const end = getEventEndFromStartAndDuration(start, fallbackDuration);
+			const duration = getEventDurationFromStartAndEnd(start, end, fallbackDuration);
 
+			// TODO: типизировать extendedProps
 			updateEvent({
-				id: event.id,
-				start: event.startStr,
-				end: event.endStr,
+				id: ext.eventId,
+				orderIndex: event.extendedProps.orderIndex,
+				start,
+				duration,
 				title: event.title,
 				description: ext.description,
 				reminders: ext.reminders,
-			}).then(patchEventsList);
+				frequency: ext.frequency,
+				updateType: 'ONE',
+			}).then(() => mutateEvents());
 		},
-		[patchEventsList, updateEvent],
+		[updateEvent],
 	);
 
+	const preparedEvents = useMemo(() => prepareEvents(events), [events]);
+
 	return {
-		events,
+		events: preparedEvents,
 
 		isEditable: currentSpace?.access === 'owner',
 		hasUserSpaces: Boolean(userSpaces?.length),

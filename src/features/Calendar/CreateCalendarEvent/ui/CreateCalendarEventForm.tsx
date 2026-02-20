@@ -1,10 +1,24 @@
-import { Button, DatePicker, Input, Switch, Textarea } from '@heroui/react';
+import { Button, DatePicker, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
+
+import type { CalendarEventFrequency } from 'entities/CalendarEvent';
 
 import { formatMinutesOffset } from 'shared/lib';
 
 const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
 
+const FREQUENCY_PRESETS: FrequencySelectItem[] = [
+	{ key: 'NEVER', label: 'Никогда' },
+	{ key: 'DAILY', label: 'Каждый день' },
+	{ key: 'WEEKLY', label: 'Каждую неделю' },
+	{ key: 'DOUBLE_WEEKLY', label: 'Каждые 2 недели' },
+	{ key: 'MONTHLY', label: 'Каждый месяц' },
+];
+
+type FrequencySelectItem = {
+	key: CalendarEventFrequency;
+	label: string;
+};
 type ReminderField = {
 	id: string;
 	offsetMinutes: number;
@@ -13,8 +27,10 @@ type ReminderField = {
 type Props = {
 	title: string;
 	description: string;
+
 	start: string;
 	end: string;
+	frequency: CalendarEventFrequency;
 
 	reminderFields: ReminderField[];
 	isSpaceHasTelegramChats: boolean;
@@ -32,6 +48,8 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
+	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
+
 	onCreateCalendarEvent: () => void;
 
 	getReminderOffset: (index: number) => number;
@@ -42,8 +60,10 @@ export const CreateCalendarEventForm = (props: Props) => {
 	const {
 		title,
 		description,
+
 		start,
 		end,
+		frequency,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -61,6 +81,8 @@ export const CreateCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
+		onChangeFrequency,
+
 		onCreateCalendarEvent,
 
 		getReminderOffset,
@@ -95,6 +117,18 @@ export const CreateCalendarEventForm = (props: Props) => {
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
+
+				<Select
+					label="Повторять через"
+					placeholder="Выберите установку"
+					selectedKeys={[frequency]}
+					// @ts-expect-error иди нахуй
+					onChange={(event) => onChangeFrequency(event.target.value)}
+				>
+					{FREQUENCY_PRESETS.map((frequency) => (
+						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
+					))}
+				</Select>
 
 				{!isSpaceHasTelegramChats && (
 					<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">

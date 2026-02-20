@@ -1,9 +1,12 @@
+import { useEffect } from 'react';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import FullCalendar from '@fullcalendar/react';
 import { Spinner, useDisclosure } from '@heroui/react';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
+
+import { useCalendarViewStore } from 'entities/Calendar';
 
 import { useCalendarEventsSync } from '../model/useCalendarEventsSync';
 import { useCalendarModalState } from '../model/useCalendarModalState';
@@ -17,7 +20,19 @@ const SELECT_LONG_PRESS_DELAY = 400;
 
 export const CalendarPage = () => {
 	const view = useCalendarViewController();
-	const events = useCalendarEventsSync();
+	const events = useCalendarEventsSync({
+		start: view.currentStartDate,
+		end: view.currentEndDate,
+	});
+
+	const { setCurrentDate } = useCalendarViewStore();
+
+	useEffect(() => {
+		setCurrentDate({
+			start: view.currentStartDate,
+			end: view.currentEndDate,
+		});
+	}, [view.currentStartDate, view.currentEndDate, setCurrentDate]);
 
 	const { isOpen: isCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 	const { isOpen: isDetailsOpen, onOpenChange: onDetailsOpenChange } = useDisclosure();
@@ -59,6 +74,7 @@ export const CalendarPage = () => {
 					isOpen={isEditOpen}
 					onOpenChange={onEditOpenChange}
 					eventId={modals.editDefaults.id}
+					eventOrderIndex={modals.eventDetails.orderIndex}
 					defaultValues={modals.editDefaults}
 					onSuccess={onEditOpenChange}
 				/>

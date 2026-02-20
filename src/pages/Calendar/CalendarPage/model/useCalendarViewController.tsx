@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DatesSetArg, DayHeaderContentArg, SlotLabelContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import type { DateClickArg } from '@fullcalendar/interaction';
@@ -14,8 +14,13 @@ import { useIsMobile } from '../lib/useIsMobile';
 
 export const useCalendarViewController = () => {
 	const calendarRef = useRef<FullCalendar | null>(null);
+
 	const [currentView, setCurrentView] = useState(getInitialView());
 	const [currentDate, setCurrentDate] = useState(getInitialDate());
+
+	const [currentStartDate, setCurrentStartDate] = useState(new Date());
+	const [currentEndDate, setCurrentEndDate] = useState(new Date());
+
 	const isMobile = useIsMobile();
 
 	const calendarApi = useCallback(() => calendarRef.current?.getApi(), []);
@@ -38,6 +43,9 @@ export const useCalendarViewController = () => {
 		setCurrentView(arg.view.type);
 		setCurrentDate(arg.view.currentStart);
 		syncUrlParams(arg.view.type, arg.view.currentStart);
+
+		setCurrentStartDate(arg.view.activeStart);
+		setCurrentEndDate(arg.view.activeEnd);
 	}, []);
 
 	const handleDateClick = useCallback(
@@ -89,6 +97,9 @@ export const useCalendarViewController = () => {
 		currentView,
 		currentDate,
 		plugins,
+
+		currentStartDate,
+		currentEndDate,
 
 		onPrev: handlePrev,
 		onNext: handleNext,

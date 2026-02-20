@@ -5,14 +5,23 @@ import type { ApiResponse } from 'shared/types';
 
 import type { CalendarEvent } from '../model/types';
 
+type Props = {
+	start: Date;
+	end: Date;
+};
+
 /**
  * Запрашивает список всех календарных событий.
  *
  * @return data - список событий по конкретному пространству (выставляется через cookie).
  * */
-export const useGetCalendarEvents = () => {
-	const fetcher = () =>
-		axiosInstance.get<ApiResponse<CalendarEvent[]>>('/events').then((res) => res.data.data);
+export const useGetCalendarEvents = (props: Props) => {
+	const { start, end } = props;
 
-	return useSWR('/api/events', fetcher);
+	const fetcher = () =>
+		axiosInstance
+			.get<ApiResponse<CalendarEvent[]>>('/events', { params: { from: start, to: end } })
+			.then((res) => res.data.data);
+
+	return useSWR(`/api/events/${start}-${end}`, fetcher);
 };

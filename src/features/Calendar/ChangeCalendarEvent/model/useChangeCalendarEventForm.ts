@@ -2,7 +2,12 @@ import { useCallback } from 'react';
 import { useController, useFieldArray, useForm } from 'react-hook-form';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import type { UpdateCalendarEvent } from 'entities/CalendarEvent';
+import { useCalendarViewStore } from 'entities/Calendar';
+import type {
+	CalendarEventFrequency,
+	UpdateCalendarEvent,
+	UpdateCalendarEventType,
+} from 'entities/CalendarEvent';
 import {
 	useDeleteCalendarEvent,
 	useGetCalendarEvents,
@@ -10,24 +15,34 @@ import {
 } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, safeParseAbsoluteToLocal } from 'shared/lib';
+import {
+	CurrentSpaceIdController,
+	getEventDurationFromStartAndEnd,
+	safeParseAbsoluteToLocal,
+} from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 
 type Props = {
 	eventId: string;
+	eventOrderIndex: number;
 	defaultValues: UpdateCalendarEvent;
 	onSuccess?: () => void;
 };
 
 export const useChangeCalendarEventForm = (props: Props) => {
-	const { eventId, defaultValues, onSuccess } = props;
+	const { eventId, eventOrderIndex, defaultValues, onSuccess } = props;
 
 	const { control, getValues } = useForm<UpdateCalendarEvent>({ defaultValues });
 
 	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
 
-	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
+	const { currentDate } = useCalendarViewStore();
+
+	const { mutate: mutateCalendarEvents } = useGetCalendarEvents({
+		start: currentDate.start,
+		end: currentDate.end,
+	});
 	const { request: updateCalendarEvent, isLoading: isUpdating } = useUpdateCalendarEvent();
 	const { request: deleteCalendarEvent, isLoading: isDeleting } = useDeleteCalendarEvent();
 	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
@@ -44,6 +59,9 @@ export const useChangeCalendarEventForm = (props: Props) => {
 	const {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
+	const {
+		field: { value: frequency, onChange: onChangeFrequency },
+	} = useController({ control, name: 'frequency', defaultValue: 'NEVER' });
 
 	const {
 		fields: reminderFields,
@@ -99,29 +117,46 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		[removeReminder],
 	);
 
-	const handleUpdateCalendarEvent = useCallback(async () => {
-		await updateCalendarEvent({
-			id: eventId,
-			title: title,
-			description: description,
-			start: start || DEFAULT_TIME_ISO_VALUE,
-			end: end || DEFAULT_TIME_ISO_VALUE,
-			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
-		});
+	const handleChangeFrequency = useCallback(
+		(frequency: CalendarEventFrequency) => {
+			onChangeFrequency(frequency);
+		},
+		[onChangeFrequency],
+	);
 
-		mutateCalendarEvents();
-		onSuccess?.();
-	}, [
-		description,
-		end,
-		eventId,
-		mutateCalendarEvents,
-		onSuccess,
-		reminderFields,
-		start,
-		title,
-		updateCalendarEvent,
-	]);
+	const handleUpdateCalendarEvent = useCallback(
+		async (updateType: UpdateCalendarEventType) => {
+			const durationMinutes = getEventDurationFromStartAndEnd(start, end);
+
+			await updateCalendarEvent({
+				id: eventId,
+				orderIndex: eventOrderIndex,
+				title: title || '',
+				description: description || '',
+				start,
+				originalStart: defaultValues.start,
+				duration: durationMinutes,
+				reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
+				frequency: frequency || 'NEVER',
+				updateType,
+			});
+
+			mutateCalendarEvents();
+			onSuccess?.();
+		},
+		[
+			description,
+			end,
+			eventId,
+			frequency,
+			mutateCalendarEvents,
+			onSuccess,
+			reminderFields,
+			start,
+			title,
+			updateCalendarEvent,
+		],
+	);
 
 	const handleDeleteCalendarEvent = useCallback(async () => {
 		const deletedEvent = await deleteCalendarEvent({ eventId });
@@ -138,8 +173,9 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		title,
 		description: description || '',
 
-		start: start || DEFAULT_TIME_ISO_VALUE,
-		end: end || DEFAULT_TIME_ISO_VALUE,
+		start,
+		end,
+		frequency,
 
 		reminderFields,
 		isRemindersActive: Boolean(currentSpace?.hasTelegramChats),
@@ -153,6 +189,8 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		onChangeEnd: handleChangeEnd,
 		onAddReminder: handleAddReminder,
 		onRemoveReminder: handleRemoveReminder,
+		onChangeFrequency: handleChangeFrequency,
+
 		onUpdateCalendarEvent: handleUpdateCalendarEvent,
 		onDeleteCalendarEvent: handleDeleteCalendarEvent,
 
