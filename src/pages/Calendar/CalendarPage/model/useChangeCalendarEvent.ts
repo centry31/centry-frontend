@@ -38,27 +38,13 @@ export const useChangeCalendarEvent = (props: Props) => {
 
 	const handleUpdateOneEvent = useCallback(async () => {
 		if (!updatedEvent) return;
-
-		const response = await updateEvent({ ...updatedEvent, updateType: 'ONE' });
-		if (!response) {
-			rollbackEventChange();
-			onCloseConfirm();
-			return;
-		}
-
+		await updateEvent({ ...updatedEvent, updateType: 'ONE' });
 		onUpdateSuccess();
 	}, [onCloseConfirm, onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
 
 	const handleUpdateFeatureEvents = useCallback(async () => {
 		if (!updatedEvent) return;
-
-		const response = await updateEvent({ ...updatedEvent, updateType: 'FUTURE' });
-		if (!response) {
-			rollbackEventChange();
-			onCloseConfirm();
-			return;
-		}
-
+		await updateEvent({ ...updatedEvent, updateType: 'FUTURE' });
 		onUpdateSuccess();
 	}, [onCloseConfirm, onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
 
