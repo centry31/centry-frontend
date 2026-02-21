@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import FullCalendar from '@fullcalendar/react';
 import { Spinner, useDisclosure } from '@heroui/react';
@@ -5,10 +6,14 @@ import { Spinner, useDisclosure } from '@heroui/react';
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
+import { useCalendarViewStore } from 'entities/Calendar';
+
 import { useCalendarEventsSync } from '../model/useCalendarEventsSync';
-import { useCalendarModalState } from '../model/useCalendarModalState';
+import { useCalendarFormModalState } from '../model/useCalendarFormModalState';
 import { useCalendarViewController } from '../model/useCalendarViewController';
+import { useChangeCalendarEvent } from '../model/useChangeCalendarEvent';
 import { ChangeCalendarEventModal } from './ChangeCalendarEventModal';
+import { ConfirmChangeEventModal } from './ConfirmChangeEventModal';
 import { CreateCalendarEventModal } from './CreateCalendarEventModal';
 
 import './styles.css';
@@ -17,17 +22,41 @@ const SELECT_LONG_PRESS_DELAY = 400;
 
 export const CalendarPage = () => {
 	const view = useCalendarViewController();
-	const events = useCalendarEventsSync();
+	const events = useCalendarEventsSync({
+		start: view.currentStartDate,
+		end: view.currentEndDate,
+	});
+
+	const { setCurrentDate } = useCalendarViewStore();
+
+	useEffect(() => {
+		setCurrentDate({
+			start: view.currentStartDate,
+			end: view.currentEndDate,
+		});
+	}, [view.currentStartDate, view.currentEndDate, setCurrentDate]);
 
 	const { isOpen: isCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 	const { isOpen: isDetailsOpen, onOpenChange: onDetailsOpenChange } = useDisclosure();
 	const { isOpen: isEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+	const {
+		isOpen: isConfirmOpen,
+		onOpen: onOpenConfirm,
+		onClose: onCloseConfirm,
+	} = useDisclosure();
 
-	const modals = useCalendarModalState({
-		onOpenCreate: onCreateOpenChange,
+	const formModals = useCalendarFormModalState({
+		onOpenFormCreate: onCreateOpenChange,
 		onOpenDetails: onDetailsOpenChange,
-		onOpenEdit: onEditOpenChange,
+		onOpenFormEdit: onEditOpenChange,
 		onCloseDetails: onDetailsOpenChange,
+	});
+
+	const updateEvents = useChangeCalendarEvent({
+		start: view.currentStartDate,
+		end: view.currentEndDate,
+		onOpenConfirm,
+		onCloseConfirm,
 	});
 
 	if (events.isEventsLoading || events.isSpacesLoading) return <Spinner />;
@@ -37,7 +66,7 @@ export const CalendarPage = () => {
 		<div className="flex h-full flex-col">
 			{isCreateOpen && (
 				<CreateCalendarEventModal
-					defaultValues={modals.createDefaults}
+					defaultValues={formModals.createDefaults}
 					onSuccess={onCreateOpenChange}
 					isOpen={isCreateOpen}
 					onOpenChange={onCreateOpenChange}
@@ -47,8 +76,8 @@ export const CalendarPage = () => {
 			{isDetailsOpen && (
 				<EventDetailsModal
 					isEditable={events.isEditable}
-					event={modals.eventDetails}
-					onEdit={modals.onEditEventModal}
+					event={formModals.eventDetails}
+					onEdit={formModals.onEditEventModal}
 					isOpen={isDetailsOpen}
 					onOpenChange={onDetailsOpenChange}
 				/>
@@ -58,11 +87,20 @@ export const CalendarPage = () => {
 				<ChangeCalendarEventModal
 					isOpen={isEditOpen}
 					onOpenChange={onEditOpenChange}
-					eventId={modals.editDefaults.id}
-					defaultValues={modals.editDefaults}
+					eventId={formModals.editDefaults.id}
+					eventOrderIndex={formModals.eventDetails.orderIndex}
+					defaultValues={formModals.editDefaults}
 					onSuccess={onEditOpenChange}
 				/>
 			)}
+
+			<ConfirmChangeEventModal
+				isOpen={isConfirmOpen}
+				onClose={updateEvents.onCancelChangeEvents}
+				onUpdateOne={updateEvents.onUpdateOneEvent}
+				onUpdateFuture={updateEvents.onUpdateFeatureEvents}
+				isUpdating={updateEvents.isEventUpdating}
+			/>
 
 			<CalendarToolbar
 				view={view.currentView}
@@ -101,10 +139,10 @@ export const CalendarPage = () => {
 				dayHeaderContent={view.dayHeaderContent}
 				slotLabelContent={view.slotLabelContent}
 				// handlers
-				select={modals.onSelectSlot}
-				eventDrop={events.onChangeEvent}
-				eventResize={events.onChangeEvent}
-				eventClick={modals.onClickEvent}
+				select={formModals.onSelectSlot}
+				eventDrop={updateEvents.onChangeEvent}
+				eventResize={updateEvents.onChangeEvent}
+				eventClick={formModals.onClickEvent}
 				dateClick={view.onDateClick}
 			/>
 		</div>

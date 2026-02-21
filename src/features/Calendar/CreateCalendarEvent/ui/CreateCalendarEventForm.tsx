@@ -1,9 +1,10 @@
-import { Button, DatePicker, Input, Switch, Textarea } from '@heroui/react';
+import { Button, DatePicker, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import { formatMinutesOffset } from 'shared/lib';
+import type { CalendarEventFrequency } from 'entities/CalendarEvent';
+import { FREQUENCY_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
 
-const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
+import { formatMinutesOffset, safeParseAbsoluteToLocal } from 'shared/lib';
 
 type ReminderField = {
 	id: string;
@@ -13,8 +14,11 @@ type ReminderField = {
 type Props = {
 	title: string;
 	description: string;
+
 	start: string;
 	end: string;
+	repeatUntil?: string;
+	frequency: CalendarEventFrequency;
 
 	reminderFields: ReminderField[];
 	isSpaceHasTelegramChats: boolean;
@@ -32,18 +36,22 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
-	onCreateCalendarEvent: () => void;
+	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
+	onChangeRepeatUntil: (value?: ZonedDateTime | null) => void;
 
+	onCreateCalendarEvent: () => void;
 	getReminderOffset: (index: number) => number;
-	parseDateValue: (value: string) => ZonedDateTime | null;
 };
 
 export const CreateCalendarEventForm = (props: Props) => {
 	const {
 		title,
 		description,
+
 		start,
 		end,
+		frequency,
+		repeatUntil,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -61,10 +69,11 @@ export const CreateCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onCreateCalendarEvent,
+		onChangeFrequency,
+		onChangeRepeatUntil,
 
+		onCreateCalendarEvent,
 		getReminderOffset,
-		parseDateValue,
 	} = props;
 
 	return (
@@ -85,16 +94,38 @@ export const CreateCalendarEventForm = (props: Props) => {
 
 				<DatePicker
 					label="Начало"
-					value={parseDateValue(start)}
+					value={safeParseAbsoluteToLocal(start)}
 					onChange={onChangeStart}
 					hideTimeZone
 				/>
 				<DatePicker
 					label="Конец"
-					value={parseDateValue(end)}
+					value={safeParseAbsoluteToLocal(end)}
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
+
+				<Select
+					label="Повторять через"
+					placeholder="Выберите установку"
+					selectedKeys={[frequency]}
+					onChange={(event) =>
+						onChangeFrequency(event.target.value as CalendarEventFrequency)
+					}
+				>
+					{FREQUENCY_PRESETS.map((frequency) => (
+						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
+					))}
+				</Select>
+				{frequency !== 'NEVER' && (
+					<DatePicker
+						label="Повторять до"
+						granularity="minute"
+						value={safeParseAbsoluteToLocal(repeatUntil)}
+						onChange={onChangeRepeatUntil}
+						hideTimeZone
+					/>
+				)}
 
 				{!isSpaceHasTelegramChats && (
 					<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">

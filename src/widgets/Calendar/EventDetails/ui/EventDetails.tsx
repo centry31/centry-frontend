@@ -16,7 +16,7 @@ type Props = {
 
 export const EventDetails = (props: Props) => {
 	const { event, isEditable, onEdit } = props;
-	const { title, description, start, end, reminders } = event;
+	const { title, description, start, duration, reminders } = event;
 
 	const handleEdit = () => {
 		onEdit?.(event);
@@ -35,7 +35,7 @@ export const EventDetails = (props: Props) => {
 			{/* body */}
 			<div className="p-4 space-y-4">
 				<section>
-					<EventTime start={start} end={end} />
+					<EventTime start={start} duration={duration} />
 				</section>
 
 				<Divider />

@@ -1,9 +1,14 @@
-import { Button, DatePicker, Input } from '@heroui/react';
+import { Button, DatePicker, Input, Select, SelectItem } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import { formatMinutesOffset } from 'shared/lib';
+import {
+	type CalendarEventFrequency,
+	FREQUENCY_PRESETS,
+	REMINDERS_PRESETS,
+	type UpdateCalendarEventType,
+} from 'entities/CalendarEvent';
 
-const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
+import { formatMinutesOffset, safeParseAbsoluteToLocal } from 'shared/lib';
 
 type ReminderField = {
 	id: string;
@@ -16,6 +21,9 @@ type Props = {
 
 	start: string;
 	end: string;
+	frequency: CalendarEventFrequency;
+	initialFrequency: CalendarEventFrequency;
+	repeatUntil?: string;
 
 	reminderFields: ReminderField[];
 	isRemindersActive: boolean;
@@ -29,12 +37,13 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
+	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
+	onChangeRepeatUntil: (value?: ZonedDateTime | null) => void;
 
-	onUpdateCalendarEvent: () => void;
+	onUpdateCalendarEvent: (updateType: UpdateCalendarEventType) => void;
 	onDeleteCalendarEvent: () => void;
 
 	getReminderOffset: (index: number) => number;
-	parseDateValue: (value: string) => ZonedDateTime | null;
 };
 
 export const ChangeCalendarEventForm = (props: Props) => {
@@ -46,6 +55,9 @@ export const ChangeCalendarEventForm = (props: Props) => {
 
 		reminderFields,
 		isRemindersActive,
+		frequency,
+		initialFrequency,
+		repeatUntil,
 
 		isUpdating,
 		isDeleting,
@@ -56,12 +68,17 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
+		onChangeFrequency,
+		onChangeRepeatUntil,
+
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
-		parseDateValue,
 	} = props;
+
+	const handleUpdateOneCalendarEvent = () => onUpdateCalendarEvent('ONE');
+	const handleUpdateFutureCalendarEvent = () => onUpdateCalendarEvent('FUTURE');
 
 	return (
 		<div className={'p-4'}>
@@ -81,16 +98,38 @@ export const ChangeCalendarEventForm = (props: Props) => {
 
 				<DatePicker
 					label="Начало"
-					value={parseDateValue(start)}
+					value={safeParseAbsoluteToLocal(start)}
 					onChange={onChangeStart}
 					hideTimeZone
 				/>
 				<DatePicker
 					label="Конец"
-					value={parseDateValue(end)}
+					value={safeParseAbsoluteToLocal(end)}
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
+
+				<Select
+					label="Повторять через"
+					placeholder="Выберите установку"
+					selectedKeys={[frequency]}
+					onChange={(event) =>
+						onChangeFrequency(event.target.value as CalendarEventFrequency)
+					}
+				>
+					{FREQUENCY_PRESETS.map((frequency) => (
+						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
+					))}
+				</Select>
+				{frequency !== 'NEVER' && (
+					<DatePicker
+						label="Повторять до"
+						granularity="minute"
+						value={safeParseAbsoluteToLocal(repeatUntil)}
+						onChange={onChangeRepeatUntil}
+						hideTimeZone
+					/>
+				)}
 
 				<div className="flex flex-col gap-2">
 					<div className="text-sm font-medium">Напоминания</div>
@@ -138,14 +177,38 @@ export const ChangeCalendarEventForm = (props: Props) => {
 			</div>
 
 			<div className="mt-6 flex flex-col gap-2">
-				<Button
-					color="primary"
-					onPress={onUpdateCalendarEvent}
-					isLoading={isUpdating}
-					disabled={isUpdating}
-				>
-					Обновить
-				</Button>
+				{initialFrequency === 'NEVER' && (
+					<Button
+						color="primary"
+						onPress={handleUpdateOneCalendarEvent}
+						isLoading={isUpdating}
+						disabled={isUpdating}
+					>
+						Обновить
+					</Button>
+				)}
+
+				{initialFrequency !== 'NEVER' && (
+					<>
+						<Button
+							color="primary"
+							onPress={handleUpdateOneCalendarEvent}
+							isLoading={isUpdating}
+							disabled={isUpdating}
+						>
+							Обновить только текущее событие
+						</Button>
+
+						<Button
+							color="primary"
+							onPress={handleUpdateFutureCalendarEvent}
+							isLoading={isUpdating}
+							disabled={isUpdating}
+						>
+							Обновить c будущими событиями
+						</Button>
+					</>
+				)}
 
 				<Button
 					color="danger"

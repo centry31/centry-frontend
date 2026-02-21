@@ -2,11 +2,12 @@ import { useCallback } from 'react';
 import { useController, useFieldArray, useForm } from 'react-hook-form';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import type { CreateCalendarEvent } from 'entities/CalendarEvent';
+import { useCalendarViewStore } from 'entities/Calendar';
+import type { CalendarEventFrequency, CreateCalendarEvent } from 'entities/CalendarEvent';
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, safeParseAbsoluteToLocal } from 'shared/lib';
+import { CurrentSpaceIdController, getEventDurationFromStartAndEnd } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 
@@ -21,8 +22,12 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	const { control, getValues } = useForm<CreateCalendarEvent>({ defaultValues });
 
 	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
+	const { currentDate } = useCalendarViewStore();
 
-	const { mutate: mutateCalendarEvents } = useGetCalendarEvents();
+	const { mutate: mutateCalendarEvents } = useGetCalendarEvents({
+		start: currentDate.start,
+		end: currentDate.end,
+	});
 	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 	const { request: createCalendarEvent, isLoading: isCreating } = useCreateCalendarEvent();
 
@@ -38,6 +43,12 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	const {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
+	const {
+		field: { value: frequency, onChange: onChangeFrequency },
+	} = useController({ control, name: 'frequency', defaultValue: 'NEVER' });
+	const {
+		field: { value: repeatUntil, onChange: onChangeRepeatUntil },
+	} = useController({ control, name: 'repeatUntil' });
 
 	const {
 		field: { value: isNotifyMessage, onChange: onToggleIsNotifyMessage },
@@ -113,18 +124,38 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		[onChangeNotifyMessage],
 	);
 
+	const handleChangeFrequency = useCallback(
+		(frequency: CalendarEventFrequency) => {
+			onChangeFrequency(frequency);
+		},
+		[onChangeFrequency],
+	);
+
+	const handleChangeRepeatUntil = useCallback(
+		(zdt?: ZonedDateTime | null) => {
+			if (!zdt) return;
+			onChangeRepeatUntil(zdt.toAbsoluteString());
+		},
+		[onChangeRepeatUntil],
+	);
+
 	const handleCreateCalendarEvent = useCallback(async () => {
-		const event: CreateCalendarEvent = {
-			title: title || '',
-			description: description || '',
-			start: start || DEFAULT_TIME_ISO_VALUE,
-			end: end || DEFAULT_TIME_ISO_VALUE,
+		const durationMinutes = getEventDurationFromStartAndEnd(start, end);
+
+		const createdEvent = await createCalendarEvent({
+			title,
+			description,
+
+			start,
+			duration: durationMinutes,
+			frequency,
+			repeatUntil,
+
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
+
 			notifyMessage,
 			isNotifyMessage,
-		};
-
-		const createdEvent = await createCalendarEvent(event);
+		});
 		if (!createdEvent) return;
 
 		mutateCalendarEvents((events) => {
@@ -136,7 +167,10 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		createCalendarEvent,
 		description,
 		end,
+		frequency,
+		isNotifyMessage,
 		mutateCalendarEvents,
+		notifyMessage,
 		onSuccess,
 		reminderFields,
 		start,
@@ -144,10 +178,13 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	]);
 
 	return {
-		title: title || '',
+		title,
 		description: description || '',
-		start: start || DEFAULT_TIME_ISO_VALUE,
-		end: end || DEFAULT_TIME_ISO_VALUE,
+
+		start,
+		end,
+		frequency,
+		repeatUntil,
 
 		reminderFields,
 		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
@@ -166,8 +203,9 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		onAddReminder: handleAddReminder,
 		onRemoveReminder: handleRemoveReminder,
 		onCreateCalendarEvent: handleCreateCalendarEvent,
+		onChangeFrequency: handleChangeFrequency,
+		onChangeRepeatUntil: handleChangeRepeatUntil,
 
 		getReminderOffset: (index: number) => getValues(`reminders.${index}.offsetMinutes`),
-		parseDateValue: safeParseAbsoluteToLocal,
 	};
 };

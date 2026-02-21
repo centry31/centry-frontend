@@ -4,13 +4,13 @@ import { formatDateRange } from '../lib/formatDateRange';
 
 type Props = {
 	start: string;
-	end: string;
+	duration: number;
 };
 
 export const EventTime = (props: Props) => {
-	const { start, end } = props;
+	const { start, duration } = props;
 
-	const { date, time } = formatDateRange(start, end);
+	const { date, time } = formatDateRange(start, duration);
 
 	return (
 		<div className="flex items-start gap-2 text-sm text-neutral-600">
