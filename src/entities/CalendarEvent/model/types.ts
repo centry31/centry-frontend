@@ -9,6 +9,7 @@ type CalendarEvent = {
 
 	start: string;
 	duration: number;
+	repeatUntil?: string;
 
 	title: string;
 	description?: string;
@@ -20,6 +21,7 @@ type CalendarEvent = {
 type CreateCalendarEvent = {
 	start: string;
 	end: string;
+	repeatUntil?: string;
 
 	title: string;
 	description?: string;
@@ -32,9 +34,14 @@ type CreateCalendarEvent = {
 };
 
 type UpdateCalendarEventType = 'ONE' | 'FUTURE';
+type FrequencySelectItem = {
+	key: CalendarEventFrequency;
+	label: string;
+};
 type UpdateCalendarEvent = {
 	start: string;
 	end: string;
+	repeatUntil?: string;
 
 	title: string;
 	description?: string;
@@ -48,6 +55,7 @@ export {
 	CalendarEventFrequency,
 	CalendarEventReminder,
 	CreateCalendarEvent,
+	FrequencySelectItem,
 	UpdateCalendarEvent,
 	UpdateCalendarEventType,
 };

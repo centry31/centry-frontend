@@ -1,16 +1,11 @@
-import { useCallback, useMemo } from 'react';
-import type { EventChangeArg, EventInput } from '@fullcalendar/core';
+import { useMemo } from 'react';
+import type { EventInput } from '@fullcalendar/core';
 
 import type { CalendarEvent } from 'entities/CalendarEvent';
-import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarEvent';
+import { useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace, useGetUserSpaces } from 'entities/Space';
 
-import {
-	CurrentSpaceIdController,
-	getEventDurationFromStartAndEnd,
-	getEventEndFromStartAndDuration,
-	normalizeEventDurationMinutes,
-} from 'shared/lib';
+import { CurrentSpaceIdController, getEventEndFromStartAndDuration } from 'shared/lib';
 
 const prepareEvents = (events: CalendarEvent[]) => {
 	return events.map((event) => {
@@ -20,13 +15,16 @@ const prepareEvents = (events: CalendarEvent[]) => {
 			title: event.title,
 
 			start: event.start,
-			duration: event.duration,
+			end: getEventEndFromStartAndDuration(event.start, event.duration),
 
+			// TODO: типизировать
 			extendedProps: {
 				eventId: event.id,
 				description: event.description,
+				duration: event.duration,
 				reminders: event.reminders,
 				frequency: event.frequency,
+				repeatUntil: event.repeatUntil,
 				orderIndex: event.orderIndex,
 			},
 		};
@@ -46,37 +44,7 @@ export const useCalendarEventsSync = (props: Props) => {
 
 	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
 	const { data: userSpaces, isLoading: isSpacesLoading } = useGetUserSpaces();
-	const {
-		data: events = [],
-		mutate: mutateEvents,
-		isLoading: isEventsLoading,
-	} = useGetCalendarEvents({ start, end });
-	const { request: updateEvent } = useUpdateCalendarEvent();
-
-	const handleChangeEvent = useCallback(
-		(arg: EventChangeArg) => {
-			const { event } = arg;
-			const ext = event.extendedProps;
-			const start = event.startStr || event.start?.toISOString() || new Date().toISOString();
-			const fallbackDuration = normalizeEventDurationMinutes(ext.duration);
-			const end = getEventEndFromStartAndDuration(start, fallbackDuration);
-			const duration = getEventDurationFromStartAndEnd(start, end, fallbackDuration);
-
-			// TODO: типизировать extendedProps
-			updateEvent({
-				id: ext.eventId,
-				orderIndex: event.extendedProps.orderIndex,
-				start,
-				duration,
-				title: event.title,
-				description: ext.description,
-				reminders: ext.reminders,
-				frequency: ext.frequency,
-				updateType: 'ONE',
-			}).then(() => mutateEvents());
-		},
-		[updateEvent],
-	);
+	const { data: events = [], isLoading: isEventsLoading } = useGetCalendarEvents({ start, end });
 
 	const preparedEvents = useMemo(() => prepareEvents(events), [events]);
 
@@ -88,7 +56,5 @@ export const useCalendarEventsSync = (props: Props) => {
 
 		isEventsLoading,
 		isSpacesLoading,
-
-		onChangeEvent: handleChangeEvent,
 	};
 };

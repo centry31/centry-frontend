@@ -58,14 +58,15 @@ const DEFAULT_EVENT_UPDATE: EditEventDefaults = {
 };
 
 type Props = {
-	onOpenCreate: () => void;
+	onOpenFormCreate: () => void;
+	onOpenFormEdit: () => void;
+
 	onOpenDetails: () => void;
-	onOpenEdit: () => void;
 	onCloseDetails: () => void;
 };
 
-export const useCalendarModalState = (props: Props) => {
-	const { onOpenCreate, onOpenDetails, onOpenEdit, onCloseDetails } = props;
+export const useCalendarFormModalState = (props: Props) => {
+	const { onOpenFormCreate, onOpenDetails, onOpenFormEdit, onCloseDetails } = props;
 
 	const [eventDetails, setEventDetails] = useState<CalendarEvent>(DEFAULT_EVENT_DATA);
 	const [createDefaults, setCreateDefaults] = useState<CreateCalendarEvent>(DEFAULT_EVENT_CREATE);
@@ -82,9 +83,9 @@ export const useCalendarModalState = (props: Props) => {
 				reminders: [],
 				frequency: 'NEVER',
 			});
-			onOpenCreate();
+			onOpenFormCreate();
 		},
-		[onOpenCreate],
+		[onOpenFormCreate],
 	);
 
 	const handleClickEvent = useCallback(
@@ -101,6 +102,7 @@ export const useCalendarModalState = (props: Props) => {
 				duration: durationMinutes,
 				reminders: event.extendedProps.reminders,
 				frequency: event.extendedProps.frequency,
+				repeatUntil: event.extendedProps.repeatUntil,
 			});
 
 			onOpenDetails();
@@ -118,12 +120,13 @@ export const useCalendarModalState = (props: Props) => {
 				end: getEventEndFromStartAndDuration(event.start, event.duration),
 				reminders: event.reminders,
 				frequency: event.frequency,
+				repeatUntil: event.repeatUntil,
 			});
 
-			onOpenEdit();
+			onOpenFormEdit();
 			onCloseDetails();
 		},
-		[onCloseDetails, onOpenEdit],
+		[onCloseDetails, onOpenFormEdit],
 	);
 
 	return {

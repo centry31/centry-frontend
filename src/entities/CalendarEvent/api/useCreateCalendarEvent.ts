@@ -10,6 +10,7 @@ type Payload = {
 	title: string;
 	description?: string;
 	reminders: CalendarEventReminder[];
+	repeatUntil?: string;
 
 	frequency: CalendarEventFrequency;
 

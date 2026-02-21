@@ -25,6 +25,7 @@ export const CreateCalendarEventModal = (props: Props) => {
 		start,
 		end,
 		frequency,
+		repeatUntil,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -43,11 +44,11 @@ export const CreateCalendarEventModal = (props: Props) => {
 		onAddReminder,
 		onRemoveReminder,
 		onChangeFrequency,
+		onChangeRepeatUntil,
 
 		onCreateCalendarEvent,
 
 		getReminderOffset,
-		parseDateValue,
 	} = useCreateCalendarEventForm({ defaultValues, onSuccess });
 
 	return (
@@ -65,6 +66,7 @@ export const CreateCalendarEventModal = (props: Props) => {
 					start={start}
 					end={end}
 					frequency={frequency}
+					repeatUntil={repeatUntil}
 					//
 					reminderFields={reminderFields}
 					isSpaceHasTelegramChats={isSpaceHasTelegramChats}
@@ -83,9 +85,9 @@ export const CreateCalendarEventModal = (props: Props) => {
 					onChangeStart={onChangeStart}
 					onChangeEnd={onChangeEnd}
 					onChangeFrequency={onChangeFrequency}
+					onChangeRepeatUntil={onChangeRepeatUntil}
 					//
 					getReminderOffset={getReminderOffset}
-					parseDateValue={parseDateValue}
 				/>
 			</ModalContent>
 		</Modal>

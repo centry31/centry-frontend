@@ -28,6 +28,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		start,
 		end,
 		frequency,
+		repeatUntil,
 
 		reminderFields,
 		isRemindersActive,
@@ -42,12 +43,12 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		onAddReminder,
 		onRemoveReminder,
 		onChangeFrequency,
+		onChangeRepeatUntil,
 
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
-		parseDateValue,
 	} = useChangeCalendarEventForm({ eventId, eventOrderIndex, defaultValues, onSuccess });
 
 	return (
@@ -60,6 +61,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					start={start}
 					end={end}
 					frequency={frequency}
+					initialFrequency={defaultValues.frequency}
+					repeatUntil={repeatUntil}
 					//
 					reminderFields={reminderFields}
 					isRemindersActive={isRemindersActive}
@@ -74,12 +77,12 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					onAddReminder={onAddReminder}
 					onRemoveReminder={onRemoveReminder}
 					onChangeFrequency={onChangeFrequency}
+					onChangeRepeatUntil={onChangeRepeatUntil}
 					//
 					onUpdateCalendarEvent={onUpdateCalendarEvent}
 					onDeleteCalendarEvent={onDeleteCalendarEvent}
 					//
 					getReminderOffset={getReminderOffset}
-					parseDateValue={parseDateValue}
 				/>
 			</ModalContent>
 		</Modal>

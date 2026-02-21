@@ -2,23 +2,10 @@ import { Button, DatePicker, Input, Select, SelectItem, Switch, Textarea } from 
 import type { ZonedDateTime } from '@internationalized/date';
 
 import type { CalendarEventFrequency } from 'entities/CalendarEvent';
+import { FREQUENCY_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
 
-import { formatMinutesOffset } from 'shared/lib';
+import { formatMinutesOffset, safeParseAbsoluteToLocal } from 'shared/lib';
 
-const REMINDERS_PRESETS = [1, 5, 15, 30, 60, 1440];
-
-const FREQUENCY_PRESETS: FrequencySelectItem[] = [
-	{ key: 'NEVER', label: 'Никогда' },
-	{ key: 'DAILY', label: 'Каждый день' },
-	{ key: 'WEEKLY', label: 'Каждую неделю' },
-	{ key: 'DOUBLE_WEEKLY', label: 'Каждые 2 недели' },
-	{ key: 'MONTHLY', label: 'Каждый месяц' },
-];
-
-type FrequencySelectItem = {
-	key: CalendarEventFrequency;
-	label: string;
-};
 type ReminderField = {
 	id: string;
 	offsetMinutes: number;
@@ -30,6 +17,7 @@ type Props = {
 
 	start: string;
 	end: string;
+	repeatUntil?: string;
 	frequency: CalendarEventFrequency;
 
 	reminderFields: ReminderField[];
@@ -49,11 +37,10 @@ type Props = {
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
 	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
+	onChangeRepeatUntil: (value?: ZonedDateTime | null) => void;
 
 	onCreateCalendarEvent: () => void;
-
 	getReminderOffset: (index: number) => number;
-	parseDateValue: (value: string) => ZonedDateTime | null;
 };
 
 export const CreateCalendarEventForm = (props: Props) => {
@@ -64,6 +51,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 		start,
 		end,
 		frequency,
+		repeatUntil,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -82,11 +70,10 @@ export const CreateCalendarEventForm = (props: Props) => {
 		onAddReminder,
 		onRemoveReminder,
 		onChangeFrequency,
+		onChangeRepeatUntil,
 
 		onCreateCalendarEvent,
-
 		getReminderOffset,
-		parseDateValue,
 	} = props;
 
 	return (
@@ -107,13 +94,13 @@ export const CreateCalendarEventForm = (props: Props) => {
 
 				<DatePicker
 					label="Начало"
-					value={parseDateValue(start)}
+					value={safeParseAbsoluteToLocal(start)}
 					onChange={onChangeStart}
 					hideTimeZone
 				/>
 				<DatePicker
 					label="Конец"
-					value={parseDateValue(end)}
+					value={safeParseAbsoluteToLocal(end)}
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
@@ -122,13 +109,23 @@ export const CreateCalendarEventForm = (props: Props) => {
 					label="Повторять через"
 					placeholder="Выберите установку"
 					selectedKeys={[frequency]}
-					// @ts-expect-error иди нахуй
-					onChange={(event) => onChangeFrequency(event.target.value)}
+					onChange={(event) =>
+						onChangeFrequency(event.target.value as CalendarEventFrequency)
+					}
 				>
 					{FREQUENCY_PRESETS.map((frequency) => (
 						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
 					))}
 				</Select>
+				{frequency !== 'NEVER' && (
+					<DatePicker
+						label="Повторять до"
+						granularity="minute"
+						value={safeParseAbsoluteToLocal(repeatUntil)}
+						onChange={onChangeRepeatUntil}
+						hideTimeZone
+					/>
+				)}
 
 				{!isSpaceHasTelegramChats && (
 					<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
