@@ -9,7 +9,7 @@ import type { UpdateCalendarEvent } from 'entities/CalendarEvent';
 
 type Props = {
 	eventId: string;
-	eventOrderIndex: number;
+	occurrenceStart: string;
 
 	defaultValues: UpdateCalendarEvent;
 	onSuccess: () => void;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const ChangeCalendarEventModal = (props: Props) => {
-	const { isOpen, onOpenChange, defaultValues, eventId, eventOrderIndex, onSuccess } = props;
+	const { isOpen, onOpenChange, defaultValues, eventId, occurrenceStart, onSuccess } = props;
 
 	const {
 		title,
@@ -27,8 +27,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 		start,
 		end,
-		frequency,
-		repeatUntil,
+		recurrenceType,
+		recurrenceUntil,
 
 		reminderFields,
 		isRemindersActive,
@@ -42,14 +42,14 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onChangeFrequency,
-		onChangeRepeatUntil,
+		onChangeRecurrenceType,
+		onChangeRecurrenceUntil,
 
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
-	} = useChangeCalendarEventForm({ eventId, eventOrderIndex, defaultValues, onSuccess });
+	} = useChangeCalendarEventForm({ eventId, occurrenceStart, defaultValues, onSuccess });
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
@@ -60,9 +60,9 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					//
 					start={start}
 					end={end}
-					frequency={frequency}
-					initialFrequency={defaultValues.frequency}
-					repeatUntil={repeatUntil}
+					recurrenceType={recurrenceType}
+					initialRecurrenceType={defaultValues.recurrence.type}
+					recurrenceUntil={recurrenceUntil}
 					//
 					reminderFields={reminderFields}
 					isRemindersActive={isRemindersActive}
@@ -76,8 +76,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					onChangeEnd={onChangeEnd}
 					onAddReminder={onAddReminder}
 					onRemoveReminder={onRemoveReminder}
-					onChangeFrequency={onChangeFrequency}
-					onChangeRepeatUntil={onChangeRepeatUntil}
+					onChangeRecurrenceType={onChangeRecurrenceType}
+					onChangeRecurrenceUntil={onChangeRecurrenceUntil}
 					//
 					onUpdateCalendarEvent={onUpdateCalendarEvent}
 					onDeleteCalendarEvent={onDeleteCalendarEvent}

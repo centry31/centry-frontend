@@ -38,15 +38,23 @@ export const useChangeCalendarEvent = (props: Props) => {
 
 	const handleUpdateOneEvent = useCallback(async () => {
 		if (!updatedEvent) return;
-		await updateEvent({ ...updatedEvent, updateType: 'ONE' });
+		await updateEvent({
+			...updatedEvent,
+			scope: updatedEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
+			eventId: updatedEvent.eventId,
+		});
 		onUpdateSuccess();
-	}, [onCloseConfirm, onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
+	}, [onUpdateSuccess, updateEvent, updatedEvent]);
 
 	const handleUpdateFeatureEvents = useCallback(async () => {
 		if (!updatedEvent) return;
-		await updateEvent({ ...updatedEvent, updateType: 'FUTURE' });
+		await updateEvent({
+			...updatedEvent,
+			scope: 'THIS_AND_FUTURE',
+			eventId: updatedEvent.eventId,
+		});
 		onUpdateSuccess();
-	}, [onCloseConfirm, onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
+	}, [onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
 
 	const handleChangeEvent = useCallback(
 		(arg: EventChangeArg) => {
@@ -58,19 +66,20 @@ export const useChangeCalendarEvent = (props: Props) => {
 			const duration = getEventDurationFromStartAndEnd(start, end);
 
 			const calendarEvent: CalendarEvent = {
-				id: ext.eventId,
-				orderIndex: event.extendedProps.orderIndex,
+				eventId: ext.eventId,
+				occurrenceStart: ext.occurrenceStart,
 				start,
 				duration,
 				title: event.title,
 				description: ext.description,
+				timeZone: ext.timeZone,
+				recurrence: ext.recurrence,
 				reminders: ext.reminders,
-				frequency: ext.frequency,
 			};
 			setUpdatedEvent(calendarEvent);
 			setRevertChange(() => arg.revert);
 
-			if (calendarEvent.frequency === 'NEVER') {
+			if (calendarEvent.recurrence.type === 'NONE') {
 				handleUpdateOneEvent();
 				return;
 			}

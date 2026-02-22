@@ -1,61 +1,73 @@
 type CalendarEventReminder = {
 	offsetMinutes: number;
 };
-type CalendarEventFrequency = 'NEVER' | 'DAILY' | 'WEEKLY' | 'DOUBLE_WEEKLY' | 'MONTHLY';
+type CalendarEventRecurrenceType =
+	| 'NONE'
+	| 'DAILY'
+	| 'WEEKLY'
+	| 'DOUBLE_WEEKLY'
+	| 'MONTHLY';
+
+type CalendarEventRecurrence = {
+	type: CalendarEventRecurrenceType;
+	until?: string;
+};
 
 type CalendarEvent = {
-	id: string;
-	orderIndex: number;
+	eventId: string;
+	occurrenceStart: string;
 
 	start: string;
 	duration: number;
-	repeatUntil?: string;
+	timeZone: string;
+	recurrence: CalendarEventRecurrence;
 
 	title: string;
-	description?: string;
+	description?: string | null;
 
 	reminders: CalendarEventReminder[];
-	frequency: CalendarEventFrequency;
 };
 
 type CreateCalendarEvent = {
 	start: string;
 	end: string;
-	repeatUntil?: string;
+	timeZone: string;
+	recurrence: CalendarEventRecurrence;
 
 	title: string;
-	description?: string;
+	description?: string | null;
 
 	reminders: CalendarEventReminder[];
-	frequency: CalendarEventFrequency;
 
 	isNotifyMessage?: boolean;
 	notifyMessage?: string;
 };
 
-type UpdateCalendarEventType = 'ONE' | 'FUTURE';
-type FrequencySelectItem = {
-	key: CalendarEventFrequency;
+type CalendarEventScope = 'SERIES' | 'THIS' | 'THIS_AND_FUTURE';
+
+type RecurrenceSelectItem = {
+	key: CalendarEventRecurrenceType;
 	label: string;
 };
 type UpdateCalendarEvent = {
 	start: string;
 	end: string;
-	repeatUntil?: string;
+	timeZone: string;
+	recurrence: CalendarEventRecurrence;
 
 	title: string;
-	description?: string;
+	description?: string | null;
 
 	reminders: CalendarEventReminder[];
-	frequency: CalendarEventFrequency;
 };
 
 export {
 	CalendarEvent,
-	CalendarEventFrequency,
+	CalendarEventRecurrence,
+	CalendarEventRecurrenceType,
 	CalendarEventReminder,
+	CalendarEventScope,
 	CreateCalendarEvent,
-	FrequencySelectItem,
+	RecurrenceSelectItem,
 	UpdateCalendarEvent,
-	UpdateCalendarEventType,
 };

@@ -3,33 +3,32 @@ import type { ApiResponse } from 'shared/types';
 
 import type {
 	CalendarEvent,
-	CalendarEventFrequency,
+	CalendarEventRecurrence,
 	CalendarEventReminder,
-	UpdateCalendarEventType,
+	CalendarEventScope,
 } from '../model/types';
 
 type Props = {
-	id: string;
-	orderIndex: number;
+	eventId: string;
+	scope: CalendarEventScope;
+	occurrenceStart?: string;
 
 	start: string;
-	originalStart?: string;
 	duration: number;
+	timeZone: string;
+	recurrence: CalendarEventRecurrence;
 
 	title: string;
-	description?: string;
+	description?: string | null;
 
 	reminders: CalendarEventReminder[];
-	frequency: CalendarEventFrequency;
-
-	updateType: UpdateCalendarEventType;
 };
 
 export const useUpdateCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
-		const { id, ...payload } = props;
+		const { eventId, ...payload } = props;
 		const response = await axiosInstance.patch<ApiResponse<CalendarEvent>>(
-			`/events/${id}`,
+			`/events/${eventId}`,
 			payload,
 		);
 		return response.data.data;

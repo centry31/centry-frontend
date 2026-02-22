@@ -87,8 +87,8 @@ export const CalendarPage = () => {
 				<ChangeCalendarEventModal
 					isOpen={isEditOpen}
 					onOpenChange={onEditOpenChange}
-					eventId={formModals.editDefaults.id}
-					eventOrderIndex={formModals.eventDetails.orderIndex}
+					eventId={formModals.editDefaults.eventId}
+					occurrenceStart={formModals.editDefaults.occurrenceStart}
 					defaultValues={formModals.editDefaults}
 					onSuccess={onEditOpenChange}
 				/>

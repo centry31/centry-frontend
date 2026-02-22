@@ -1,18 +1,21 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 import type { ApiResponse } from 'shared/types';
 
-import type { CalendarEvent, CalendarEventFrequency, CalendarEventReminder } from '../model/types';
+import type {
+	CalendarEvent,
+	CalendarEventRecurrence,
+	CalendarEventReminder,
+} from '../model/types';
 
 type Payload = {
 	start: string;
 	duration: number;
+	timeZone: string;
+	recurrence: CalendarEventRecurrence;
 
 	title: string;
-	description?: string;
+	description?: string | null;
 	reminders: CalendarEventReminder[];
-	repeatUntil?: string;
-
-	frequency: CalendarEventFrequency;
 
 	isNotifyMessage?: boolean;
 	notifyMessage?: string;
