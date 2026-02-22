@@ -9,7 +9,7 @@ import { CurrentSpaceIdController, getEventEndFromStartAndDuration } from 'share
 
 const prepareEvents = (events: CalendarEvent[]) => {
 	return events.map((event) => {
-		const id = `${event.id}.${event.orderIndex}`;
+		const id = `${event.eventId}:${event.occurrenceStart}`;
 		const fullCalendarEvent: EventInput = {
 			id,
 			title: event.title,
@@ -19,13 +19,13 @@ const prepareEvents = (events: CalendarEvent[]) => {
 
 			// TODO: типизировать
 			extendedProps: {
-				eventId: event.id,
+				eventId: event.eventId,
+				occurrenceStart: event.occurrenceStart,
 				description: event.description,
 				duration: event.duration,
 				reminders: event.reminders,
-				frequency: event.frequency,
-				repeatUntil: event.repeatUntil,
-				orderIndex: event.orderIndex,
+				recurrence: event.recurrence,
+				timeZone: event.timeZone,
 			},
 		};
 		return fullCalendarEvent;

@@ -3,13 +3,14 @@ import { useController, useFieldArray, useForm } from 'react-hook-form';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import { useCalendarViewStore } from 'entities/Calendar';
-import type { CalendarEventFrequency, CreateCalendarEvent } from 'entities/CalendarEvent';
+import type { CalendarEventRecurrenceType, CreateCalendarEvent } from 'entities/CalendarEvent';
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
 import { CurrentSpaceIdController, getEventDurationFromStartAndEnd } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
+const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
 type Props = {
 	defaultValues: CreateCalendarEvent;
@@ -44,11 +45,14 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
 	const {
-		field: { value: frequency, onChange: onChangeFrequency },
-	} = useController({ control, name: 'frequency', defaultValue: 'NEVER' });
+		field: { value: recurrenceType, onChange: onChangeRecurrenceType },
+	} = useController({ control, name: 'recurrence.type', defaultValue: 'NONE' });
 	const {
-		field: { value: repeatUntil, onChange: onChangeRepeatUntil },
-	} = useController({ control, name: 'repeatUntil' });
+		field: { value: recurrenceUntil, onChange: onChangeRecurrenceUntil },
+	} = useController({ control, name: 'recurrence.until' });
+	const {
+		field: { value: timeZone },
+	} = useController({ control, name: 'timeZone', defaultValue: DEFAULT_TIME_ZONE });
 
 	const {
 		field: { value: isNotifyMessage, onChange: onToggleIsNotifyMessage },
@@ -124,19 +128,25 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		[onChangeNotifyMessage],
 	);
 
-	const handleChangeFrequency = useCallback(
-		(frequency: CalendarEventFrequency) => {
-			onChangeFrequency(frequency);
+	const handleChangeRecurrenceType = useCallback(
+		(type: CalendarEventRecurrenceType) => {
+			onChangeRecurrenceType(type);
+			if (type === 'NONE') {
+				onChangeRecurrenceUntil(undefined);
+			}
 		},
-		[onChangeFrequency],
+		[onChangeRecurrenceType, onChangeRecurrenceUntil],
 	);
 
-	const handleChangeRepeatUntil = useCallback(
+	const handleChangeRecurrenceUntil = useCallback(
 		(zdt?: ZonedDateTime | null) => {
-			if (!zdt) return;
-			onChangeRepeatUntil(zdt.toAbsoluteString());
+			if (!zdt) {
+				onChangeRecurrenceUntil(undefined);
+				return;
+			}
+			onChangeRecurrenceUntil(zdt.toAbsoluteString());
 		},
-		[onChangeRepeatUntil],
+		[onChangeRecurrenceUntil],
 	);
 
 	const handleCreateCalendarEvent = useCallback(async () => {
@@ -148,8 +158,11 @@ export const useCreateCalendarEventForm = (props: Props) => {
 
 			start,
 			duration: durationMinutes,
-			frequency,
-			repeatUntil,
+			timeZone: timeZone || DEFAULT_TIME_ZONE,
+			recurrence: {
+				type: recurrenceType || 'NONE',
+				until: recurrenceUntil,
+			},
 
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
 
@@ -158,22 +171,21 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		});
 		if (!createdEvent) return;
 
-		mutateCalendarEvents((events) => {
-			if (!events) return;
-			return [...events, createdEvent];
-		});
+		mutateCalendarEvents();
 		onSuccess?.();
 	}, [
 		createCalendarEvent,
 		description,
 		end,
-		frequency,
 		isNotifyMessage,
 		mutateCalendarEvents,
 		notifyMessage,
 		onSuccess,
+		recurrenceType,
+		recurrenceUntil,
 		reminderFields,
 		start,
+		timeZone,
 		title,
 	]);
 
@@ -183,8 +195,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 
 		start,
 		end,
-		frequency,
-		repeatUntil,
+		recurrenceType,
+		recurrenceUntil,
 
 		reminderFields,
 		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
@@ -203,8 +215,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		onAddReminder: handleAddReminder,
 		onRemoveReminder: handleRemoveReminder,
 		onCreateCalendarEvent: handleCreateCalendarEvent,
-		onChangeFrequency: handleChangeFrequency,
-		onChangeRepeatUntil: handleChangeRepeatUntil,
+		onChangeRecurrenceType: handleChangeRecurrenceType,
+		onChangeRecurrenceUntil: handleChangeRecurrenceUntil,
 
 		getReminderOffset: (index: number) => getValues(`reminders.${index}.offsetMinutes`),
 	};

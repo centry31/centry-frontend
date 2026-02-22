@@ -1,7 +1,7 @@
 import { FileText } from 'lucide-react';
 
 type Props = {
-	description?: string;
+	description?: string | null;
 };
 
 export const EventDescription = (props: Props) => {

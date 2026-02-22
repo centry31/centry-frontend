@@ -1,12 +1,8 @@
 import { Button, DatePicker, Input, Select, SelectItem } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import {
-	type CalendarEventFrequency,
-	FREQUENCY_PRESETS,
-	REMINDERS_PRESETS,
-	type UpdateCalendarEventType,
-} from 'entities/CalendarEvent';
+import type { CalendarEventRecurrenceType, CalendarEventScope } from 'entities/CalendarEvent';
+import { RECURRENCE_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
 
 import { formatMinutesOffset, safeParseAbsoluteToLocal } from 'shared/lib';
 
@@ -21,9 +17,9 @@ type Props = {
 
 	start: string;
 	end: string;
-	frequency: CalendarEventFrequency;
-	initialFrequency: CalendarEventFrequency;
-	repeatUntil?: string;
+	recurrenceType: CalendarEventRecurrenceType;
+	initialRecurrenceType: CalendarEventRecurrenceType;
+	recurrenceUntil?: string;
 
 	reminderFields: ReminderField[];
 	isRemindersActive: boolean;
@@ -37,11 +33,11 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
-	onChangeFrequency: (frequency: CalendarEventFrequency) => void;
-	onChangeRepeatUntil: (value?: ZonedDateTime | null) => void;
+	onChangeRecurrenceType: (type: CalendarEventRecurrenceType) => void;
+	onChangeRecurrenceUntil: (value?: ZonedDateTime | null) => void;
 
-	onUpdateCalendarEvent: (updateType: UpdateCalendarEventType) => void;
-	onDeleteCalendarEvent: () => void;
+	onUpdateCalendarEvent: (scope: CalendarEventScope) => void;
+	onDeleteCalendarEvent: (scope: CalendarEventScope) => void;
 
 	getReminderOffset: (index: number) => number;
 };
@@ -55,9 +51,9 @@ export const ChangeCalendarEventForm = (props: Props) => {
 
 		reminderFields,
 		isRemindersActive,
-		frequency,
-		initialFrequency,
-		repeatUntil,
+		recurrenceType,
+		initialRecurrenceType,
+		recurrenceUntil,
 
 		isUpdating,
 		isDeleting,
@@ -68,8 +64,8 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onChangeFrequency,
-		onChangeRepeatUntil,
+		onChangeRecurrenceType,
+		onChangeRecurrenceUntil,
 
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
@@ -77,8 +73,12 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		getReminderOffset,
 	} = props;
 
-	const handleUpdateOneCalendarEvent = () => onUpdateCalendarEvent('ONE');
-	const handleUpdateFutureCalendarEvent = () => onUpdateCalendarEvent('FUTURE');
+	const handleUpdateOneCalendarEvent = () => onUpdateCalendarEvent('THIS');
+	const handleUpdateFutureCalendarEvent = () => onUpdateCalendarEvent('THIS_AND_FUTURE');
+	const handleUpdateSeriesCalendarEvent = () => onUpdateCalendarEvent('SERIES');
+
+	const handleDeleteOneCalendarEvent = () => onDeleteCalendarEvent('THIS');
+	const handleDeleteSeriesCalendarEvent = () => onDeleteCalendarEvent('SERIES');
 
 	return (
 		<div className={'p-4'}>
@@ -112,21 +112,21 @@ export const ChangeCalendarEventForm = (props: Props) => {
 				<Select
 					label="Повторять через"
 					placeholder="Выберите установку"
-					selectedKeys={[frequency]}
+					selectedKeys={[recurrenceType]}
 					onChange={(event) =>
-						onChangeFrequency(event.target.value as CalendarEventFrequency)
+						onChangeRecurrenceType(event.target.value as CalendarEventRecurrenceType)
 					}
 				>
-					{FREQUENCY_PRESETS.map((frequency) => (
-						<SelectItem key={frequency.key}>{frequency.label}</SelectItem>
+					{RECURRENCE_PRESETS.map((preset) => (
+						<SelectItem key={preset.key}>{preset.label}</SelectItem>
 					))}
 				</Select>
-				{frequency !== 'NEVER' && (
+				{recurrenceType !== 'NONE' && (
 					<DatePicker
 						label="Повторять до"
 						granularity="minute"
-						value={safeParseAbsoluteToLocal(repeatUntil)}
-						onChange={onChangeRepeatUntil}
+						value={safeParseAbsoluteToLocal(recurrenceUntil)}
+						onChange={onChangeRecurrenceUntil}
 						hideTimeZone
 					/>
 				)}
@@ -177,10 +177,10 @@ export const ChangeCalendarEventForm = (props: Props) => {
 			</div>
 
 			<div className="mt-6 flex flex-col gap-2">
-				{initialFrequency === 'NEVER' && (
+				{initialRecurrenceType === 'NONE' && (
 					<Button
 						color="primary"
-						onPress={handleUpdateOneCalendarEvent}
+						onPress={handleUpdateSeriesCalendarEvent}
 						isLoading={isUpdating}
 						disabled={isUpdating}
 					>
@@ -188,7 +188,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					</Button>
 				)}
 
-				{initialFrequency !== 'NEVER' && (
+				{initialRecurrenceType !== 'NONE' && (
 					<>
 						<Button
 							color="primary"
@@ -210,14 +210,38 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					</>
 				)}
 
-				<Button
-					color="danger"
-					onPress={onDeleteCalendarEvent}
-					isLoading={isDeleting}
-					disabled={isDeleting}
-				>
-					Удалить
-				</Button>
+				{initialRecurrenceType === 'NONE' && (
+					<Button
+						color="danger"
+						onPress={handleDeleteSeriesCalendarEvent}
+						isLoading={isDeleting}
+						disabled={isDeleting}
+					>
+						Удалить
+					</Button>
+				)}
+
+				{initialRecurrenceType !== 'NONE' && (
+					<>
+						<Button
+							color="danger"
+							variant="flat"
+							onPress={handleDeleteOneCalendarEvent}
+							isLoading={isDeleting}
+							disabled={isDeleting}
+						>
+							Удалить только текущее событие
+						</Button>
+						<Button
+							color="danger"
+							onPress={handleDeleteSeriesCalendarEvent}
+							isLoading={isDeleting}
+							disabled={isDeleting}
+						>
+							Удалить всю серию
+						</Button>
+					</>
+				)}
 			</div>
 		</div>
 	);
