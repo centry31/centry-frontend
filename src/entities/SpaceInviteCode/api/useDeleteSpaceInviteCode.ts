@@ -1,7 +1,4 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
-import type { ApiResponse } from 'shared/types';
-
-import type { SpaceInviteCode } from '../model/types';
 
 type Props = {
 	spaceId: string;
@@ -11,10 +8,8 @@ type Props = {
 export const useDeleteSpaceInviteCode = () => {
 	const fetcher = async (props: Props) => {
 		const { spaceId, code } = props;
-		const response = await axiosInstance.delete<ApiResponse<SpaceInviteCode>>(
-			`/space-invite-codes/${spaceId}/delete/${code}`,
-		);
-		return response.data.data;
+		await axiosInstance.delete(`/space-invite-codes/${spaceId}/delete/${code}`);
+		return true;
 	};
 
 	return useApiMutation(fetcher);

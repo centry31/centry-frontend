@@ -10,6 +10,8 @@ import {
 	useGetSpaceInviteCodes,
 } from 'entities/SpaceInviteCode';
 
+import { notifySuccess } from 'shared/lib';
+
 const DEFAULT_EXPIRES = addMinutes(new Date(), 15).toISOString();
 
 type Props = {
@@ -80,10 +82,10 @@ export const useCreateSpaceInviteCodeForm = (props: Props) => {
 	const handleCreateInviteLink = useCallback(async () => {
 		const formValues = form.getValues();
 		const spaceInviteCode = await createInviteCode({ ...formValues, spaceId });
-		if (!spaceInviteCode) return;
-
+		if (spaceInviteCode === undefined) return;
 		mutateSpaceCodes();
 		setCreatedCode(spaceInviteCode.code);
+		notifySuccess('Ссылка-приглашение создана');
 	}, [createInviteCode, form, mutateSpaceCodes, spaceId]);
 
 	return {

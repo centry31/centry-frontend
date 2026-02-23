@@ -4,6 +4,8 @@ import { useController, useForm } from 'react-hook-form';
 import type { ImportBmstuSchedule } from 'entities/Bmstu';
 import { useImportBmstuSchedule } from 'entities/Bmstu';
 
+import { notifySuccess } from 'shared/lib';
+
 type Props = {
 	spaceId: string;
 	onSuccess?: () => void;
@@ -27,7 +29,9 @@ export const useImportBmstuScheduleForm = (props: Props) => {
 	);
 
 	const handleImportBmstuSchedule = useCallback(async () => {
-		await importSchedule({ spaceId, groupId });
+		const result = await importSchedule({ spaceId, groupId });
+		if (result === undefined) return;
+		notifySuccess('Расписание успешно импортировано');
 		onSuccess?.();
 	}, [groupId, importSchedule, onSuccess, spaceId]);
 

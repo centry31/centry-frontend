@@ -5,7 +5,7 @@ import type { EventChangeArg } from '@fullcalendar/core';
 import type { CalendarEvent } from 'entities/CalendarEvent';
 import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarEvent';
 
-import { getEventDurationFromStartAndEnd } from 'shared/lib';
+import { getEventDurationFromStartAndEnd, notifySuccess } from 'shared/lib';
 
 type Props = {
 	start: Date;
@@ -41,24 +41,28 @@ export const useChangeCalendarEvent = (props: Props) => {
 
 	const handleUpdateOneEvent = useCallback(async () => {
 		if (!updatedEvent) return;
-		await updateEvent({
+		const result = await updateEvent({
 			...updatedEvent,
 			scope: updatedEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
 			spaceId,
 			eventId: updatedEvent.eventId,
 		});
+		if (result === undefined) return;
 		onUpdateSuccess();
+		notifySuccess('Событие обновлено');
 	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
 
 	const handleUpdateFeatureEvents = useCallback(async () => {
 		if (!updatedEvent) return;
-		await updateEvent({
+		const result = await updateEvent({
 			...updatedEvent,
 			scope: 'THIS_AND_FUTURE',
 			spaceId,
 			eventId: updatedEvent.eventId,
 		});
+		if (result === undefined) return;
 		onUpdateSuccess();
+		notifySuccess('Событие обновлено');
 	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
 
 	const handleChangeEvent = useCallback(
@@ -90,7 +94,12 @@ export const useChangeCalendarEvent = (props: Props) => {
 					scope: calendarEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
 					spaceId,
 					eventId: calendarEvent.eventId,
-				}).then(onUpdateSuccess);
+				})
+					.then((result) => {
+						if (result === undefined) return;
+						onUpdateSuccess();
+						notifySuccess('Событие обновлено');
+					});
 				return;
 			}
 			onOpenConfirm();

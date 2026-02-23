@@ -1,8 +1,6 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
-import type { ApiResponse } from 'shared/types';
 
 import type {
-	CalendarEvent,
 	CalendarEventRecurrence,
 	CalendarEventReminder,
 	CalendarEventScope,
@@ -29,11 +27,8 @@ type Props = {
 export const useUpdateCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
 		const { eventId, spaceId, ...payload } = props;
-		const response = await axiosInstance.patch<ApiResponse<CalendarEvent>>(
-			`/events/${spaceId}/${eventId}`,
-			payload,
-		);
-		return response.data.data;
+		await axiosInstance.patch(`/events/${spaceId}/${eventId}`, payload);
+		return true;
 	};
 
 	return useApiMutation(fetcher);

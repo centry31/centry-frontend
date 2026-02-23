@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMatch } from 'react-router';
-import { HeroUIProvider, Spinner } from '@heroui/react';
+import { HeroUIProvider, Spinner, ToastProvider } from '@heroui/react';
 
 import { NavbarAuth } from 'widgets/Auth/NavbarAuth';
 import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
@@ -34,6 +34,8 @@ const App = () => {
 	return (
 		<HeroUIProvider locale={'ru-RU'} className={'h-full'}>
 			<div className={'App'}>
+				<ToastProvider placement={'top-right'} />
+
 				{authData && <NavbarAuth />}
 				{!isWelcomePage && !authData && <NavbarGuest />}
 

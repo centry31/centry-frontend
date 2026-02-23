@@ -20,8 +20,8 @@ export const useLoginWithMagicLink = () => {
 
 		const accessToken = response.data.data;
 		localStorage.setItem(ACCESS_TOKEN_LOCALSTORAGE_KEY, accessToken);
-		return null;
+		return true;
 	};
 
-	return useApiMutation(fetcher, { rethrow: true });
+	return useApiMutation(fetcher);
 };
