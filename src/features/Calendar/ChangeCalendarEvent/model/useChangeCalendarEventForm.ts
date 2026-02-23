@@ -168,20 +168,21 @@ export const useChangeCalendarEventForm = (props: Props) => {
 			onSuccess?.();
 		},
 		[
-			description,
-			defaultValues.recurrence.type,
+			start,
 			end,
+			defaultValues.recurrence.type,
+			updateCalendarEvent,
+			spaceId,
 			eventId,
-			mutateCalendarEvents,
 			occurrenceStart,
-			onSuccess,
+			title,
+			description,
+			timeZone,
 			recurrenceType,
 			recurrenceUntil,
 			reminderFields,
-			start,
-			timeZone,
-			title,
-			updateCalendarEvent,
+			mutateCalendarEvents,
+			onSuccess,
 		],
 	);
 
@@ -205,6 +206,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 			mutateCalendarEvents,
 			occurrenceStart,
 			onSuccess,
+			spaceId,
 		],
 	);
 

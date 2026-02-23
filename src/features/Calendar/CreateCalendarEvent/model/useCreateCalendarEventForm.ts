@@ -187,6 +187,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		recurrenceType,
 		recurrenceUntil,
 		reminderFields,
+		spaceId,
 		start,
 		timeZone,
 		title,
