@@ -8,7 +8,7 @@ import { useGetSpaceMembers, useGetUserSpaces, useJoinSpaceWithInviteCode } from
 import { useGetSpaceInviteCodeInfo } from 'entities/SpaceInviteCode';
 
 import { RoutesPaths } from 'shared/configs';
-import { setLastSelectedSpaceId, useGetParamFromUrl } from 'shared/lib';
+import { notifySuccess, setLastSelectedSpaceId, useGetParamFromUrl } from 'shared/lib';
 
 // TODO: refactoring
 export const SpaceInviteCodeInfoCard = () => {
@@ -32,15 +32,19 @@ export const SpaceInviteCodeInfoCard = () => {
 
 	const handleJoin = async () => {
 		if (!code) return;
+		if (!spaceInfo) return;
 
-		const joinedSpace = await joinSpace({ code });
-		if (!joinedSpace) return;
+		const result = await joinSpace({ code });
+		if (result === undefined) return;
 
-		setLastSelectedSpaceId(joinedSpace.id);
+		setLastSelectedSpaceId(spaceInfo.id);
 		await mutateSpaces();
 		await mutateSpaceMembers();
 
-		const path = generatePath(RoutesPaths.spaceDetails, { spaceId: joinedSpace.id });
+		const path = generatePath(RoutesPaths.spaceDetails, {
+			spaceId: spaceInfo.id,
+		});
+		notifySuccess('Вы присоединились к пространству');
 		navigate(path);
 	};
 

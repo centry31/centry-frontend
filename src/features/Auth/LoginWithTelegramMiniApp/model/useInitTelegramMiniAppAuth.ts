@@ -1,8 +1,17 @@
 import { useLoginWithTelegramMiniApp, useUserStore } from 'entities/User';
 
+import { notifySuccess } from 'shared/lib';
+
 export const useInitTelegramMiniAppAuth = () => {
 	const { initAuthData } = useUserStore();
 	const { request: loginWithTelegramMiniApp } = useLoginWithTelegramMiniApp();
+
+	const handleLoginWithTelegramMiniApp = async (initData: string) => {
+		const result = await loginWithTelegramMiniApp({ initData });
+		if (result === undefined) return;
+		notifySuccess('Вход через Telegram выполнен');
+		initAuthData();
+	};
 
 	const initTelegramMiniApp = () => {
 		const tg = window.Telegram?.WebApp;
@@ -13,7 +22,7 @@ export const useInitTelegramMiniAppAuth = () => {
 			tg.expand();
 			tg.BackButton?.onClick(handleBackButton);
 			tg.BackButton?.show();
-			loginWithTelegramMiniApp({ initData: tg.initData }).then(() => initAuthData());
+			void handleLoginWithTelegramMiniApp(tg.initData);
 			tg?.requestFullsize?.();
 		} else {
 			initAuthData();

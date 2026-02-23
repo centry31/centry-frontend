@@ -12,6 +12,7 @@ export {
 	normalizeEventDurationMinutes,
 } from './getEventDurationFromStartAndEnd';
 export { getEventEndFromStartAndDuration } from './getEventEndFromStartAndDuration';
+export { notifyError, notifySuccess } from './notify';
 export { safeParseAbsoluteToLocal } from './safeParseAbsoluteToLocal';
 export {
 	clearLastSelectedSpaceId,

@@ -52,7 +52,12 @@ export const ChangeCalendarEventModal = (props: Props) => {
 	} = useChangeCalendarEventForm({ eventId, occurrenceStart, defaultValues, onSuccess });
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
+		<Modal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			shouldBlockScroll={false}
+			scrollBehavior={'outside'}
+		>
 			<ModalContent>
 				<ChangeCalendarEventForm
 					title={title}

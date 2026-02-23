@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
 import { useController, useForm } from 'react-hook-form';
-import { generatePath, useNavigate } from 'react-router-dom';
 
 import type { CreateSpace } from 'entities/Space';
 import { useCreateSpace, useGetUserSpaces } from 'entities/Space';
 
-import { RoutesPaths } from 'shared/configs';
-import { setLastSelectedSpaceId } from 'shared/lib';
+import { notifySuccess, setLastSelectedSpaceId } from 'shared/lib';
 
-export const useCreateSpaceForm = () => {
-	const navigate = useNavigate();
+type Props = {
+	onSuccess?: (createdSpaceId: string) => void;
+};
+
+export const useCreateSpaceForm = (props: Props = {}) => {
+	const { onSuccess } = props;
 
 	const { control, formState, handleSubmit } = useForm<CreateSpace>({
 		defaultValues: {
@@ -27,9 +29,7 @@ export const useCreateSpaceForm = () => {
 	} = useController({
 		control,
 		name: 'name',
-		rules: {
-			required: true,
-		},
+		rules: { required: true },
 	});
 
 	const {
@@ -56,17 +56,13 @@ export const useCreateSpaceForm = () => {
 	const handleCreateSpace = useCallback(() => {
 		return handleSubmit(async (values) => {
 			const createdSpace = await createSpace(values);
-			if (!createdSpace) return;
-
+			if (createdSpace === undefined) return;
 			setLastSelectedSpaceId(createdSpace.id);
 			await mutateSpaces();
-
-			const calendarPath = generatePath(RoutesPaths.calendar, {
-				spaceId: createdSpace.id,
-			});
-			navigate(calendarPath);
+			notifySuccess('Пространство создано');
+			onSuccess?.(createdSpace.id);
 		})();
-	}, [createSpace, handleSubmit, mutateSpaces, navigate]);
+	}, [createSpace, handleSubmit, mutateSpaces, onSuccess]);
 
 	const isSubmitDisabled = isLoading || !formState.isDirty || !formState.isValid;
 

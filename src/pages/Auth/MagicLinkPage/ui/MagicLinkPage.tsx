@@ -16,7 +16,7 @@ import { ArrowRight, Link as LinkIcon } from 'lucide-react';
 import { useLoginWithMagicLink } from 'entities/User';
 
 import { RoutesPaths } from 'shared/configs';
-import { useGetParamFromUrl } from 'shared/lib';
+import { notifySuccess, useGetParamFromUrl } from 'shared/lib';
 
 import { EmptyStateNoCode } from './EmptyStateNoCode';
 import { ErrorBlock } from './ErrorBlock';
@@ -54,8 +54,13 @@ export const MagicLinkPage = () => {
 	useEffect(() => {
 		if (!code) return;
 
-		loginWithMagicLink({ code }).then(handleRedirectAfterLogin);
-	}, [code]);
+		loginWithMagicLink({ code })
+			.then((result) => {
+				if (result === undefined) return;
+				notifySuccess('Вход выполнен');
+				handleRedirectAfterLogin();
+			});
+	}, [code, loginWithMagicLink]);
 
 	return (
 		<div className="m-auto h-full flex max-w-md items-center justify-center px-4 py-6">

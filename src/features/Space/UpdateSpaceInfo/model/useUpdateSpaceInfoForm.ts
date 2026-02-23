@@ -4,6 +4,8 @@ import { useController, useForm } from 'react-hook-form';
 import type { UpdateSpace } from 'entities/Space';
 import { useGetSpace, useUpdateSpaceInfo } from 'entities/Space';
 
+import { notifySuccess } from 'shared/lib';
+
 type Props = {
 	spaceId: string;
 	defaultValues?: UpdateSpace;
@@ -42,9 +44,10 @@ export const useUpdateSpaceInfoForm = (props: Props) => {
 	);
 
 	const handleUpdateSpaceInfo = useCallback(async () => {
-		const updatedSpace = await updateSpace({ spaceId, name, description });
-		if (!updatedSpace) return;
+		const result = await updateSpace({ spaceId, name, description });
+		if (result === undefined) return;
 		mutateSpace();
+		notifySuccess('Информация о пространстве обновлена');
 	}, [description, mutateSpace, name, spaceId, updateSpace]);
 
 	const handleResetForm = useCallback(() => {

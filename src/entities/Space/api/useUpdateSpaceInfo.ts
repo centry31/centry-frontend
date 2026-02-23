@@ -1,7 +1,4 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
-import type { ApiResponse } from 'shared/types';
-
-import type { Space } from '../model/types';
 
 type Props = {
 	spaceId: string;
@@ -12,11 +9,8 @@ type Props = {
 export const useUpdateSpaceInfo = () => {
 	const fetcher = async (props: Props) => {
 		const { spaceId, ...payload } = props;
-		const response = await axiosInstance.patch<ApiResponse<Space>>(
-			`/spaces/${spaceId}`,
-			payload,
-		);
-		return response.data.data;
+		await axiosInstance.patch(`/spaces/${spaceId}`, payload);
+		return true;
 	};
 
 	return useApiMutation(fetcher);

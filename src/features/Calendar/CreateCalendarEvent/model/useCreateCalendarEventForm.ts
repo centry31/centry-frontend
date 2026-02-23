@@ -8,7 +8,7 @@ import type { CalendarEventRecurrenceType, CreateCalendarEvent } from 'entities/
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { getEventDurationFromStartAndEnd } from 'shared/lib';
+import { getEventDurationFromStartAndEnd, notifySuccess } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -172,9 +172,9 @@ export const useCreateCalendarEventForm = (props: Props) => {
 			notifyMessage,
 			isNotifyMessage,
 		});
-		if (!createdEvent) return;
-
+		if (createdEvent === undefined) return;
 		mutateCalendarEvents();
+		notifySuccess('Событие создано');
 		onSuccess?.();
 	}, [
 		createCalendarEvent,
