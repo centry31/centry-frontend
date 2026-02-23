@@ -32,15 +32,17 @@ export const SpaceInviteCodeInfoCard = () => {
 
 	const handleJoin = async () => {
 		if (!code) return;
+		if (!spaceInfo) return;
 
-		const joinedSpace = await joinSpace({ code });
-		if (joinedSpace === undefined) return;
-		setLastSelectedSpaceId(joinedSpace.id);
+		const result = await joinSpace({ code });
+		if (result === undefined) return;
+
+		setLastSelectedSpaceId(spaceInfo.id);
 		await mutateSpaces();
 		await mutateSpaceMembers();
 
 		const path = generatePath(RoutesPaths.spaceDetails, {
-			spaceId: joinedSpace.id,
+			spaceId: spaceInfo.id,
 		});
 		notifySuccess('Вы присоединились к пространству');
 		navigate(path);
