@@ -85,12 +85,17 @@ export const useChangeCalendarEvent = (props: Props) => {
 			setRevertChange(() => arg.revert);
 
 			if (calendarEvent.recurrence.type === 'NONE') {
-				handleUpdateOneEvent();
+				updateEvent({
+					...calendarEvent,
+					scope: calendarEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
+					spaceId,
+					eventId: calendarEvent.eventId,
+				}).then(onUpdateSuccess);
 				return;
 			}
 			onOpenConfirm();
 		},
-		[handleUpdateOneEvent, onOpenConfirm],
+		[onOpenConfirm, onUpdateSuccess, spaceId, updateEvent],
 	);
 
 	const handleCancelChangeEvents = useCallback(() => {
