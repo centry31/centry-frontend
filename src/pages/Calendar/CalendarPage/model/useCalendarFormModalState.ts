@@ -84,12 +84,11 @@ export const useCalendarFormModalState = (props: Props) => {
 
 	const handleSelectSlot = useCallback(
 		(arg: DateSelectArg) => {
-			const end = getEventEndFromStartAndDuration(arg.startStr);
 			setCreateDefaults({
 				title: '',
 				description: '',
 				start: arg.startStr,
-				end,
+				end: arg.endStr,
 				timeZone: DEFAULT_TIME_ZONE,
 				recurrence: DEFAULT_RECURRENCE,
 				reminders: [],
