@@ -3,7 +3,6 @@
 import type { RouteProps } from 'react-router-dom';
 
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
-import { MagicLinkPage } from 'pages/Auth/MagicLinkPage';
 import { ImportBmstuScheduleHintPage } from 'pages/Bmstu/ImportBmstuScheduleHintPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
@@ -26,8 +25,10 @@ export type AppRoutesProps = RouteProps & {
 
 /** Конфигурация путей всего приложения */
 export enum Routes {
+	MAIN = 'main',
+
 	WELCOME = 'welcome',
-	MAGIC_LINK = 'magicLink',
+	// MAGIC_LINK = 'magicLink', // TODO: magic-links убраны на неопределенный срок
 	CALENDAR = 'calendar',
 	LOGIN_WITH_TELEGRAM = 'loginWithTelegram',
 
@@ -48,7 +49,9 @@ export enum Routes {
 }
 
 export type Path =
-	| '/auth/magic-link'
+	| '/'
+	//
+	// | '/auth/magic-link'
 	| '/calendar/:spaceId'
 	| '/login'
 	| '/welcome'
@@ -70,7 +73,9 @@ export type Path =
 	| '/spaces/bmstu/:spaceId/import-schedule-hint';
 
 export const RoutesPaths: Record<Routes, Path> = {
-	[Routes.MAGIC_LINK]: '/auth/magic-link',
+	[Routes.MAIN]: '/',
+
+	// [Routes.MAGIC_LINK]: '/auth/magic-link',
 	[Routes.CALENDAR]: '/calendar/:spaceId',
 	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
 	[Routes.WELCOME]: '/welcome',
@@ -96,10 +101,15 @@ export const RoutesPaths: Record<Routes, Path> = {
 };
 
 export const routerConfig: Record<Routes, AppRoutesProps> = {
-	[Routes.MAGIC_LINK]: {
-		path: RoutesPaths.magicLink,
-		element: <MagicLinkPage />,
+	[Routes.MAIN]: {
+		path: RoutesPaths.main,
+		element: <SpacesPage />,
 	},
+
+	// [Routes.MAGIC_LINK]: {
+	// 	path: RoutesPaths.magicLink,
+	// 	element: <MagicLinkPage />,
+	// },
 	[Routes.CALENDAR]: {
 		path: RoutesPaths.calendar,
 		element: <CalendarPage />,
