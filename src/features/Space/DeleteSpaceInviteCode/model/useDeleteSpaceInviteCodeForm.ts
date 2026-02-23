@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import { useDeleteSpaceInviteCode, useGetSpaceInviteCodes } from 'entities/SpaceInviteCode';
 
+import { notifySuccess } from 'shared/lib';
+
 type Props = {
 	spaceId: string;
 	code: string;
@@ -14,9 +16,10 @@ export const useDeleteSpaceInviteCodeForm = (props: Props) => {
 	const { request: deleteCode, isLoading } = useDeleteSpaceInviteCode();
 
 	const handleDeleteSpaceInviteCode = useCallback(async () => {
-		const deletedCode = await deleteCode({ spaceId, code });
-		if (!deletedCode) return;
+		const result = await deleteCode({ spaceId, code });
+		if (result === undefined) return;
 		mutateCodes();
+		notifySuccess('Код приглашения удален');
 	}, [code, deleteCode, mutateCodes, spaceId]);
 
 	return {

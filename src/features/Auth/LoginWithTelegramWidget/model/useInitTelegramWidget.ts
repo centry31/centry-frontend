@@ -5,14 +5,19 @@ import {
 	useUserStore,
 } from 'entities/User';
 
+import { notifySuccess } from 'shared/lib';
+
 import type { TelegramUserPayload } from './types';
 
 export const useInitTelegramWidget = () => {
 	const { initAuthData } = useUserStore();
 	const { request: loginWithTelegram } = useTelegramLoginWidgetApi();
 
-	const handleLogin = (userPayload: TelegramUserPayload) => {
-		loginWithTelegram(userPayload).then(initAuthData);
+	const handleLogin = async (userPayload: TelegramUserPayload) => {
+		const result = await loginWithTelegram(userPayload);
+		if (result === undefined) return;
+		notifySuccess('Вход через Telegram выполнен');
+		initAuthData();
 	};
 
 	const initTelegramWidget = (botName: string, containerRef: RefObject<HTMLDivElement>) => {

@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 import { useController, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 
 import type { CreateSpace } from 'entities/Space';
 import { useCreateSpace, useGetUserSpaces } from 'entities/Space';
 
-import { setLastSelectedSpaceId } from 'shared/lib';
+import { notifySuccess, setLastSelectedSpaceId } from 'shared/lib';
 
 type Props = {
 	onSuccess?: (createdSpaceId: string) => void;
@@ -57,11 +56,10 @@ export const useCreateSpaceForm = (props: Props = {}) => {
 	const handleCreateSpace = useCallback(() => {
 		return handleSubmit(async (values) => {
 			const createdSpace = await createSpace(values);
-			if (!createdSpace) return;
-
+			if (createdSpace === undefined) return;
 			setLastSelectedSpaceId(createdSpace.id);
 			await mutateSpaces();
-
+			notifySuccess('Пространство создано');
 			onSuccess?.(createdSpace.id);
 		})();
 	}, [createSpace, handleSubmit, mutateSpaces, onSuccess]);

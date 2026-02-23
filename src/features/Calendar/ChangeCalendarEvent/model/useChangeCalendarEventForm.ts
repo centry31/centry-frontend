@@ -16,7 +16,7 @@ import {
 } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { getEventDurationFromStartAndEnd } from 'shared/lib';
+import { getEventDurationFromStartAndEnd, notifySuccess } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -147,7 +147,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 			const durationMinutes = getEventDurationFromStartAndEnd(start, end);
 
 			const actualScope = defaultValues.recurrence.type === 'NONE' ? 'SERIES' : scope;
-			await updateCalendarEvent({
+			const result = await updateCalendarEvent({
 				spaceId,
 				eventId,
 				scope: actualScope,
@@ -163,8 +163,9 @@ export const useChangeCalendarEventForm = (props: Props) => {
 				},
 				reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
 			});
-
+			if (result === undefined) return;
 			mutateCalendarEvents();
+			notifySuccess('Событие обновлено');
 			onSuccess?.();
 		},
 		[
@@ -189,14 +190,15 @@ export const useChangeCalendarEventForm = (props: Props) => {
 	const handleDeleteCalendarEvent = useCallback(
 		async (scope: CalendarEventScope) => {
 			const actualScope = defaultValues.recurrence.type === 'NONE' ? 'SERIES' : scope;
-			await deleteCalendarEvent({
+			const result = await deleteCalendarEvent({
 				spaceId,
 				eventId,
 				scope: actualScope,
 				occurrenceStart: actualScope === 'THIS' ? occurrenceStart : undefined,
 			});
-
+			if (result === undefined) return;
 			mutateCalendarEvents();
+			notifySuccess('Событие удалено');
 			onSuccess?.();
 		},
 		[

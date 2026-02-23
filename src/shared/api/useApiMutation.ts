@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { getApiResponseErrorMessage } from '../lib';
+import { getApiResponseErrorMessage, notifyError } from '../lib';
 
 type RequestFn<TPayload, TResult> = (payload: TPayload) => Promise<TResult>;
 
@@ -30,6 +30,7 @@ export const useApiMutation = <TPayload, TResult>(
 					getApiResponseErrorMessage(requestError);
 
 				setError(errorMessage);
+				notifyError(errorMessage);
 				options?.onError?.(requestError);
 
 				if (!options?.onError) {

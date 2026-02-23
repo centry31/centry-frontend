@@ -9,8 +9,8 @@ export const useLeaveSpace = () => {
 	const fetcher = async (props: Props) => {
 		const { spaceId } = props;
 		await axiosInstance.delete<ApiResponse<null>>(`/space-members/leave/${spaceId}`);
-		return null;
+		return true;
 	};
 
-	return useApiMutation(fetcher, { rethrow: true });
+	return useApiMutation(fetcher);
 };
