@@ -25,7 +25,7 @@ export const UserSpacesList = () => {
 		);
 	if (!spaces?.length)
 		return (
-			<Card className="border border-neutral-200">
+			<Card className="border border-neutral-200 max-w-80 m-auto">
 				<CardBody className="flex items-center justify-between gap-4">
 					<div>
 						<h3 className="text-base font-medium">Пока пусто</h3>
