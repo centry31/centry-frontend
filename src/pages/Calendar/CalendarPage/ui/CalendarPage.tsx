@@ -134,6 +134,7 @@ export const CalendarPage = () => {
 						dayMaxEventRows={3}
 						// settings
 						selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
+						scrollTime={'09:00:00'}
 						editable={events.isEditable}
 						selectable={events.isEditable}
 						expandRows={true}

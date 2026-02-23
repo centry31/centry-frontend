@@ -61,10 +61,9 @@ export const useCalendarViewController = () => {
 
 	const handleDateChange = useCallback(
 		(value: DateValue) => {
-			if (isMobile) return;
 			calendarApi()?.gotoDate(value.toDate(getLocalTimeZone()));
 		},
-		[calendarApi, isMobile],
+		[calendarApi],
 	);
 
 	const dayHeaderContent = useCallback((arg: DayHeaderContentArg) => {
