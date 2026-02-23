@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { DatesSetArg, DayHeaderContentArg, SlotLabelContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import type { DateClickArg } from '@fullcalendar/interaction';
@@ -6,6 +6,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import type FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timeGrid';
+import type { DateValue } from '@internationalized/date';
+import { getLocalTimeZone } from '@internationalized/date';
 import classNames from 'classnames';
 
 import { getInitialDate, getInitialView, saveView, syncUrlParams } from 'shared/lib';
@@ -57,6 +59,13 @@ export const useCalendarViewController = () => {
 		[calendarApi, isMobile],
 	);
 
+	const handleDateChange = useCallback(
+		(value: DateValue) => {
+			calendarApi()?.gotoDate(value.toDate(getLocalTimeZone()));
+		},
+		[calendarApi],
+	);
+
 	const dayHeaderContent = useCallback((arg: DayHeaderContentArg) => {
 		const date: Date = arg.date;
 		const isToday = date.toDateString() === new Date().toDateString();
@@ -100,6 +109,7 @@ export const useCalendarViewController = () => {
 
 		currentStartDate,
 		currentEndDate,
+		isMobile,
 
 		onPrev: handlePrev,
 		onNext: handleNext,
@@ -107,6 +117,7 @@ export const useCalendarViewController = () => {
 		onChangeView: handleChangeView,
 		onDatesSet: handleDatesSet,
 		onDateClick: handleDateClick,
+		onDateChange: handleDateChange,
 		dayHeaderContent,
 		slotLabelContent,
 	};
