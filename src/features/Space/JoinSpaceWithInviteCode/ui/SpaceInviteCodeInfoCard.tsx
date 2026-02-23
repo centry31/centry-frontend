@@ -28,7 +28,7 @@ export const SpaceInviteCodeInfoCard = () => {
 	useEffect(() => {
 		if (!code) return;
 		getSpaceInfo({ code }).then((space) => setSpaceInfo(space));
-	}, [code, getSpaceInfo]);
+	}, [code]);
 
 	const handleJoin = async () => {
 		if (!code) return;
