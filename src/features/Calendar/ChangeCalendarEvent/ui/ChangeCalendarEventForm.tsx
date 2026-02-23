@@ -1,4 +1,4 @@
-import { Button, DatePicker, Input, Select, SelectItem } from '@heroui/react';
+import { Button, DatePicker, Input, Select, SelectItem, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import type { CalendarEventRecurrenceType, CalendarEventScope } from 'entities/CalendarEvent';
@@ -90,7 +90,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					value={title}
 					onChange={(event) => onChangeTitle(event.target.value)}
 				/>
-				<Input
+				<Textarea
 					label="Описание"
 					value={description}
 					onChange={(event) => onChangeDescription(event.target.value)}

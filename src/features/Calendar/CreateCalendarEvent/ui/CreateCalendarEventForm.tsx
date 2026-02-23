@@ -86,7 +86,7 @@ export const CreateCalendarEventForm = (props: Props) => {
 					value={title}
 					onChange={(event) => onChangeTitle(event.target.value)}
 				/>
-				<Input
+				<Textarea
 					label="Описание"
 					value={description}
 					onChange={(event) => onChangeDescription(event.target.value)}
