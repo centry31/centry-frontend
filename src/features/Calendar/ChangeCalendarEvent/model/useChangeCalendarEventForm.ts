@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useController, useFieldArray, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import { useCalendarViewStore } from 'entities/Calendar';
@@ -15,7 +16,7 @@ import {
 } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, getEventDurationFromStartAndEnd } from 'shared/lib';
+import { getEventDurationFromStartAndEnd } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -32,17 +33,17 @@ export const useChangeCalendarEventForm = (props: Props) => {
 
 	const { control, getValues } = useForm<UpdateCalendarEvent>({ defaultValues });
 
-	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
-
+	const { spaceId = '' } = useParams();
 	const { currentDate } = useCalendarViewStore();
 
 	const { mutate: mutateCalendarEvents } = useGetCalendarEvents({
+		spaceId,
 		start: currentDate.start,
 		end: currentDate.end,
 	});
 	const { request: updateCalendarEvent, isLoading: isUpdating } = useUpdateCalendarEvent();
 	const { request: deleteCalendarEvent, isLoading: isDeleting } = useDeleteCalendarEvent();
-	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
+	const { data: currentSpace } = useGetSpace({ spaceId });
 
 	const {
 		field: { value: title, onChange: onChangeTitle },
@@ -147,6 +148,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 
 			const actualScope = defaultValues.recurrence.type === 'NONE' ? 'SERIES' : scope;
 			await updateCalendarEvent({
+				spaceId,
 				eventId,
 				scope: actualScope,
 				occurrenceStart: actualScope === 'SERIES' ? undefined : occurrenceStart,
@@ -187,6 +189,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		async (scope: CalendarEventScope) => {
 			const actualScope = defaultValues.recurrence.type === 'NONE' ? 'SERIES' : scope;
 			await deleteCalendarEvent({
+				spaceId,
 				eventId,
 				scope: actualScope,
 				occurrenceStart: actualScope === 'THIS' ? occurrenceStart : undefined,

@@ -1,13 +1,11 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 import type { ApiResponse } from 'shared/types';
 
-import type {
-	CalendarEvent,
-	CalendarEventRecurrence,
-	CalendarEventReminder,
-} from '../model/types';
+import type { CalendarEvent, CalendarEventRecurrence, CalendarEventReminder } from '../model/types';
 
-type Payload = {
+type Props = {
+	spaceId: string;
+
 	start: string;
 	duration: number;
 	timeZone: string;
@@ -26,8 +24,12 @@ type Payload = {
  * Пространство выставляется с каждым запросом через cookie.
  * */
 export const useCreateCalendarEvent = () => {
-	const fetcher = async (payload: Payload) => {
-		const response = await axiosInstance.post<ApiResponse<CalendarEvent>>('/events', payload);
+	const fetcher = async (props: Props) => {
+		const { spaceId, ...payload } = props;
+		const response = await axiosInstance.post<ApiResponse<CalendarEvent>>(
+			`/events/${spaceId}`,
+			payload,
+		);
 		return response.data.data;
 	};
 

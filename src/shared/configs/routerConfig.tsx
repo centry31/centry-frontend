@@ -8,6 +8,7 @@ import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
 import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
+import { NoSpacesPage } from 'pages/Space/NoSpacesPage';
 import { SpaceDetailsPage } from 'pages/Space/SpaceDetailsPage';
 import { SpaceSettingsInviteCodesPage } from 'pages/Space/SpaceSettingsInviteCodesPage';
 import { SpaceSettingsListPage } from 'pages/Space/SpaceSettingsListPage';
@@ -18,6 +19,7 @@ import { SpacesPage } from 'pages/Space/SpacesPage';
 
 export type AppRoutesProps = RouteProps & {
 	authOnly?: boolean;
+	requireSpace?: boolean;
 };
 
 /** Конфигурация путей всего приложения */
@@ -37,11 +39,12 @@ export enum Routes {
 
 	CREATE_SPACE = 'createSpace',
 	JOIN_SPACE_WITH_INVITE_CODE = 'joinSpaceWithInviteCode',
+	NO_SPACES = 'noSpaces',
 }
 
 export type Path =
 	| '/auth/magic-link'
-	| '/calendar'
+	| '/calendar/:spaceId'
 	| '/login'
 	| '/welcome'
 	//
@@ -55,11 +58,12 @@ export type Path =
 	| '/spaces/details/:spaceId'
 	//
 	| '/spaces/create'
-	| '/spaces/join';
+	| '/spaces/join'
+	| '/spaces/no-spaces';
 
 export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.MAGIC_LINK]: '/auth/magic-link',
-	[Routes.CALENDAR]: '/calendar',
+	[Routes.CALENDAR]: '/calendar/:spaceId',
 	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
 	[Routes.WELCOME]: '/welcome',
 
@@ -74,6 +78,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 
 	[Routes.CREATE_SPACE]: '/spaces/create',
 	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: '/spaces/join',
+	[Routes.NO_SPACES]: '/spaces/no-spaces',
 	// // 404
 	// [Routes.NOT_FOUND]: '*',
 };
@@ -87,6 +92,7 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		path: RoutesPaths.calendar,
 		element: <CalendarPage />,
 		authOnly: true,
+		requireSpace: true,
 	},
 	[Routes.LOGIN_WITH_TELEGRAM]: {
 		path: RoutesPaths.loginWithTelegram,
@@ -142,6 +148,11 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: {
 		path: RoutesPaths.joinSpaceWithInviteCode,
 		element: <JoinSpaceInviteCodePage />,
+		authOnly: true,
+	},
+	[Routes.NO_SPACES]: {
+		path: RoutesPaths.noSpaces,
+		element: <NoSpacesPage />,
 		authOnly: true,
 	},
 	// [Routes.NOT_FOUND]: {

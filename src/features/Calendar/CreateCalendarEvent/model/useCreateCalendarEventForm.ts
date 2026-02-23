@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useController, useFieldArray, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import { useCalendarViewStore } from 'entities/Calendar';
@@ -7,7 +8,7 @@ import type { CalendarEventRecurrenceType, CreateCalendarEvent } from 'entities/
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
-import { CurrentSpaceIdController, getEventDurationFromStartAndEnd } from 'shared/lib';
+import { getEventDurationFromStartAndEnd } from 'shared/lib';
 
 const DEFAULT_TIME_ISO_VALUE = new Date().toISOString();
 const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -22,14 +23,15 @@ export const useCreateCalendarEventForm = (props: Props) => {
 
 	const { control, getValues } = useForm<CreateCalendarEvent>({ defaultValues });
 
-	const currentSpaceId = CurrentSpaceIdController.getCurrentSpaceId() || '';
+	const { spaceId = '' } = useParams();
 	const { currentDate } = useCalendarViewStore();
 
 	const { mutate: mutateCalendarEvents } = useGetCalendarEvents({
+		spaceId,
 		start: currentDate.start,
 		end: currentDate.end,
 	});
-	const { data: currentSpace } = useGetSpace({ spaceId: currentSpaceId });
+	const { data: currentSpace } = useGetSpace({ spaceId });
 	const { request: createCalendarEvent, isLoading: isCreating } = useCreateCalendarEvent();
 
 	const {
@@ -153,6 +155,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		const durationMinutes = getEventDurationFromStartAndEnd(start, end);
 
 		const createdEvent = await createCalendarEvent({
+			spaceId,
 			title,
 			description,
 

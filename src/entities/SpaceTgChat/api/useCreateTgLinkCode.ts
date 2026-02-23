@@ -1,15 +1,15 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 import type { ApiResponse } from 'shared/types';
 
-type Payload = {
+type Props = {
 	spaceId: string;
 };
 
 export const useCreateTgLinkCode = () => {
-	const fetcher = async (payload: Payload) => {
+	const fetcher = async (props: Props) => {
+		const { spaceId } = props;
 		const response = await axiosInstance.post<ApiResponse<string>>(
-			'/space-tg-chat-links/create',
-			payload,
+			`/space-tg-chat-links/${spaceId}/create`,
 		);
 		return response.data.data;
 	};

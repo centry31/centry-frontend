@@ -1,12 +1,12 @@
-type SpaceTgChatType = 'private' | 'group' | 'supergroup' | 'channel';
-
 type SpaceTgChat = {
 	id: string;
-	chatType: SpaceTgChatType;
-	chatTitle?: string;
-	messageThreadId?: number;
-	isActive: boolean;
-	createdAt: string; // ISO
+	spaceId: string;
+
+	title?: string;
+
+	isActive?: boolean;
+	createdAt?: string;
+	updatedAt?: string;
 };
 
 export { SpaceTgChat };

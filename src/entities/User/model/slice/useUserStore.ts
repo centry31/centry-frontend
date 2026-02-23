@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
 import { ACCESS_TOKEN_LOCALSTORAGE_KEY } from 'shared/const';
-import { CurrentSpaceIdController } from 'shared/lib';
 
 import { requestInitAuthData } from '../../api/requestInitAuthData';
 import type { User } from '../types/user';
@@ -25,17 +24,7 @@ export const useUserStore = create<Store>((set) => ({
 	initAuthData: async () => {
 		try {
 			const authData = await requestInitAuthData();
-
-			if (!authData) {
-				throw new Error('Что-то пошло не так...');
-			}
-
-			const savedSpaceId = CurrentSpaceIdController.getSavedSpaceId();
-
-			if (savedSpaceId) {
-				CurrentSpaceIdController.setCurrentSpaceId(savedSpaceId);
-			}
-
+			if (!authData) throw new Error('Что-то пошло не так...');
 			set({ authData });
 		} catch (error) {
 			// TODO: add notifications
@@ -46,9 +35,7 @@ export const useUserStore = create<Store>((set) => ({
 	},
 
 	logout: () => {
-		CurrentSpaceIdController.clearCurrentSpaceId();
 		localStorage.removeItem(ACCESS_TOKEN_LOCALSTORAGE_KEY);
-
 		set({ authData: undefined });
 	},
 }));

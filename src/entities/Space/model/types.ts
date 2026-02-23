@@ -1,6 +1,6 @@
 import type { User } from 'entities/User';
 
-type Access = 'owner' | 'member';
+type SpaceAccess = 'owner' | 'member';
 
 type Space = {
 	id: string;
@@ -8,7 +8,7 @@ type Space = {
 	description?: string;
 
 	hasTelegramChats?: boolean;
-	access?: Access;
+	access: SpaceAccess;
 
 	// TODO: add createdBy field (User)
 };
@@ -25,4 +25,4 @@ type UpdateSpace = {
 
 type SpaceMember = User;
 
-export { CreateSpace, Space, SpaceMember, UpdateSpace };
+export { CreateSpace, Space, SpaceAccess, SpaceMember, UpdateSpace };

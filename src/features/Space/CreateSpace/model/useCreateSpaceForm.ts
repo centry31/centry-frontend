@@ -1,10 +1,16 @@
 import { useCallback } from 'react';
 import { useController, useForm } from 'react-hook-form';
+import { generatePath, useNavigate } from 'react-router-dom';
 
 import type { CreateSpace } from 'entities/Space';
-import { useCreateSpace } from 'entities/Space';
+import { useCreateSpace, useGetUserSpaces } from 'entities/Space';
+
+import { RoutesPaths } from 'shared/configs';
+import { setLastSelectedSpaceId } from 'shared/lib';
 
 export const useCreateSpaceForm = () => {
+	const navigate = useNavigate();
+
 	const { control, formState, handleSubmit } = useForm<CreateSpace>({
 		defaultValues: {
 			name: '',
@@ -13,6 +19,7 @@ export const useCreateSpaceForm = () => {
 		mode: 'onChange',
 	});
 
+	const { mutate: mutateSpaces } = useGetUserSpaces();
 	const { request: createSpace, isLoading, error } = useCreateSpace();
 
 	const {
@@ -48,9 +55,18 @@ export const useCreateSpaceForm = () => {
 
 	const handleCreateSpace = useCallback(() => {
 		return handleSubmit(async (values) => {
-			await createSpace(values);
+			const createdSpace = await createSpace(values);
+			if (!createdSpace) return;
+
+			setLastSelectedSpaceId(createdSpace.id);
+			await mutateSpaces();
+
+			const calendarPath = generatePath(RoutesPaths.calendar, {
+				spaceId: createdSpace.id,
+			});
+			navigate(calendarPath);
 		})();
-	}, [createSpace, handleSubmit]);
+	}, [createSpace, handleSubmit, mutateSpaces, navigate]);
 
 	const isSubmitDisabled = isLoading || !formState.isDirty || !formState.isValid;
 

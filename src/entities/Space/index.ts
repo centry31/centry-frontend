@@ -6,4 +6,4 @@ export { useGetUserSpaces } from './api/useGetUserSpaces';
 export { useJoinSpaceWithInviteCode } from './api/useJoinSpaceWithInviteCode';
 export { useLeaveSpace } from './api/useLeaveSpace';
 export { useUpdateSpaceInfo } from './api/useUpdateSpaceInfo';
-export type { CreateSpace, Space, SpaceMember, UpdateSpace } from './model/types';
+export type { CreateSpace, Space, SpaceAccess, SpaceMember, UpdateSpace } from './model/types';

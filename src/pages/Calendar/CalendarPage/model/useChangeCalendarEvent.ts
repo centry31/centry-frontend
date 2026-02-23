@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import type { EventChangeArg } from '@fullcalendar/core';
 
 import type { CalendarEvent } from 'entities/CalendarEvent';
@@ -17,10 +18,12 @@ type Props = {
 export const useChangeCalendarEvent = (props: Props) => {
 	const { start, end, onOpenConfirm, onCloseConfirm } = props;
 
+	const { spaceId = '' } = useParams();
+
 	const [updatedEvent, setUpdatedEvent] = useState<CalendarEvent>();
 	const [revertChange, setRevertChange] = useState<(() => void) | undefined>();
 
-	const { mutate: mutateEvents } = useGetCalendarEvents({ start, end });
+	const { mutate: mutateEvents } = useGetCalendarEvents({ spaceId, start, end });
 	const { request: updateEvent, isLoading: isEventUpdating } = useUpdateCalendarEvent();
 
 	const onUpdateSuccess = useCallback(() => {
@@ -41,20 +44,22 @@ export const useChangeCalendarEvent = (props: Props) => {
 		await updateEvent({
 			...updatedEvent,
 			scope: updatedEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
+			spaceId,
 			eventId: updatedEvent.eventId,
 		});
 		onUpdateSuccess();
-	}, [onUpdateSuccess, updateEvent, updatedEvent]);
+	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
 
 	const handleUpdateFeatureEvents = useCallback(async () => {
 		if (!updatedEvent) return;
 		await updateEvent({
 			...updatedEvent,
 			scope: 'THIS_AND_FUTURE',
+			spaceId,
 			eventId: updatedEvent.eventId,
 		});
 		onUpdateSuccess();
-	}, [onUpdateSuccess, rollbackEventChange, updateEvent, updatedEvent]);
+	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
 
 	const handleChangeEvent = useCallback(
 		(arg: EventChangeArg) => {
