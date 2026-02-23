@@ -2,13 +2,15 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import FullCalendar from '@fullcalendar/react';
-import { Spinner, useDisclosure } from '@heroui/react';
+import { Calendar, Spinner, useDisclosure } from '@heroui/react';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
 import { useCalendarViewStore } from 'entities/Calendar';
 import { useGetSpace } from 'entities/Space';
+
+import { safeParseAbsoluteToLocal } from 'shared/lib';
 
 import { useCalendarEventsSync } from '../model/useCalendarEventsSync';
 import { useCalendarFormModalState } from '../model/useCalendarFormModalState';
@@ -117,39 +119,52 @@ export const CalendarPage = () => {
 				onCreateEvent={onCreateOpenChange}
 			/>
 
-			<FullCalendar
-				ref={view.calendarRef}
-				initialView={view.currentView}
-				initialDate={view.currentDate}
-				datesSet={view.onDatesSet}
-				events={events.events ?? []}
-				plugins={view.plugins}
-				//
-				locale={ruLocale}
-				firstDay={1}
-				dayMaxEventRows={3}
-				// settings
-				selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
-				editable={events.isEditable}
-				selectable={events.isEditable}
-				expandRows={true}
-				allDaySlot={false}
-				selectMirror={true}
-				headerToolbar={false}
-				// styles
-				height="100%"
-				themeSystem="standard"
-				slotLabelFormat={{ hour: '2-digit', minute: '2-digit' }}
-				eventClassNames={() => ['us-event']}
-				dayHeaderContent={view.dayHeaderContent}
-				slotLabelContent={view.slotLabelContent}
-				// handlers
-				select={formModals.onSelectSlot}
-				eventDrop={updateEvents.onChangeEvent}
-				eventResize={updateEvents.onChangeEvent}
-				eventClick={formModals.onClickEvent}
-				dateClick={view.onDateClick}
-			/>
+			<div className={'flex h-full gap-2 items-start'}>
+				<div className={'flex-1 h-full'}>
+					<FullCalendar
+						ref={view.calendarRef}
+						initialView={view.currentView}
+						initialDate={view.currentDate}
+						datesSet={view.onDatesSet}
+						events={events.events ?? []}
+						plugins={view.plugins}
+						//
+						locale={ruLocale}
+						firstDay={1}
+						dayMaxEventRows={3}
+						// settings
+						selectLongPressDelay={SELECT_LONG_PRESS_DELAY}
+						editable={events.isEditable}
+						selectable={events.isEditable}
+						expandRows={true}
+						allDaySlot={false}
+						selectMirror={true}
+						headerToolbar={false}
+						// styles
+						height="100%"
+						themeSystem="standard"
+						slotLabelFormat={{ hour: '2-digit', minute: '2-digit' }}
+						eventClassNames={() => ['us-event']}
+						dayHeaderContent={view.dayHeaderContent}
+						slotLabelContent={view.slotLabelContent}
+						// handlers
+						select={formModals.onSelectSlot}
+						eventDrop={updateEvents.onChangeEvent}
+						eventResize={updateEvents.onChangeEvent}
+						eventClick={formModals.onClickEvent}
+						dateClick={view.onDateClick}
+					/>
+				</div>
+
+				{!view.isMobile && view.currentView === 'timeGridDay' && (
+					<Calendar
+						classNames={{ base: 'border-none shadow-none' }}
+						className={'bg-white'}
+						value={safeParseAbsoluteToLocal(view.currentDate.toISOString())}
+						onChange={view.onDateChange}
+					/>
+				)}
+			</div>
 		</div>
 	);
 };
