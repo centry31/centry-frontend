@@ -11,7 +11,16 @@ import {
 	useDisclosure,
 } from '@heroui/react';
 import classNames from 'classnames';
-import { ChevronRight, Link2, LogOut, MessageSquare, Settings, Trash2, Users } from 'lucide-react';
+import {
+	CalendarFold,
+	ChevronRight,
+	Link2,
+	LogOut,
+	MessageSquare,
+	Settings,
+	Trash2,
+	Users,
+} from 'lucide-react';
 
 import { SpaceInfo } from 'widgets/Space/SpaceInfo';
 
@@ -108,6 +117,15 @@ export const SpaceSettingsListPage = () => {
 					title: 'Привязанные чаты',
 					description: 'Группы, каналы, синхронизация',
 					icon: <MessageSquare size={18} className="text-neutral-600 shrink-0" />,
+					showDivider: true,
+				},
+				{
+					key: '/spaces/settings/:spaceId/import-bmstu-schedule',
+					onPress: () =>
+						handleNavigate('/spaces/settings/:spaceId/import-bmstu-schedule'),
+					title: 'Расписание из МГТУ им. Баумана',
+					description: 'Импортирование расписаний',
+					icon: <CalendarFold size={18} className="text-neutral-600 shrink-0" />,
 				},
 			],
 		},

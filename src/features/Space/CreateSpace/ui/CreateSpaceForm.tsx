@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Input } from '@heroui/react';
+import { Button, Input, Textarea } from '@heroui/react';
 
 type Props = {
 	name: string;
@@ -26,35 +26,31 @@ export const CreateSpaceForm = (props: Props) => {
 	} = props;
 
 	return (
-		<Card shadow={'none'}>
-			<CardHeader>
-				<h4 className="font-bold text-large">Создание пространства</h4>
-			</CardHeader>
+		<>
+			<Input
+				label="Название"
+				placeholder="Например, ИУ3-22М"
+				value={name}
+				onChange={(event) => onChangeName(event.target.value)}
+			/>
 
-			<CardBody className={'gap-3'}>
-				<Input
-					label={'Название'}
-					placeholder={'Введите название пространства'}
-					value={name}
-					onChange={(event) => onChangeName(event.target.value)}
-				/>
+			<Textarea
+				label="Описание"
+				placeholder="Коротко опишите, зачем нужно это пространство"
+				value={description}
+				onChange={(event) => onChangeDescription(event.target.value)}
+			/>
 
-				<Input
-					label={'Описание'}
-					placeholder={'Введите описание пространства'}
-					value={description}
-					onChange={(event) => onChangeDescription(event.target.value)}
-				/>
-
+			<div className="flex gap-2">
 				<Button
-					color={'primary'}
+					color="primary"
 					onPress={onCreateSpace}
 					isLoading={isSubmitting}
 					isDisabled={isSubmitDisabled}
 				>
 					Создать
 				</Button>
-			</CardBody>
-		</Card>
+			</div>
+		</>
 	);
 };

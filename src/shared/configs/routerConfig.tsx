@@ -4,12 +4,14 @@ import type { RouteProps } from 'react-router-dom';
 
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
 import { MagicLinkPage } from 'pages/Auth/MagicLinkPage';
+import { ImportBmstuScheduleHintPage } from 'pages/Bmstu/ImportBmstuScheduleHintPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
 import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
 import { NoSpacesPage } from 'pages/Space/NoSpacesPage';
 import { SpaceDetailsPage } from 'pages/Space/SpaceDetailsPage';
+import { SpaceImportBmstuSchedulePage } from 'pages/Space/SpaceImportBmstuSchedulePage';
 import { SpaceSettingsInviteCodesPage } from 'pages/Space/SpaceSettingsInviteCodesPage';
 import { SpaceSettingsListPage } from 'pages/Space/SpaceSettingsListPage';
 import { SpaceSettingsMembersPage } from 'pages/Space/SpaceSettingsMembersPage';
@@ -36,10 +38,13 @@ export enum Routes {
 	SPACE_MEMBERS = 'spaceMembers',
 	SPACE_INVITE_CODES = 'spaceInviteCodes',
 	SPACE_TG_CHATS = 'spaceTgChats',
+	SPACE_IMPORT_BMSTU_SCHEDULE = 'spaceImportBmstuSchedule',
 
 	CREATE_SPACE = 'createSpace',
 	JOIN_SPACE_WITH_INVITE_CODE = 'joinSpaceWithInviteCode',
 	NO_SPACES = 'noSpaces',
+
+	IMPORT_BMSTU_SCHEDULE_HINT = 'importBmstuScheduleHint',
 }
 
 export type Path =
@@ -54,12 +59,15 @@ export type Path =
 	| '/spaces/settings/:spaceId/settings'
 	| '/spaces/settings/:spaceId/invite-codes'
 	| '/spaces/settings/:spaceId/tg-chats'
+	| '/spaces/settings/:spaceId/import-bmstu-schedule'
 	//
 	| '/spaces/details/:spaceId'
 	//
 	| '/spaces/create'
 	| '/spaces/join'
-	| '/spaces/no-spaces';
+	| '/spaces/no-spaces'
+	//
+	| '/spaces/bmstu/:spaceId/import-schedule-hint';
 
 export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.MAGIC_LINK]: '/auth/magic-link',
@@ -73,12 +81,16 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.SPACE_SETTINGS]: '/spaces/settings/:spaceId/settings',
 	[Routes.SPACE_INVITE_CODES]: '/spaces/settings/:spaceId/invite-codes',
 	[Routes.SPACE_TG_CHATS]: '/spaces/settings/:spaceId/tg-chats',
+	[Routes.SPACE_IMPORT_BMSTU_SCHEDULE]: '/spaces/settings/:spaceId/import-bmstu-schedule',
 
 	[Routes.SPACE_DETAILS]: '/spaces/details/:spaceId',
 
 	[Routes.CREATE_SPACE]: '/spaces/create',
 	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: '/spaces/join',
 	[Routes.NO_SPACES]: '/spaces/no-spaces',
+
+	[Routes.IMPORT_BMSTU_SCHEDULE_HINT]: '/spaces/bmstu/:spaceId/import-schedule-hint',
+
 	// // 404
 	// [Routes.NOT_FOUND]: '*',
 };
@@ -133,6 +145,12 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <SpaceSettingsTgChatsPage />,
 		authOnly: true,
 	},
+	[Routes.SPACE_IMPORT_BMSTU_SCHEDULE]: {
+		path: RoutesPaths.spaceImportBmstuSchedule,
+		element: <SpaceImportBmstuSchedulePage />,
+		authOnly: true,
+		requireSpace: true,
+	},
 
 	[Routes.SPACE_DETAILS]: {
 		path: RoutesPaths.spaceDetails,
@@ -155,6 +173,14 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		element: <NoSpacesPage />,
 		authOnly: true,
 	},
+
+	[Routes.IMPORT_BMSTU_SCHEDULE_HINT]: {
+		path: RoutesPaths.importBmstuScheduleHint,
+		element: <ImportBmstuScheduleHintPage />,
+		authOnly: true,
+		requireSpace: true,
+	},
+
 	// [Routes.NOT_FOUND]: {
 	// 	path: RoutesPaths.notFound,
 	// 	element: <NotFoundPage />,
