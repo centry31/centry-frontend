@@ -5,15 +5,17 @@ import type { CalendarEvent, CalendarEventScope } from '../model/types';
 
 type Props = {
 	eventId: string;
+	spaceId: string;
+
 	scope?: CalendarEventScope;
 	occurrenceStart?: string;
 };
 
 export const useDeleteCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
-		const { eventId, scope, occurrenceStart } = props;
+		const { eventId, spaceId, scope, occurrenceStart } = props;
 		const response = await axiosInstance.delete<ApiResponse<CalendarEvent>>(
-			`/events/${eventId}`,
+			`/events/${spaceId}/${eventId}`,
 			{
 				params: {
 					scope,

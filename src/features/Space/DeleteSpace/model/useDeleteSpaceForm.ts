@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDeleteSpace, useGetUserSpaces } from 'entities/Space';
 
 import { RoutesPaths } from 'shared/configs';
+import { removeLastSelectedSpaceIdIfMatches } from 'shared/lib';
 
 type Props = {
 	spaceId: string;
@@ -21,7 +22,8 @@ export const useDeleteSpaceForm = (props: Props) => {
 		const deletedSpace = await deleteSpace({ spaceId });
 		if (!deletedSpace) return;
 
-		mutateSpaces();
+		removeLastSelectedSpaceIdIfMatches(spaceId);
+		await mutateSpaces();
 		navigate(RoutesPaths.spaces);
 	}, [deleteSpace, mutateSpaces, navigate, spaceId]);
 

@@ -20,7 +20,7 @@ export const WelcomePage = () => {
 	};
 
 	if (authData) {
-		return <Navigate to={'/calendar'} />;
+		return <Navigate to={RoutesPaths.spaces} />;
 	}
 
 	return (

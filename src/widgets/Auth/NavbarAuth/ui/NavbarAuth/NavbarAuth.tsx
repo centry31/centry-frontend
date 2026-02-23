@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import {
 	Link,
 	Navbar as NavbarUI,
@@ -13,7 +13,10 @@ import {
 import classNames from 'classnames';
 import { CalendarDays, LayoutGrid } from 'lucide-react';
 
+import { useGetUserSpaces } from 'entities/Space';
+
 import { RoutesPaths } from 'shared/configs';
+import { resolveSpaceId } from 'shared/lib';
 
 import { SpaceSelect } from '../SpaceSelect/SpaceSelect';
 import { UserDropdown } from '../UserDropdown/UserDropdown';
@@ -21,18 +24,19 @@ import { UserDropdown } from '../UserDropdown/UserDropdown';
 type MenuItem = {
 	title: string;
 	to: string;
+	matchPath: string;
 	Icon: ReactNode;
 };
 
-const MENU_ITEMS: MenuItem[] = [
-	{ title: 'Пространства', to: RoutesPaths.spaces, Icon: <LayoutGrid size={16} /> },
-	{ title: 'Календарь', to: RoutesPaths.calendar, Icon: <CalendarDays size={16} /> },
-];
-
 export const NavbarAuth = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	const { data: userSpaces = [] } = useGetUserSpaces();
+
+	const selectedSpaceId = useMemo(() => resolveSpaceId({ spaces: userSpaces }), [userSpaces]);
 
 	const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
 	const handleLinkClick = (item: MenuItem) => {
@@ -40,8 +44,26 @@ export const NavbarAuth = () => {
 		setIsMenuOpen(false);
 	};
 
-	const isActive = (path: string) => location.pathname.startsWith(path);
+	const isActive = (path: string) =>
+		Boolean(matchPath({ path, end: false }, location.pathname));
 	const isCalendarPage = isActive(RoutesPaths.calendar);
+
+	const MENU_ITEMS: MenuItem[] = [
+		{
+			title: 'Пространства',
+			to: RoutesPaths.spaces,
+			matchPath: RoutesPaths.spaces,
+			Icon: <LayoutGrid size={16} />,
+		},
+		{
+			title: 'Календарь',
+			to: selectedSpaceId
+				? generatePath(RoutesPaths.calendar, { spaceId: selectedSpaceId })
+				: RoutesPaths.noSpaces,
+			matchPath: RoutesPaths.calendar,
+			Icon: <CalendarDays size={16} />,
+		},
+	];
 
 	return (
 		<NavbarUI
@@ -60,13 +82,15 @@ export const NavbarAuth = () => {
 
 			{/* ЦЕНТР — десктопная навигация */}
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
-				{MENU_ITEMS.map(({ to, title, Icon }) => {
-					const active = isActive(to);
+				{MENU_ITEMS.map((props) => {
+					const { to, title, Icon, matchPath } = props;
+
+					const active = isActive(matchPath);
 
 					return (
 						<NavbarItem key={to} isActive={active} className="relative">
 							<Link
-								onPress={() => handleLinkClick({ to, title, Icon })}
+								onPress={() => handleLinkClick(props)}
 								className={classNames(
 									'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-opacity',
 									active && 'text-primary',
@@ -95,8 +119,8 @@ export const NavbarAuth = () => {
 			{/* МОБИЛЬНОЕ МЕНЮ */}
 			<NavbarMenu className="pt-2">
 				{MENU_ITEMS.map((item) => {
-					const { title, to, Icon } = item;
-					const active = isActive(to);
+					const { title, to, Icon, matchPath } = item;
+					const active = isActive(matchPath);
 
 					return (
 						<NavbarMenuItem key={to} isActive={active}>

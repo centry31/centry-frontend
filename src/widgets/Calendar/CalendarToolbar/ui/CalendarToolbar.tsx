@@ -1,5 +1,7 @@
 import { Button, Tab, Tabs } from '@heroui/react';
 
+import type { SpaceAccess } from 'entities/Space';
+
 type Props = {
 	view: string;
 	date: Date;
@@ -9,11 +11,14 @@ type Props = {
 	onToday: () => void;
 	onChangeView: (v: string) => void;
 
+	spaceAccess?: SpaceAccess;
 	onCreateEvent: () => void;
 };
 
 export const CalendarToolbar = (props: Props) => {
-	const { view, date, onPrev, onNext, onToday, onChangeView, onCreateEvent } = props;
+	const { view, date, onPrev, onNext, onToday, onChangeView } = props;
+	const { spaceAccess, onCreateEvent } = props;
+
 	const isToday = new Date().toDateString() === date.toDateString();
 
 	return (
@@ -54,9 +59,11 @@ export const CalendarToolbar = (props: Props) => {
 					{date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
 				</div>
 
-				<Button className={'h-5 sm:h-auto'} color={'primary'} onPress={onCreateEvent}>
-					+
-				</Button>
+				{spaceAccess === 'owner' && (
+					<Button className={'h-5 sm:h-auto'} color={'primary'} onPress={onCreateEvent}>
+						+
+					</Button>
+				)}
 			</div>
 		</div>
 	);

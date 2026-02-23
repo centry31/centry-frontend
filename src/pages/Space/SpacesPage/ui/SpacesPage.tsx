@@ -3,11 +3,13 @@ import { Button } from '@heroui/react';
 
 import { UserSpacesList } from 'widgets/Space/UserSpacesList';
 
+import { RoutesPaths } from 'shared/configs';
+
 export const SpacesPage = () => {
 	const navigate = useNavigate();
 
 	const handleOpenCreateSpacePage = () => {
-		navigate('/spaces/create');
+		navigate(RoutesPaths.createSpace);
 	};
 
 	return (

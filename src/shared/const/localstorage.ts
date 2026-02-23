@@ -1,3 +1,3 @@
 export const ACCESS_TOKEN_LOCALSTORAGE_KEY = 'accessToken';
 
-export const CURRENT_SPACE_ID_LOCALSTORAGE_KEY = 'currentSpaceId';
+export const LAST_SELECTED_SPACE_ID = 'lastSelectedSpaceId';

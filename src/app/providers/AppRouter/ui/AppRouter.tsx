@@ -5,13 +5,18 @@ import type { AppRoutesProps } from 'shared/configs';
 import { routerConfig } from 'shared/configs';
 
 import { CheckRequirements } from '../ui/CheckRequirements';
+import { RequireSpace } from './RequireSpace';
 
 /**
  * Рендерит все маршруты и проставляет разрешения на просмотр.
  * */
 export const AppRouter = () => {
 	const renderWithWrapper = useCallback((route: AppRoutesProps) => {
-		const element = route.element;
+		const element = route.requireSpace ? (
+			<RequireSpace>{route.element}</RequireSpace>
+		) : (
+			route.element
+		);
 
 		return (
 			<Route

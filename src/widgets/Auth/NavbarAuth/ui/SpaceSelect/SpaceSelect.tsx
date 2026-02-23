@@ -1,51 +1,39 @@
-import { useCallback, useEffect, useState } from 'react';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { Select, SelectItem } from '@heroui/react';
-import { mutate } from 'swr';
 
 import { useGetUserSpaces } from 'entities/Space';
 
-import { CurrentSpaceIdController } from 'shared/lib';
+import { RoutesPaths } from 'shared/configs';
+import { resolveSpaceId, setLastSelectedSpaceId } from 'shared/lib';
 
 export const SpaceSelect = () => {
-	const [selectedSpaceId, setSelectedSpaceId] = useState<string>('');
+	const { spaceId: selectedSpaceId = '' } = useParams();
+	const navigate = useNavigate();
 
 	const { data: spaces, isLoading: isSpacesLoading } = useGetUserSpaces();
+	const resolvedSpaceId = resolveSpaceId({
+		spaces,
+		preferredSpaceId: selectedSpaceId,
+	});
 
 	const handleSelectSpace = (spaceId?: string) => {
 		if (!spaceId) return;
 
-		CurrentSpaceIdController.setCurrentSpaceId(spaceId);
-		setSelectedSpaceId(spaceId);
-
-		mutate(() => true).finally();
+		const path = generatePath(RoutesPaths.calendar, { spaceId });
+		navigate(path);
+		setLastSelectedSpaceId(spaceId);
 	};
-
-	const initSelectedSpace = useCallback(() => {
-		const savedSpaceId = CurrentSpaceIdController.getSavedSpaceId();
-
-		if (selectedSpaceId === CurrentSpaceIdController.getSavedSpaceId()) return;
-		if (!spaces?.length) return;
-
-		if (savedSpaceId && spaces?.find((space) => space.id === selectedSpaceId)) {
-			setSelectedSpaceId(savedSpaceId);
-			return;
-		}
-
-		setSelectedSpaceId(spaces[0].id);
-		CurrentSpaceIdController.setCurrentSpaceId(spaces[0].id);
-	}, [selectedSpaceId, spaces]);
-
-	useEffect(() => {
-		initSelectedSpace();
-	}, [initSelectedSpace]);
 
 	return (
 		<Select
 			size={'sm'}
 			items={spaces || []}
 			isLoading={isSpacesLoading}
-			onSelectionChange={(selected) => handleSelectSpace(selected.currentKey)}
-			selectedKeys={[selectedSpaceId]}
+			onSelectionChange={(selected) => {
+				const currentKey = selected.currentKey;
+				handleSelectSpace(typeof currentKey === 'string' ? currentKey : undefined);
+			}}
+			selectedKeys={resolvedSpaceId ? [resolvedSpaceId] : []}
 			className={'max-w-xs'}
 		>
 			{(space) => <SelectItem key={space.id}>{space.name}</SelectItem>}

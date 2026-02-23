@@ -1,13 +1,17 @@
+import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody } from '@heroui/react';
 import { Plus } from 'lucide-react';
 
 import { useGetUserSpaces } from 'entities/Space';
+
+import { RoutesPaths } from 'shared/configs';
 
 import { SpaceActionButtons } from './SpaceActionButtons';
 import { SpaceCard } from './SpaceCard';
 import { SpacesListSkeleton } from './SpacesListSkeleton';
 
 export const UserSpacesList = () => {
+	const navigate = useNavigate();
 	const { data: spaces, isLoading, error } = useGetUserSpaces();
 
 	if (isLoading) return <SpacesListSkeleton />;
@@ -31,7 +35,11 @@ export const UserSpacesList = () => {
 						</p>
 					</div>
 
-					<Button color="primary" startContent={<Plus size={16} />}>
+					<Button
+						color="primary"
+						startContent={<Plus size={16} />}
+						onPress={() => navigate(RoutesPaths.createSpace)}
+					>
 						Создать
 					</Button>
 				</CardBody>

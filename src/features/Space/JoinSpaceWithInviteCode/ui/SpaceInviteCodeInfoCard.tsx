@@ -4,11 +4,11 @@ import { Avatar, Button, Card, CardBody, CardHeader, Divider, Spinner } from '@h
 import { Users } from 'lucide-react';
 
 import type { Space } from 'entities/Space';
-import { useGetSpaceMembers, useJoinSpaceWithInviteCode } from 'entities/Space';
+import { useGetSpaceMembers, useGetUserSpaces, useJoinSpaceWithInviteCode } from 'entities/Space';
 import { useGetSpaceInviteCodeInfo } from 'entities/SpaceInviteCode';
 
 import { RoutesPaths } from 'shared/configs';
-import { useGetParamFromUrl } from 'shared/lib';
+import { setLastSelectedSpaceId, useGetParamFromUrl } from 'shared/lib';
 
 // TODO: refactoring
 export const SpaceInviteCodeInfoCard = () => {
@@ -20,18 +20,28 @@ export const SpaceInviteCodeInfoCard = () => {
 
 	const { request: getSpaceInfo, isLoading: isLoadingSpaceInfo } = useGetSpaceInviteCodeInfo();
 	const { request: joinSpace, isLoading: isJoining } = useJoinSpaceWithInviteCode();
-	const { data: spaceMembers } = useGetSpaceMembers({ spaceId: spaceInfo?.id || '' });
+	const { mutate: mutateSpaces } = useGetUserSpaces();
+	const { data: spaceMembers, mutate: mutateSpaceMembers } = useGetSpaceMembers({
+		spaceId: spaceInfo?.id || '',
+	});
 
 	useEffect(() => {
 		if (!code) return;
 		getSpaceInfo({ code }).then((space) => setSpaceInfo(space));
 	}, [code]);
 
-	const handleJoin = () => {
+	const handleJoin = async () => {
 		if (!code) return;
 
-		const path = generatePath(RoutesPaths.spaceDetails, { spaceId: spaceInfo?.id || '' });
-		joinSpace({ code }).then(() => navigate(path));
+		const joinedSpace = await joinSpace({ code });
+		if (!joinedSpace) return;
+
+		setLastSelectedSpaceId(joinedSpace.id);
+		await mutateSpaces();
+		await mutateSpaceMembers();
+
+		const path = generatePath(RoutesPaths.spaceDetails, { spaceId: joinedSpace.id });
+		navigate(path);
 	};
 
 	if (isLoadingSpaceInfo || isJoining) {

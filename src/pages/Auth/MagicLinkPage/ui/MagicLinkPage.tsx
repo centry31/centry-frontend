@@ -120,7 +120,7 @@ export const MagicLinkPage = () => {
 								<Button
 									color="primary"
 									endContent={<ArrowRight size={16} />}
-									onPress={() => navigate(RoutesPaths.calendar)}
+									onPress={() => navigate(RoutesPaths.spaces)}
 									isDisabled={Boolean(error)}
 								>
 									Перейти в приложение

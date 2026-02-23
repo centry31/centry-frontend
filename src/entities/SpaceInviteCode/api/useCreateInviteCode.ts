@@ -3,16 +3,17 @@ import type { ApiResponse } from 'shared/types';
 
 import type { SpaceInviteCode } from '../model/types';
 
-type Payload = {
+type Props = {
 	spaceId: string;
 	maxUses: number;
 	expiresAt: string;
 };
 
 export const useCreateInviteCode = () => {
-	const fetcher = async (payload: Payload) => {
+	const fetcher = async (props: Props) => {
+		const { spaceId, ...payload } = props;
 		const response = await axiosInstance.post<ApiResponse<SpaceInviteCode>>(
-			'/space-invite-codes/create',
+			`/space-invite-codes/${spaceId}/create`,
 			payload,
 		);
 		return response.data.data;

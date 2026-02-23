@@ -10,6 +10,8 @@ import type {
 
 type Props = {
 	eventId: string;
+	spaceId: string;
+
 	scope: CalendarEventScope;
 	occurrenceStart?: string;
 
@@ -26,9 +28,9 @@ type Props = {
 
 export const useUpdateCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
-		const { eventId, ...payload } = props;
+		const { eventId, spaceId, ...payload } = props;
 		const response = await axiosInstance.patch<ApiResponse<CalendarEvent>>(
-			`/events/${eventId}`,
+			`/events/${spaceId}/${eventId}`,
 			payload,
 		);
 		return response.data.data;

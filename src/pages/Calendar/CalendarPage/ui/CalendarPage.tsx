@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import ruLocale from '@fullcalendar/core/locales/ru';
 import FullCalendar from '@fullcalendar/react';
 import { Spinner, useDisclosure } from '@heroui/react';
@@ -7,6 +8,7 @@ import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
 import { EventDetailsModal } from 'widgets/Calendar/EventDetails';
 
 import { useCalendarViewStore } from 'entities/Calendar';
+import { useGetSpace } from 'entities/Space';
 
 import { useCalendarEventsSync } from '../model/useCalendarEventsSync';
 import { useCalendarFormModalState } from '../model/useCalendarFormModalState';
@@ -27,7 +29,10 @@ export const CalendarPage = () => {
 		end: view.currentEndDate,
 	});
 
+	const { spaceId = '' } = useParams();
+
 	const { setCurrentDate } = useCalendarViewStore();
+	const { data: currentSpace } = useGetSpace({ spaceId });
 
 	useEffect(() => {
 		setCurrentDate({
@@ -59,8 +64,7 @@ export const CalendarPage = () => {
 		onCloseConfirm,
 	});
 
-	if (events.isEventsLoading || events.isSpacesLoading) return <Spinner />;
-	if (!events.hasUserSpaces) return <div>У вас нет пространств</div>;
+	if (events.isEventsLoading) return <Spinner />;
 
 	return (
 		<div className="flex h-full flex-col">
@@ -109,6 +113,7 @@ export const CalendarPage = () => {
 				onNext={view.onNext}
 				onToday={view.onToday}
 				onChangeView={view.onChangeView}
+				spaceAccess={currentSpace?.access}
 				onCreateEvent={onCreateOpenChange}
 			/>
 
