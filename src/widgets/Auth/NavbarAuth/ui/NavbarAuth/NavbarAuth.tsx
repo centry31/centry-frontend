@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import {
 	Link,
@@ -36,7 +36,7 @@ export const NavbarAuth = () => {
 
 	const { data: userSpaces = [] } = useGetUserSpaces();
 
-	const selectedSpaceId = useMemo(() => resolveSpaceId({ spaces: userSpaces }), [userSpaces]);
+	const selectedSpaceId = resolveSpaceId({ spaces: userSpaces });
 
 	const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
 	const handleLinkClick = (item: MenuItem) => {
