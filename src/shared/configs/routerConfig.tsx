@@ -25,8 +25,6 @@ export type AppRoutesProps = RouteProps & {
 
 /** Конфигурация путей всего приложения */
 enum Routes {
-	MAIN = 'main',
-
 	WELCOME = 'welcome',
 	// MAGIC_LINK = 'magicLink', // TODO: magic-links убраны на неопределенный срок
 	CALENDAR = 'calendar',
@@ -51,8 +49,6 @@ enum Routes {
 }
 
 export type Path =
-	| '/'
-	//
 	// | '/auth/magic-link'
 	| '/calendar/:spaceId'
 	| '/login'
@@ -75,8 +71,6 @@ export type Path =
 	| '/spaces/bmstu/:spaceId/import-schedule-hint';
 
 export const RoutesPaths: Record<Routes, Path> = {
-	[Routes.MAIN]: '/',
-
 	// [Routes.MAGIC_LINK]: '/auth/magic-link',
 	[Routes.CALENDAR]: '/calendar/:spaceId',
 	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
@@ -103,11 +97,6 @@ export const RoutesPaths: Record<Routes, Path> = {
 };
 
 export const routerConfig: Record<Routes, AppRoutesProps> = {
-	[Routes.MAIN]: {
-		path: RoutesPaths.main,
-		element: <SpacesPage />,
-	},
-
 	// [Routes.MAGIC_LINK]: {
 	// 	path: RoutesPaths.magicLink,
 	// 	element: <MagicLinkPage />,
