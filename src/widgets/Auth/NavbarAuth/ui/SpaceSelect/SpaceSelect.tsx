@@ -1,4 +1,4 @@
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useMatch, useNavigate } from 'react-router-dom';
 import { Select, SelectItem } from '@heroui/react';
 
 import { useGetUserSpaces } from 'entities/Space';
@@ -7,7 +7,8 @@ import { RoutesPaths } from 'shared/configs';
 import { resolveSpaceId, setLastSelectedSpaceId } from 'shared/lib';
 
 export const SpaceSelect = () => {
-	const { spaceId: selectedSpaceId = '' } = useParams();
+	const calendarMatch = useMatch(RoutesPaths.calendar);
+	const selectedSpaceId = calendarMatch?.params.spaceId;
 	const navigate = useNavigate();
 
 	const { data: spaces, isLoading: isSpacesLoading } = useGetUserSpaces();

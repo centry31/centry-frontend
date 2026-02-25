@@ -1,11 +1,11 @@
 /* eslint-disable @conarti/feature-sliced/layers-slices */
-
 import type { RouteProps } from 'react-router-dom';
 
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
 import { ImportBmstuScheduleHintPage } from 'pages/Bmstu/ImportBmstuScheduleHintPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
+import { NotFoundPage } from 'pages/NotFound/NotFoundPage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
 import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
 import { NoSpacesPage } from 'pages/Space/NoSpacesPage';
@@ -24,7 +24,7 @@ export type AppRoutesProps = RouteProps & {
 };
 
 /** Конфигурация путей всего приложения */
-export enum Routes {
+enum Routes {
 	MAIN = 'main',
 
 	WELCOME = 'welcome',
@@ -46,6 +46,8 @@ export enum Routes {
 	NO_SPACES = 'noSpaces',
 
 	IMPORT_BMSTU_SCHEDULE_HINT = 'importBmstuScheduleHint',
+
+	NOT_FOUND = 'notFound',
 }
 
 export type Path =
@@ -96,8 +98,8 @@ export const RoutesPaths: Record<Routes, Path> = {
 
 	[Routes.IMPORT_BMSTU_SCHEDULE_HINT]: '/spaces/bmstu/:spaceId/import-schedule-hint',
 
-	// // 404
-	// [Routes.NOT_FOUND]: '*',
+	// @ts-expect-error намеренно
+	[Routes.NOT_FOUND]: '*',
 };
 
 export const routerConfig: Record<Routes, AppRoutesProps> = {
@@ -191,8 +193,8 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		requireSpace: true,
 	},
 
-	// [Routes.NOT_FOUND]: {
-	// 	path: RoutesPaths.notFound,
-	// 	element: <NotFoundPage />,
-	// },
+	[Routes.NOT_FOUND]: {
+		path: RoutesPaths.notFound,
+		element: <NotFoundPage />,
+	},
 };
