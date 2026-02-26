@@ -7,6 +7,7 @@ declare module '*.css' {
 
 declare const __IS_DEV__: boolean;
 declare const __API_URL__: string;
+declare const __TG_BOT_NAME__: string;
 
 type TelegramInsets = {
 	top: number;

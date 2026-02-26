@@ -6,7 +6,7 @@ import { TelegramLoginWidget } from 'features/Auth/LoginWithTelegramWidget';
 
 import { useUserStore } from 'entities/User';
 
-const BOT_NAME = process.env.TG_BOT_NAME || 'unishare_test_v1_bot';
+const BOT_NAME = __TG_BOT_NAME__;
 
 export const LoginWithTelegramPage = () => {
 	const { authData } = useUserStore();
