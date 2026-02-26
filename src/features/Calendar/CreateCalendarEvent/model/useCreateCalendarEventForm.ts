@@ -134,7 +134,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		(type: CalendarEventRecurrenceType) => {
 			onChangeRecurrenceType(type);
 			if (type === 'NONE') {
-				onChangeRecurrenceUntil(undefined);
+				onChangeRecurrenceUntil(null);
 			}
 		},
 		[onChangeRecurrenceType, onChangeRecurrenceUntil],
@@ -143,7 +143,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 	const handleChangeRecurrenceUntil = useCallback(
 		(zdt?: ZonedDateTime | null) => {
 			if (!zdt) {
-				onChangeRecurrenceUntil(undefined);
+				onChangeRecurrenceUntil(null);
 				return;
 			}
 			onChangeRecurrenceUntil(zdt.toAbsoluteString());

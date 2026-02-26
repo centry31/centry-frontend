@@ -1,4 +1,5 @@
-import { Button, DatePicker, Input, Select, SelectItem, Textarea } from '@heroui/react';
+import { useEffect } from 'react';
+import { Button, DatePicker, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import type { CalendarEventRecurrenceType, CalendarEventScope } from 'entities/CalendarEvent';
@@ -80,6 +81,15 @@ export const ChangeCalendarEventForm = (props: Props) => {
 	const handleDeleteOneCalendarEvent = () => onDeleteCalendarEvent('THIS');
 	const handleDeleteSeriesCalendarEvent = () => onDeleteCalendarEvent('SERIES');
 
+	const handleChangeInfinityUntilSwitch = () => {
+		if (recurrenceUntil) {
+			onChangeRecurrenceUntil(null);
+		} else {
+			const now = Date.now().toString();
+			onChangeRecurrenceUntil(safeParseAbsoluteToLocal(now));
+		}
+	};
+
 	return (
 		<div className={'p-4'}>
 			<div className="mb-2 text-lg font-semibold">Редактировать событие</div>
@@ -121,7 +131,17 @@ export const ChangeCalendarEventForm = (props: Props) => {
 						<SelectItem key={preset.key}>{preset.label}</SelectItem>
 					))}
 				</Select>
+
 				{recurrenceType !== 'NONE' && (
+					<Switch
+						isSelected={!recurrenceUntil}
+						size={'sm'}
+						onChange={handleChangeInfinityUntilSwitch}
+					>
+						Повторять бесконечно
+					</Switch>
+				)}
+				{recurrenceType !== 'NONE' && recurrenceUntil && (
 					<DatePicker
 						label="Повторять до"
 						granularity="minute"

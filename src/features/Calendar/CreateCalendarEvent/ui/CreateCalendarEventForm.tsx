@@ -76,6 +76,15 @@ export const CreateCalendarEventForm = (props: Props) => {
 		getReminderOffset,
 	} = props;
 
+	const handleChangeInfinityUntilSwitch = () => {
+		if (recurrenceUntil) {
+			onChangeRecurrenceUntil(null);
+		} else {
+			const now = Date.now().toString();
+			onChangeRecurrenceUntil(safeParseAbsoluteToLocal(now));
+		}
+	};
+
 	return (
 		<div className="p-4">
 			<div className="mb-2 text-lg font-semibold">Создать событие</div>
@@ -91,7 +100,6 @@ export const CreateCalendarEventForm = (props: Props) => {
 					value={description}
 					onChange={(event) => onChangeDescription(event.target.value)}
 				/>
-
 				<DatePicker
 					label="Начало"
 					value={safeParseAbsoluteToLocal(start)}
@@ -104,7 +112,6 @@ export const CreateCalendarEventForm = (props: Props) => {
 					onChange={onChangeEnd}
 					hideTimeZone
 				/>
-
 				<Select
 					label="Повторять через"
 					placeholder="Выберите установку"
@@ -117,7 +124,17 @@ export const CreateCalendarEventForm = (props: Props) => {
 						<SelectItem key={preset.key}>{preset.label}</SelectItem>
 					))}
 				</Select>
+
 				{recurrenceType !== 'NONE' && (
+					<Switch
+						isSelected={!recurrenceUntil}
+						size={'sm'}
+						onChange={handleChangeInfinityUntilSwitch}
+					>
+						Повторять бесконечно
+					</Switch>
+				)}
+				{recurrenceType !== 'NONE' && recurrenceUntil && (
 					<DatePicker
 						label="Повторять до"
 						granularity="minute"
