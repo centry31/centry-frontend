@@ -57,8 +57,7 @@ export const CreateSpaceTgLinkCodeForm = (props: Props) => {
 								<div className="text-sm font-medium">Как привязать чат</div>
 								<ol className="list-inside list-decimal space-y-1 text-sm text-neutral-700">
 									<li>
-										Добавь бота в нужный <b>групповой чат</b> и дай ему право
-										читать сообщения.
+										Добавь бота в нужный <b>групповой чат</b>
 									</li>
 
 									<li className={'flex flex-col gap-2'}>
