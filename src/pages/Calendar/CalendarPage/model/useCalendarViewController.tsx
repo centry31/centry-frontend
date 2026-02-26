@@ -5,7 +5,7 @@ import type { DateClickArg } from '@fullcalendar/interaction';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import type FullCalendar from '@fullcalendar/react';
-import timeGridPlugin from '@fullcalendar/timeGrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import type { DateValue } from '@internationalized/date';
 import { getLocalTimeZone } from '@internationalized/date';
 import classNames from 'classnames';
