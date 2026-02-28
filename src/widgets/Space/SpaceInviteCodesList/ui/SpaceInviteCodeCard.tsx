@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, Progress, Snippet } from '@heroui/react';
 import { ClockIcon, Link2Icon, UsersIcon } from 'lucide-react';
 
 import type { SpaceInviteCode } from 'entities/SpaceInviteCode';
-import { getSpaceInviteLinkUrl } from 'entities/SpaceInviteCode/lib/getSpaceInviteLinkUrl';
+import { getSpaceInviteLinkUrl } from 'entities/SpaceInviteCode';
 
 type Props = {
 	invite: SpaceInviteCode;

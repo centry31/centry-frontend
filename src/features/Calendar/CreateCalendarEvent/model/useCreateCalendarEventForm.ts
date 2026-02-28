@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import type { ZonedDateTime } from '@internationalized/date';
 
 import { useCalendarViewStore } from 'entities/Calendar';
-import type { CalendarEventRecurrenceType, CreateCalendarEvent } from 'entities/CalendarEvent';
+import type { CalendarEventFrequency, CreateCalendarEvent } from 'entities/CalendarEvent';
 import { useCreateCalendarEvent, useGetCalendarEvents } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
@@ -47,11 +47,11 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		field: { value: end, onChange: onChangeEnd },
 	} = useController({ control, name: 'end', defaultValue: DEFAULT_TIME_ISO_VALUE });
 	const {
-		field: { value: recurrenceType, onChange: onChangeRecurrenceType },
-	} = useController({ control, name: 'recurrence.type', defaultValue: 'NONE' });
+		field: { value: frequency, onChange: onChangeFrequency },
+	} = useController({ control, name: 'frequency', defaultValue: 'NEVER' });
 	const {
-		field: { value: recurrenceUntil, onChange: onChangeRecurrenceUntil },
-	} = useController({ control, name: 'recurrence.until' });
+		field: { value: until, onChange: onChangeUntil },
+	} = useController({ control, name: 'until' });
 	const {
 		field: { value: timeZone },
 	} = useController({ control, name: 'timeZone', defaultValue: DEFAULT_TIME_ZONE });
@@ -130,25 +130,25 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		[onChangeNotifyMessage],
 	);
 
-	const handleChangeRecurrenceType = useCallback(
-		(type: CalendarEventRecurrenceType) => {
-			onChangeRecurrenceType(type);
-			if (type === 'NONE') {
-				onChangeRecurrenceUntil(null);
+	const handleChangeFrequency = useCallback(
+		(value: CalendarEventFrequency) => {
+			onChangeFrequency(value);
+			if (value === 'NEVER') {
+				onChangeUntil(undefined);
 			}
 		},
-		[onChangeRecurrenceType, onChangeRecurrenceUntil],
+		[onChangeFrequency, onChangeUntil],
 	);
 
-	const handleChangeRecurrenceUntil = useCallback(
+	const handleChangeUntil = useCallback(
 		(zdt?: ZonedDateTime | null) => {
 			if (!zdt) {
-				onChangeRecurrenceUntil(null);
+				onChangeUntil(undefined);
 				return;
 			}
-			onChangeRecurrenceUntil(zdt.toAbsoluteString());
+			onChangeUntil(zdt.toAbsoluteString());
 		},
-		[onChangeRecurrenceUntil],
+		[onChangeUntil],
 	);
 
 	const handleCreateCalendarEvent = useCallback(async () => {
@@ -162,10 +162,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 			start,
 			duration: durationMinutes,
 			timeZone: timeZone || DEFAULT_TIME_ZONE,
-			recurrence: {
-				type: recurrenceType || 'NONE',
-				until: recurrenceUntil,
-			},
+			frequency,
+			until,
 
 			reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
 
@@ -173,6 +171,7 @@ export const useCreateCalendarEventForm = (props: Props) => {
 			isNotifyMessage,
 		});
 		if (createdEvent === undefined) return;
+
 		mutateCalendarEvents();
 		notifySuccess('Событие создано');
 		onSuccess?.();
@@ -184,8 +183,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		mutateCalendarEvents,
 		notifyMessage,
 		onSuccess,
-		recurrenceType,
-		recurrenceUntil,
+		frequency,
+		until,
 		reminderFields,
 		spaceId,
 		start,
@@ -199,8 +198,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 
 		start,
 		end,
-		recurrenceType,
-		recurrenceUntil,
+		frequency,
+		until,
 
 		reminderFields,
 		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
@@ -219,8 +218,8 @@ export const useCreateCalendarEventForm = (props: Props) => {
 		onAddReminder: handleAddReminder,
 		onRemoveReminder: handleRemoveReminder,
 		onCreateCalendarEvent: handleCreateCalendarEvent,
-		onChangeRecurrenceType: handleChangeRecurrenceType,
-		onChangeRecurrenceUntil: handleChangeRecurrenceUntil,
+		onChangeFrequency: handleChangeFrequency,
+		onChangeUntil: handleChangeUntil,
 
 		getReminderOffset: (index: number) => getValues(`reminders.${index}.offsetMinutes`),
 	};

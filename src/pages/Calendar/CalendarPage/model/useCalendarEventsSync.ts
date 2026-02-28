@@ -10,7 +10,7 @@ import { getEventEndFromStartAndDuration } from 'shared/lib';
 
 const prepareEvents = (events: CalendarEvent[]) => {
 	return events.map((event) => {
-		const id = `${event.eventId}:${event.occurrenceStart}`;
+		const id = `${event.id}:${event.start}`;
 		const fullCalendarEvent: EventInput = {
 			id,
 			title: event.title,
@@ -20,12 +20,12 @@ const prepareEvents = (events: CalendarEvent[]) => {
 
 			// TODO: типизировать
 			extendedProps: {
-				eventId: event.eventId,
-				occurrenceStart: event.occurrenceStart,
+				id: event.id,
 				description: event.description,
 				duration: event.duration,
 				reminders: event.reminders,
-				recurrence: event.recurrence,
+				frequency: event.frequency,
+				until: event.until,
 				timeZone: event.timeZone,
 			},
 		};
