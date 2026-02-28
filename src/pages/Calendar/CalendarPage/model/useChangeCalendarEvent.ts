@@ -7,6 +7,10 @@ import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarE
 
 import { getEventDurationFromStartAndEnd, notifySuccess } from 'shared/lib';
 
+type PendingUpdateEvent = CalendarEvent & {
+	oldStart: string;
+};
+
 type Props = {
 	start: Date;
 	end: Date;
@@ -20,7 +24,7 @@ export const useChangeCalendarEvent = (props: Props) => {
 
 	const { spaceId = '' } = useParams();
 
-	const [updatedEvent, setUpdatedEvent] = useState<CalendarEvent>();
+	const [updatedEvent, setUpdatedEvent] = useState<PendingUpdateEvent>();
 	const [revertChange, setRevertChange] = useState<(() => void) | undefined>();
 
 	const { mutate: mutateEvents } = useGetCalendarEvents({ spaceId, start, end });
@@ -43,9 +47,15 @@ export const useChangeCalendarEvent = (props: Props) => {
 		if (!updatedEvent) return;
 		const result = await updateEvent({
 			...updatedEvent,
-			scope: updatedEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
+
+			scope: 'THIS',
+			frequency: 'NEVER',
+
+			oldStart: updatedEvent.oldStart,
+			newStart: updatedEvent.start,
+
 			spaceId,
-			eventId: updatedEvent.eventId,
+			eventId: updatedEvent.id,
 		});
 		if (result === undefined) return;
 		onUpdateSuccess();
@@ -57,8 +67,12 @@ export const useChangeCalendarEvent = (props: Props) => {
 		const result = await updateEvent({
 			...updatedEvent,
 			scope: 'THIS_AND_FUTURE',
+
+			oldStart: updatedEvent.oldStart,
+			newStart: updatedEvent.start,
+
 			spaceId,
-			eventId: updatedEvent.eventId,
+			eventId: updatedEvent.id,
 		});
 		if (result === undefined) return;
 		onUpdateSuccess();
@@ -70,36 +84,40 @@ export const useChangeCalendarEvent = (props: Props) => {
 			const { event } = arg;
 			const ext = event.extendedProps;
 
-			const start = event.startStr;
-			const end = event.endStr;
-			const duration = getEventDurationFromStartAndEnd(start, end);
+			const updatedStart = event.startStr;
+			const updatedEnd = event.endStr;
+			const duration = getEventDurationFromStartAndEnd(updatedStart, updatedEnd);
+			const frequency = ext.frequency;
 
-			const calendarEvent: CalendarEvent = {
-				eventId: ext.eventId,
-				occurrenceStart: ext.occurrenceStart,
-				start,
+			const calendarEvent: PendingUpdateEvent = {
+				id: ext.id,
+				oldStart: arg.oldEvent.startStr,
+				start: updatedStart,
 				duration,
 				title: event.title,
 				description: ext.description,
 				timeZone: ext.timeZone,
-				recurrence: ext.recurrence,
+				frequency,
+				until: ext.until,
 				reminders: ext.reminders,
 			};
 			setUpdatedEvent(calendarEvent);
 			setRevertChange(() => arg.revert);
 
-			if (calendarEvent.recurrence.type === 'NONE') {
+			if (calendarEvent.frequency === 'NEVER') {
 				updateEvent({
 					...calendarEvent,
-					scope: calendarEvent.recurrence.type === 'NONE' ? 'SERIES' : 'THIS',
+					scope: 'THIS',
+					oldStart: calendarEvent.oldStart,
+					newStart: calendarEvent.start,
 					spaceId,
-					eventId: calendarEvent.eventId,
-				})
-					.then((result) => {
-						if (result === undefined) return;
-						onUpdateSuccess();
-						notifySuccess('Событие обновлено');
-					});
+					eventId: calendarEvent.id,
+				}).then((result) => {
+					if (result === undefined) return;
+
+					onUpdateSuccess();
+					notifySuccess('Событие обновлено');
+				});
 				return;
 			}
 			onOpenConfirm();

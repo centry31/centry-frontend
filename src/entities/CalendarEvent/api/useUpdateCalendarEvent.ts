@@ -1,22 +1,25 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 
 import type {
-	CalendarEventRecurrence,
+	CalendarEventFrequency,
 	CalendarEventReminder,
-	CalendarEventScope,
+	CreateUpdateCalendarEventScope,
 } from '../model/types';
 
 type Props = {
 	eventId: string;
 	spaceId: string;
 
-	scope: CalendarEventScope;
-	occurrenceStart?: string;
+	scope: CreateUpdateCalendarEventScope;
 
-	start: string;
+	newStart: string;
+	oldStart: string;
+
 	duration: number;
 	timeZone: string;
-	recurrence: CalendarEventRecurrence;
+
+	frequency: CalendarEventFrequency;
+	until?: string;
 
 	title: string;
 	description?: string | null;

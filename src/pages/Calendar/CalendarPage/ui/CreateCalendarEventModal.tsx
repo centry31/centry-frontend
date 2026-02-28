@@ -24,8 +24,8 @@ export const CreateCalendarEventModal = (props: Props) => {
 
 		start,
 		end,
-		recurrenceType,
-		recurrenceUntil,
+		frequency,
+		until,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -43,8 +43,8 @@ export const CreateCalendarEventModal = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onChangeRecurrenceType,
-		onChangeRecurrenceUntil,
+		onChangeFrequency,
+		onChangeUntil,
 
 		onCreateCalendarEvent,
 
@@ -65,8 +65,8 @@ export const CreateCalendarEventModal = (props: Props) => {
 					//
 					start={start}
 					end={end}
-					recurrenceType={recurrenceType}
-					recurrenceUntil={recurrenceUntil}
+					frequency={frequency}
+					until={until}
 					//
 					reminderFields={reminderFields}
 					isSpaceHasTelegramChats={isSpaceHasTelegramChats}
@@ -84,8 +84,8 @@ export const CreateCalendarEventModal = (props: Props) => {
 					onCreateCalendarEvent={onCreateCalendarEvent}
 					onChangeStart={onChangeStart}
 					onChangeEnd={onChangeEnd}
-					onChangeRecurrenceType={onChangeRecurrenceType}
-					onChangeRecurrenceUntil={onChangeRecurrenceUntil}
+					onChangeFrequency={onChangeFrequency}
+					onChangeUntil={onChangeUntil}
 					//
 					getReminderOffset={getReminderOffset}
 				/>
