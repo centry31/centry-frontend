@@ -1,8 +1,8 @@
 import { Button, DatePicker, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
 import type { ZonedDateTime } from '@internationalized/date';
 
-import type { CalendarEventRecurrenceType } from 'entities/CalendarEvent';
-import { RECURRENCE_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
+import type { CalendarEventFrequency } from 'entities/CalendarEvent';
+import { FREQUENCY_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
 
 import { formatMinutesOffset, safeParseAbsoluteToLocal } from 'shared/lib';
 
@@ -17,8 +17,8 @@ type Props = {
 
 	start: string;
 	end: string;
-	recurrenceUntil?: string;
-	recurrenceType: CalendarEventRecurrenceType;
+	until?: string;
+	frequency: CalendarEventFrequency;
 
 	reminderFields: ReminderField[];
 	isSpaceHasTelegramChats: boolean;
@@ -36,8 +36,8 @@ type Props = {
 	onChangeEnd: (value?: ZonedDateTime | null) => void;
 	onAddReminder: (minutes: number) => void;
 	onRemoveReminder: (index: number) => void;
-	onChangeRecurrenceType: (type: CalendarEventRecurrenceType) => void;
-	onChangeRecurrenceUntil: (value?: ZonedDateTime | null) => void;
+	onChangeFrequency: (value: CalendarEventFrequency) => void;
+	onChangeUntil: (value?: ZonedDateTime | null) => void;
 
 	onCreateCalendarEvent: () => void;
 	getReminderOffset: (index: number) => number;
@@ -50,8 +50,8 @@ export const CreateCalendarEventForm = (props: Props) => {
 
 		start,
 		end,
-		recurrenceType,
-		recurrenceUntil,
+		frequency,
+		until,
 
 		reminderFields,
 		isSpaceHasTelegramChats,
@@ -69,19 +69,19 @@ export const CreateCalendarEventForm = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onChangeRecurrenceType,
-		onChangeRecurrenceUntil,
+		onChangeFrequency,
+		onChangeUntil,
 
 		onCreateCalendarEvent,
 		getReminderOffset,
 	} = props;
 
 	const handleChangeInfinityUntilSwitch = () => {
-		if (recurrenceUntil) {
-			onChangeRecurrenceUntil(null);
+		if (until) {
+			onChangeUntil(null);
 		} else {
 			const now = Date.now().toString();
-			onChangeRecurrenceUntil(safeParseAbsoluteToLocal(now));
+			onChangeUntil(safeParseAbsoluteToLocal(now));
 		}
 	};
 
@@ -115,31 +115,31 @@ export const CreateCalendarEventForm = (props: Props) => {
 				<Select
 					label="Повторять через"
 					placeholder="Выберите установку"
-					selectedKeys={[recurrenceType]}
+					selectedKeys={[frequency]}
 					onChange={(event) =>
-						onChangeRecurrenceType(event.target.value as CalendarEventRecurrenceType)
+						onChangeFrequency(event.target.value as CalendarEventFrequency)
 					}
 				>
-					{RECURRENCE_PRESETS.map((preset) => (
+					{FREQUENCY_PRESETS.map((preset) => (
 						<SelectItem key={preset.key}>{preset.label}</SelectItem>
 					))}
 				</Select>
 
-				{recurrenceType !== 'NONE' && (
+				{frequency !== 'NEVER' && (
 					<Switch
-						isSelected={!recurrenceUntil}
+						isSelected={!until}
 						size={'sm'}
 						onChange={handleChangeInfinityUntilSwitch}
 					>
 						Повторять бесконечно
 					</Switch>
 				)}
-				{recurrenceType !== 'NONE' && recurrenceUntil && (
+				{frequency !== 'NEVER' && until && (
 					<DatePicker
 						label="Повторять до"
 						granularity="minute"
-						value={safeParseAbsoluteToLocal(recurrenceUntil)}
-						onChange={onChangeRecurrenceUntil}
+						value={safeParseAbsoluteToLocal(until)}
+						onChange={onChangeUntil}
 						hideTimeZone
 					/>
 				)}

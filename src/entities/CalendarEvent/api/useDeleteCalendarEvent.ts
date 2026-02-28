@@ -1,22 +1,22 @@
 import { axiosInstance, useApiMutation } from 'shared/api';
 
-import type { CalendarEventScope } from '../model/types';
+import type { DeleteCalendarEventScope } from '../model/types';
 
 type Props = {
 	eventId: string;
 	spaceId: string;
 
-	scope?: CalendarEventScope;
-	occurrenceStart?: string;
+	scope: DeleteCalendarEventScope;
+	start: string;
 };
 
 export const useDeleteCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
-		const { eventId, spaceId, scope, occurrenceStart } = props;
+		const { eventId, spaceId, scope, start } = props;
 		await axiosInstance.delete(`/events/${spaceId}/${eventId}`, {
 			params: {
 				scope,
-				occurrenceStart,
+				start,
 			},
 		});
 		return true;

@@ -3,7 +3,6 @@ import type { DateSelectArg, EventClickArg } from '@fullcalendar/core';
 
 import type {
 	CalendarEvent,
-	CalendarEventRecurrence,
 	CreateCalendarEvent,
 	UpdateCalendarEvent,
 } from 'entities/CalendarEvent';
@@ -16,11 +15,10 @@ import {
 
 const DEFAULT_EVENT_DURATION_MINUTES = normalizeEventDurationMinutes();
 const DEFAULT_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-const DEFAULT_RECURRENCE: CalendarEventRecurrence = { type: 'NONE' };
+const DEFAULT_FREQUENCY = 'NEVER';
 
 type EditEventDefaults = UpdateCalendarEvent & {
 	eventId: string;
-	occurrenceStart: string;
 };
 
 const getDurationFromClickedEvent = (arg: EventClickArg) => {
@@ -34,14 +32,13 @@ const getDurationFromClickedEvent = (arg: EventClickArg) => {
 };
 
 const DEFAULT_EVENT_DATA: CalendarEvent = {
-	eventId: '',
-	occurrenceStart: new Date().toISOString(),
+	id: '',
 	title: '',
 	description: '',
 	start: new Date().toISOString(),
 	duration: DEFAULT_EVENT_DURATION_MINUTES,
 	timeZone: DEFAULT_TIME_ZONE,
-	recurrence: DEFAULT_RECURRENCE,
+	frequency: DEFAULT_FREQUENCY,
 	reminders: [],
 };
 
@@ -51,19 +48,18 @@ const DEFAULT_EVENT_CREATE: CreateCalendarEvent = {
 	start: new Date().toISOString(),
 	end: new Date().toISOString(),
 	timeZone: DEFAULT_TIME_ZONE,
-	recurrence: DEFAULT_RECURRENCE,
+	frequency: DEFAULT_FREQUENCY,
 	reminders: [],
 };
 
 const DEFAULT_EVENT_UPDATE: EditEventDefaults = {
 	eventId: '',
-	occurrenceStart: new Date().toISOString(),
 	title: '',
 	description: '',
 	start: new Date().toISOString(),
 	end: new Date().toISOString(),
 	timeZone: DEFAULT_TIME_ZONE,
-	recurrence: DEFAULT_RECURRENCE,
+	frequency: DEFAULT_FREQUENCY,
 	reminders: [],
 };
 
@@ -90,7 +86,7 @@ export const useCalendarFormModalState = (props: Props) => {
 				start: arg.startStr,
 				end: arg.endStr,
 				timeZone: DEFAULT_TIME_ZONE,
-				recurrence: DEFAULT_RECURRENCE,
+				frequency: DEFAULT_FREQUENCY,
 				reminders: [],
 			});
 			onOpenFormCreate();
@@ -104,14 +100,14 @@ export const useCalendarFormModalState = (props: Props) => {
 			const durationMinutes = getDurationFromClickedEvent(arg);
 
 			setEventDetails({
-				eventId: event.extendedProps.eventId,
-				occurrenceStart: event.extendedProps.occurrenceStart,
+				id: event.extendedProps.id,
 				title: event.title,
 				description: event.extendedProps.description,
 				start: event.startStr,
 				duration: durationMinutes,
 				timeZone: event.extendedProps.timeZone,
-				recurrence: event.extendedProps.recurrence,
+				frequency: event.extendedProps.frequency || DEFAULT_FREQUENCY,
+				until: event.extendedProps.until,
 				reminders: event.extendedProps.reminders,
 			});
 
@@ -123,14 +119,14 @@ export const useCalendarFormModalState = (props: Props) => {
 	const handleEditEventModal = useCallback(
 		(event: CalendarEvent) => {
 			setEditDefaults({
-				eventId: event.eventId,
-				occurrenceStart: event.occurrenceStart,
+				eventId: event.id,
 				title: event.title,
 				description: event.description,
 				start: event.start,
 				end: getEventEndFromStartAndDuration(event.start, event.duration),
 				timeZone: event.timeZone,
-				recurrence: event.recurrence,
+				frequency: event.frequency,
+				until: event.until,
 				reminders: event.reminders,
 			});
 

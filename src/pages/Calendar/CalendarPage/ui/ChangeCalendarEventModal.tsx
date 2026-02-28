@@ -9,7 +9,6 @@ import type { UpdateCalendarEvent } from 'entities/CalendarEvent';
 
 type Props = {
 	eventId: string;
-	occurrenceStart: string;
 
 	defaultValues: UpdateCalendarEvent;
 	onSuccess: () => void;
@@ -19,7 +18,7 @@ type Props = {
 };
 
 export const ChangeCalendarEventModal = (props: Props) => {
-	const { isOpen, onOpenChange, defaultValues, eventId, occurrenceStart, onSuccess } = props;
+	const { isOpen, onOpenChange, defaultValues, eventId, onSuccess } = props;
 
 	const {
 		title,
@@ -27,8 +26,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 
 		start,
 		end,
-		recurrenceType,
-		recurrenceUntil,
+		frequency,
+		until,
 
 		reminderFields,
 		isRemindersActive,
@@ -42,14 +41,14 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		onChangeEnd,
 		onAddReminder,
 		onRemoveReminder,
-		onChangeRecurrenceType,
-		onChangeRecurrenceUntil,
+		onChangeFrequency,
+		onChangeUntil,
 
 		onUpdateCalendarEvent,
 		onDeleteCalendarEvent,
 
 		getReminderOffset,
-	} = useChangeCalendarEventForm({ eventId, occurrenceStart, defaultValues, onSuccess });
+	} = useChangeCalendarEventForm({ eventId, defaultValues, onSuccess });
 
 	return (
 		<Modal
@@ -65,9 +64,9 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					//
 					start={start}
 					end={end}
-					recurrenceType={recurrenceType}
-					initialRecurrenceType={defaultValues.recurrence.type}
-					recurrenceUntil={recurrenceUntil}
+					frequency={frequency}
+					initialFrequency={defaultValues.frequency}
+					until={until}
 					//
 					reminderFields={reminderFields}
 					isRemindersActive={isRemindersActive}
@@ -81,8 +80,8 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					onChangeEnd={onChangeEnd}
 					onAddReminder={onAddReminder}
 					onRemoveReminder={onRemoveReminder}
-					onChangeRecurrenceType={onChangeRecurrenceType}
-					onChangeRecurrenceUntil={onChangeRecurrenceUntil}
+					onChangeFrequency={onChangeFrequency}
+					onChangeUntil={onChangeUntil}
 					//
 					onUpdateCalendarEvent={onUpdateCalendarEvent}
 					onDeleteCalendarEvent={onDeleteCalendarEvent}

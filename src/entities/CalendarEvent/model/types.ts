@@ -1,26 +1,15 @@
-type CalendarEventReminder = {
-	offsetMinutes: number;
-};
-type CalendarEventRecurrenceType =
-	| 'NONE'
-	| 'DAILY'
-	| 'WEEKLY'
-	| 'DOUBLE_WEEKLY'
-	| 'MONTHLY';
-
-type CalendarEventRecurrence = {
-	type: CalendarEventRecurrenceType;
-	until?: string;
-};
+type CalendarEventReminder = { offsetMinutes: number };
+type CalendarEventFrequency = 'NEVER' | 'DAILY' | 'WEEKLY' | 'DOUBLE_WEEKLY' | 'MONTHLY';
 
 type CalendarEvent = {
-	eventId: string;
-	occurrenceStart: string;
+	id: string;
 
 	start: string;
 	duration: number;
 	timeZone: string;
-	recurrence: CalendarEventRecurrence;
+
+	frequency: CalendarEventFrequency;
+	until?: string;
 
 	title: string;
 	description?: string | null;
@@ -32,7 +21,9 @@ type CreateCalendarEvent = {
 	start: string;
 	end: string;
 	timeZone: string;
-	recurrence: CalendarEventRecurrence;
+
+	frequency: CalendarEventFrequency;
+	until?: string;
 
 	title: string;
 	description?: string | null;
@@ -43,17 +34,20 @@ type CreateCalendarEvent = {
 	notifyMessage?: string;
 };
 
-type CalendarEventScope = 'SERIES' | 'THIS' | 'THIS_AND_FUTURE';
+type CreateUpdateCalendarEventScope = 'THIS' | 'THIS_AND_FUTURE';
+type DeleteCalendarEventScope = 'THIS' | 'SERIES';
 
-type RecurrenceSelectItem = {
-	key: CalendarEventRecurrenceType;
+type FrequencySelectItem = {
+	key: CalendarEventFrequency;
 	label: string;
 };
 type UpdateCalendarEvent = {
 	start: string;
 	end: string;
 	timeZone: string;
-	recurrence: CalendarEventRecurrence;
+
+	frequency: CalendarEventFrequency;
+	until?: string;
 
 	title: string;
 	description?: string | null;
@@ -63,11 +57,11 @@ type UpdateCalendarEvent = {
 
 export {
 	CalendarEvent,
-	CalendarEventRecurrence,
-	CalendarEventRecurrenceType,
+	CalendarEventFrequency,
 	CalendarEventReminder,
-	CalendarEventScope,
 	CreateCalendarEvent,
-	RecurrenceSelectItem,
+	CreateUpdateCalendarEventScope,
+	DeleteCalendarEventScope,
+	FrequencySelectItem,
 	UpdateCalendarEvent,
 };
