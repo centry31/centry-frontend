@@ -6,7 +6,7 @@ import { TelegramLoginWidget } from 'features/Auth/LoginWithTelegramWidget';
 
 import { useUserStore } from 'entities/User';
 
-const BOT_NAME = __TG_BOT_NAME__;
+const TG_OAUTH_CLIENT_ID = __TG_OAUTH_CLIENT_ID__;
 
 export const LoginWithTelegramPage = () => {
 	const { authData } = useUserStore();
@@ -34,11 +34,10 @@ export const LoginWithTelegramPage = () => {
 				<CardBody className="space-y-5">
 					{/* CTA */}
 					<div className="flex flex-col items-center gap-3">
-						<TelegramLoginWidget botName={BOT_NAME} />
+						<TelegramLoginWidget clientId={TG_OAUTH_CLIENT_ID} />
 
 						<p className="text-xs text-neutral-500 text-center">
-							Нажимая кнопку, вы соглашаетесь передать публичные данные Telegram для
-							входа в приложение.
+							После нажатия откроется Telegram OAuth, затем вы вернётесь в приложение.
 						</p>
 					</div>
 
@@ -70,17 +69,11 @@ export const LoginWithTelegramPage = () => {
 							</li>
 
 							<li>
-								Если виджет не загрузился, отключите блокировщик и перезагрузите
-								страницу.
+								Если Telegram не открылся, проверьте блокировщик всплывающих окон и
+								попробуйте снова.
 							</li>
 
-							{/*<li>*/}
-							{/*	Можно войти по{' '}*/}
-							{/*	<UiLink size={'sm'} href="/login/magic">*/}
-							{/*		magic-ссылке*/}
-							{/*	</UiLink>{' '}*/}
-							{/*	(Telegram-бот отправит одноразовый код).*/}
-							{/*</li>*/}
+							<li>Если ошибка повторяется, вернитесь на главную и начните вход заново.</li>
 						</ul>
 					</div>
 
