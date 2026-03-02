@@ -1,17 +1,35 @@
-import { Avatar, Card, CardBody, CardHeader, Chip, Spinner } from '@heroui/react';
+import { useParams } from 'react-router-dom';
+import { Card, CardBody, CardHeader, Chip, Spinner } from '@heroui/react';
 import { Info } from 'lucide-react';
 
-import type { SpaceMember } from 'entities/Space';
+import { useGetSpace } from 'entities/Space';
+import { useDeleteSpaceMember, useGetSpaceMembers } from 'entities/SpaceMember';
 import { useUserStore } from 'entities/User';
 
-type Props = {
-	members: SpaceMember[];
-	isLoading: boolean;
-};
+import { notifySuccess } from 'shared/lib';
 
-export const SpaceMembersList = (props: Props) => {
-	const { members, isLoading } = props;
+import { SpaceMemberButtonActions } from './SpaceMemberButtonActions';
+import { SpaceMemberItem } from './SpaceMemberItem';
+
+export const SpaceMembersList = () => {
+	const { spaceId = '' } = useParams();
 	const { authData } = useUserStore();
+
+	const { data: space } = useGetSpace({ spaceId });
+	const {
+		data: spaceMembers = [],
+		isLoading,
+		mutate: mutateSpaceMembers,
+	} = useGetSpaceMembers({ spaceId });
+	const { request: deleteSpaceMember } = useDeleteSpaceMember();
+
+	const handleDeleteSpaceMember = async (userId: string) => {
+		const result = await deleteSpaceMember({ spaceId, userId });
+		if (!result) return;
+
+		notifySuccess('Участник пространства успешно удален');
+		mutateSpaceMembers();
+	};
 
 	return (
 		<Card shadow={'none'} className="border border-neutral-200">
@@ -20,7 +38,7 @@ export const SpaceMembersList = (props: Props) => {
 					<h3 className="text-base font-medium">Участники</h3>
 
 					<Chip size="sm" variant="flat">
-						{members?.length ?? '-'}
+						{spaceMembers.length ?? '-'}
 					</Chip>
 				</div>
 			</CardHeader>
@@ -32,51 +50,30 @@ export const SpaceMembersList = (props: Props) => {
 					</div>
 				)}
 
-				{!isLoading && !members.length && (
+				{!isLoading && !spaceMembers.length && (
 					<div className="flex items-center justify-center gap-2 py-10 text-neutral-500">
 						<Info size={16} /> Никого не найдено
 					</div>
 				)}
 
-				<ul className="divide-y divide-neutral-200">
-					{members.map((member) => (
-						<li
-							key={member.id}
-							className="flex items-center justify-between gap-3 px-4 py-3"
-						>
-							<div className="flex items-center gap-3">
-								{/* TODO: add avatar url */}
-								<Avatar size="sm" name={member.displayName} />
-
-								<div className="leading-tight">
-									<div className="text-sm font-medium">{member.displayName}</div>
-
-									{member.username && (
-										<div className="text-xs text-neutral-500">
-											@{member.username}
-										</div>
-									)}
-								</div>
-							</div>
-
-							<div className="flex items-center gap-2">
-								{/* TODO: https://uniteam31.atlassian.net/browse/US-17 */}
-								{/*{member.id !== authData?.id && (*/}
-								{/*	// TODO: add handler*/}
-								{/*	<Button size="sm" variant="light" color="danger">*/}
-								{/*		Удалить*/}
-								{/*	</Button>*/}
-								{/*)}*/}
-
-								{member.id === authData?.id && (
-									<Chip size="sm" variant="flat" color={'primary'}>
-										Это вы
-									</Chip>
-								)}
-							</div>
-						</li>
-					))}
-				</ul>
+				{space && (
+					<ul className="divide-y divide-neutral-200">
+						{spaceMembers.map((member) => (
+							<SpaceMemberItem
+								key={member.id}
+								space={space}
+								member={member}
+								currentUserId={authData?.id ?? ''}
+								Actions={
+									<SpaceMemberButtonActions
+										member={member}
+										onDeleteSpaceMember={handleDeleteSpaceMember}
+									/>
+								}
+							/>
+						))}
+					</ul>
+				)}
 			</CardBody>
 		</Card>
 	);

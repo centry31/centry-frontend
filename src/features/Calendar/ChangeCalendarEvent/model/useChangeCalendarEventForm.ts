@@ -125,7 +125,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		(value: CalendarEventFrequency) => {
 			onChangeFrequency(value);
 			if (value === 'NEVER') {
-				onChangeUntil(undefined);
+				onChangeUntil(null);
 			}
 		},
 		[onChangeFrequency, onChangeUntil],
@@ -134,7 +134,7 @@ export const useChangeCalendarEventForm = (props: Props) => {
 	const handleChangeUntil = useCallback(
 		(value?: ZonedDateTime | null) => {
 			if (!value) {
-				onChangeUntil(undefined);
+				onChangeUntil(null);
 				return;
 			}
 			onChangeUntil(value.toAbsoluteString());

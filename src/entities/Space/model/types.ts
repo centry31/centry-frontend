@@ -1,5 +1,3 @@
-import type { User } from 'entities/User';
-
 type SpaceAccess = 'owner' | 'member';
 
 type Space = {
@@ -23,6 +21,4 @@ type UpdateSpace = {
 	description?: string;
 };
 
-type SpaceMember = User;
-
-export { CreateSpace, Space, SpaceAccess, SpaceMember, UpdateSpace };
+export { CreateSpace, Space, SpaceAccess, UpdateSpace };
