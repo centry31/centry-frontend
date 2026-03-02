@@ -9,8 +9,7 @@ import type { BuildOptions } from './types/config';
 
 export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins'] => {
 	const { paths, IS_DEV, API_URL } = props;
-	const TG_BOT_NAME = process.env.TG_BOT_NAME || 'unishare_test_v1_bot';
-	const TG_OAUTH_CLIENT_ID = process.env.TG_OAUTH_CLIENT_ID || '8464558286';
+	const TG_OAUTH_CLIENT_ID = process.env.TG_OAUTH_CLIENT_ID;
 
 	return [
 		new HtmlWebpackPlugin({
