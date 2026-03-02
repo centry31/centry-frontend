@@ -2,12 +2,11 @@ name: Frontend CI
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
-      - develop
-      - 'release/**'
-      - 'feature/**'
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
   lint-and-build:
