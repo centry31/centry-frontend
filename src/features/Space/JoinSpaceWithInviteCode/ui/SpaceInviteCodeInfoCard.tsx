@@ -4,8 +4,9 @@ import { Avatar, Button, Card, CardBody, CardHeader, Divider, Spinner } from '@h
 import { Users } from 'lucide-react';
 
 import type { Space } from 'entities/Space';
-import { useGetSpaceMembers, useGetUserSpaces, useJoinSpaceWithInviteCode } from 'entities/Space';
+import { useGetUserSpaces, useJoinSpaceWithInviteCode } from 'entities/Space';
 import { useGetSpaceInviteCodeInfo } from 'entities/SpaceInviteCode';
+import { useGetSpaceMembers } from 'entities/SpaceMember';
 
 import { RoutesPaths } from 'shared/configs';
 import { notifySuccess, setLastSelectedSpaceId, useGetParamFromUrl } from 'shared/lib';

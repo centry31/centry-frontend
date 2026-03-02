@@ -24,10 +24,7 @@ export const SpaceTgChatActionsList = (props: Props) => {
 	const { spaceId, chatId } = props;
 
 	const { isOpen, onOpenChange } = useDisclosure();
-	const { isLoading, handleRemoveTgChat } = useRemoveTgChatFromSpaceForm({
-		spaceId,
-		chatId,
-	});
+	const { isLoading, handleRemoveTgChat } = useRemoveTgChatFromSpaceForm({ spaceId, chatId });
 
 	const handleOpenRemoveChatModal = () => {
 		onOpenChange();
