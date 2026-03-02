@@ -10,7 +10,7 @@ on:
       deploy_path:
         description: 'Path to frontend repo on server'
         required: true
-        default: '/opt/centry/centry-frontend-v2'
+        default: '/opt/centry/centry-frontend'
       static_path:
         description: 'Path to nginx static root'
         required: true
