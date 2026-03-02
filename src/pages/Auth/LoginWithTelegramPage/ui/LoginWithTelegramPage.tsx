@@ -74,13 +74,13 @@ export const LoginWithTelegramPage = () => {
 								страницу.
 							</li>
 
-							<li>
-								Можно войти по{' '}
-								<UiLink size={'sm'} href="/login/magic">
-									magic-ссылке
-								</UiLink>{' '}
-								(Telegram-бот отправит одноразовый код).
-							</li>
+							{/*<li>*/}
+							{/*	Можно войти по{' '}*/}
+							{/*	<UiLink size={'sm'} href="/login/magic">*/}
+							{/*		magic-ссылке*/}
+							{/*	</UiLink>{' '}*/}
+							{/*	(Telegram-бот отправит одноразовый код).*/}
+							{/*</li>*/}
 						</ul>
 					</div>
 

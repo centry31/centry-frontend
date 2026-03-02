@@ -6,7 +6,7 @@ import { SpaceMembersList } from 'widgets/Space/SpaceMembersList';
 
 import { LeaveSpaceForm, useLeaveSpaceForm } from 'features/Space/LeaveSpace';
 
-import { useGetSpace, useGetSpaceMembers } from 'entities/Space';
+import { useGetSpace } from 'entities/Space';
 
 export const SpaceDetailsPage = () => {
 	const { spaceId = '' } = useParams();
@@ -15,12 +15,11 @@ export const SpaceDetailsPage = () => {
 	const { isLeaving, handleLeaveSpace } = useLeaveSpaceForm({ spaceId });
 
 	const { data: space } = useGetSpace({ spaceId });
-	const { data: members, isLoading: isMembersLoading } = useGetSpaceMembers({ spaceId });
 
 	return (
 		<div className={'p-3 flex max-w-2xl gap-5 m-auto flex-col'}>
 			{space && <SpaceInfo space={space} />}
-			<SpaceMembersList members={members || []} isLoading={isMembersLoading} />
+			<SpaceMembersList />
 
 			<Button onPress={onLeaveOpenChange} color={'danger'} variant={'light'} fullWidth>
 				Выйти из пространства

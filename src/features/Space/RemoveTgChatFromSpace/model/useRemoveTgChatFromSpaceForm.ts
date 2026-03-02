@@ -17,7 +17,8 @@ export const useRemoveTgChatFromSpaceForm = (props: Props) => {
 
 	const handleRemoveTgChat = useCallback(async () => {
 		const result = await removeChat({ spaceId, chatId });
-		if (result === undefined) return;
+		if (!result) return;
+
 		mutateChats();
 		notifySuccess('Telegram-чат отвязан');
 	}, [chatId, mutateChats, removeChat, spaceId]);
