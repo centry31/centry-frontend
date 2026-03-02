@@ -22,6 +22,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     timeout-minutes: 25
 
     steps:
@@ -38,19 +39,19 @@ jobs:
             REF="${{ github.event.inputs.ref }}"
             DEPLOY_PATH="${{ github.event.inputs.deploy_path }}"
             STATIC_PATH="${{ github.event.inputs.static_path }}"
-            ENV_B64='${{ secrets.FRONTEND_ENV_B64 }}'
             TS="$(date +%Y%m%d-%H%M%S)"
 
             cd "$DEPLOY_PATH"
             mkdir -p /opt/backups/centry-manual
-            if [ -z "$ENV_B64" ]; then
-              echo "Missing secret FRONTEND_ENV_B64"
-              exit 1
-            fi
             if [ -f .env ]; then
               cp -a .env "/opt/backups/centry-manual/frontend.env.$TS"
             fi
-            printf '%s' "$ENV_B64" | base64 -d > .env
+            cat > .env <<'EOF'
+            PORT=${{ secrets.PORT }}
+            MODE=${{ secrets.MODE }}
+            API_URL=${{ secrets.API_URL }}
+            TG_BOT_NAME=${{ secrets.TG_BOT_NAME }}
+            EOF
             chmod 600 .env
 
             git fetch origin "$REF"
