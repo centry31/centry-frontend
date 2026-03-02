@@ -11,7 +11,7 @@ type Data = {
 };
 type Methods = {
 	setAuthData: (authData: User) => void;
-	initAuthData: () => void;
+	initAuthData: () => Promise<void>;
 	logout: () => void;
 };
 type Store = Data & Methods;
