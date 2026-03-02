@@ -1,11 +1,7 @@
-type TelegramUserPayload = {
-	id: number;
-	username?: string;
-	photo_url?: string;
-	first_name: string;
-	last_name?: string;
-	auth_date: number;
-	hash: string;
+type ParsedTelegramOidcOnAuthPayload = {
+	idToken: string | null;
+	error: string | null;
+	errorDescription: string | null;
 };
 
-export { TelegramUserPayload };
+export type { ParsedTelegramOidcOnAuthPayload };

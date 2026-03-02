@@ -10,6 +10,7 @@ import type { BuildOptions } from './types/config';
 export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins'] => {
 	const { paths, IS_DEV, API_URL } = props;
 	const TG_BOT_NAME = process.env.TG_BOT_NAME || 'unishare_test_v1_bot';
+	const TG_OAUTH_CLIENT_ID = process.env.TG_OAUTH_CLIENT_ID || '8464558286';
 
 	return [
 		new HtmlWebpackPlugin({
@@ -24,7 +25,7 @@ export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins
 		new webpack.DefinePlugin({
 			__IS_DEV__: JSON.stringify(IS_DEV),
 			__API_URL__: JSON.stringify(API_URL),
-			__TG_BOT_NAME__: JSON.stringify(TG_BOT_NAME),
+			__TG_OAUTH_CLIENT_ID__: JSON.stringify(TG_OAUTH_CLIENT_ID),
 		}),
 		//
 		new webpack.ProgressPlugin(),
