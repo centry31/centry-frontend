@@ -1,1 +1,1 @@
-export { ACCESS_TOKEN_LOCALSTORAGE_KEY } from './localstorage';
+export { ACCESS_TOKEN_LOCALSTORAGE_KEY, LAST_SELECTED_SPACE_ID } from './localstorage';

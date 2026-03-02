@@ -1,16 +1,16 @@
 @import "tailwindcss";
-
 @plugin './hero.ts';
+
 /* Note: You may need to change the path to fit your project structure */
 @source '../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 @custom-variant dark (&:is(.dark *));
 
 .App {
-	height: 100vh;
-	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	height: 100svh;
 }
 
-.content-page {
-	background-position: 50%;
-	background-size: cover;
+.content {
+	height: 100%;
 }

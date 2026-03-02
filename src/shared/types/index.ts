@@ -1,1 +1,1 @@
-export { ApiResponse, TAccessToken } from './api';
+export { AccessToken, ApiResponse } from './api';
