@@ -1,0 +1,60 @@
+name: Frontend Deploy Manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to deploy (branch/tag)'
+        required: true
+        default: 'release/0.0.0'
+      deploy_path:
+        description: 'Path to frontend repo on server'
+        required: true
+        default: '/opt/centry/centry-frontend-v2'
+      static_path:
+        description: 'Path to nginx static root'
+        required: true
+        default: '/var/www/centry-frontend/build'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            REF="${{ github.event.inputs.ref }}"
+            DEPLOY_PATH="${{ github.event.inputs.deploy_path }}"
+            STATIC_PATH="${{ github.event.inputs.static_path }}"
+            TS="$(date +%Y%m%d-%H%M%S)"
+
+            cd "$DEPLOY_PATH"
+            mkdir -p /opt/backups/centry-manual
+            cp -a .env "/opt/backups/centry-manual/frontend.env.$TS"
+
+            git fetch origin "$REF"
+            git checkout "$REF"
+            git pull --ff-only origin "$REF"
+
+            yarn install --frozen-lockfile
+            yarn build
+
+            mkdir -p "$STATIC_PATH"
+            rsync -a --delete "$DEPLOY_PATH/build/" "$STATIC_PATH/"
+
+            nginx -t
+            systemctl reload nginx
+
+            test -f "$STATIC_PATH/index.html"
