@@ -3,7 +3,6 @@ export {
 	getInitialDate,
 	getInitialView,
 	saveView,
-	syncUrlParams,
 } from './calendarNav';
 export { formatMinutesOffset } from './formatMinutesOffset';
 export { getApiResponseErrorMessage } from './getApiResponseErrorMessage';

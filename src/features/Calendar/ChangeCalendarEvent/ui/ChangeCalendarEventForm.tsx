@@ -127,6 +127,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					label="Повторять через"
 					placeholder="Выберите установку"
 					selectedKeys={[frequency]}
+					disallowEmptySelection
 					onChange={(event) =>
 						onChangeFrequency(event.target.value as CalendarEventFrequency)
 					}

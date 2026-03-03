@@ -1,102 +1,352 @@
+/* ===== Calendar Tokens ===== */
 :root {
-    /* фон и бордеры календаря */
-    --fc-page-bg-color: #fff;
-    --fc-neutral-bg-color: #fafafa;      /* фон ячеек при hover/selection */
-    --fc-border-color: #E5E5EA;          /* тонкие линии */
-
-    /* «сегодня» и «текущая линия» */
-    --fc-today-bg-color: #eaf0ff;         /* без заливки для Apple-вида */
-    --fc-now-indicator-color: #FF3B30;   /* красная линия «сейчас» */
-
-    /* события — мягкий вид по умолчанию */
-    --fc-event-bg-color: #007AFF;        /* iOS-синий */
-    --fc-event-text-color: #fff;
-    --fc-event-border-color: transparent;
+	--calendar-accent: #0a84ff;
+	--calendar-accent-soft: rgb(10 132 255 / 12%);
+	--calendar-danger: #ff453a;
+	--calendar-grid: #e6ebf3;
+	--calendar-grid-soft: #eef2f8;
+	--calendar-muted: #6f7686;
+	--calendar-text: #151a24;
+	--calendar-event-bg: linear-gradient(180deg, #2f8cff 0%, #1172f5 100%);
 }
 
-/* Убираем жирную рамку контейнера */
-.fc .fc-scrollgrid { border: none; }
+/* ===== Page Shell ===== */
+.calendar-page {
+	background:
+		radial-gradient(80% 60% at 10% 0%, #eaf3ff 0%, rgb(234 243 255 / 0%) 70%),
+		radial-gradient(90% 70% at 100% 100%, #f0f8ff 0%, rgb(240 248 255 / 0%) 72%),
+		linear-gradient(180deg, #f6f9ff 0%, #f8f8fc 100%);
+}
 
-/* Шапка дней — делаем «пилюли» и типографику */
+.calendar-layout {
+	min-height: 0;
+}
+
+.calendar-toolbar {
+	border-radius: 20px;
+	box-shadow:
+		0 8px 28px rgb(14 26 54 / 8%),
+		inset 0 1px 0 rgb(255 255 255 / 90%);
+}
+
+.calendar-shell,
+.calendar-sidebar {
+	border-radius: 22px;
+	box-shadow:
+		0 16px 36px rgb(15 30 64 / 9%),
+		inset 0 1px 0 rgb(255 255 255 / 90%);
+}
+
+.calendar-shell__body {
+	display: flex;
+	min-height: 0;
+}
+
+.calendar-mini {
+	border: 1px solid var(--calendar-grid);
+	border-radius: 16px;
+	padding: 8px;
+}
+
+/* ===== FullCalendar Base ===== */
+.fc {
+	--fc-border-color: var(--calendar-grid);
+	--fc-neutral-bg-color: #f7f9fc;
+	--fc-page-bg-color: #fff;
+	--fc-today-bg-color: rgb(10 132 255 / 8%);
+	--fc-event-bg-color: #1172f5;
+	--fc-event-text-color: #fff;
+	--fc-event-border-color: transparent;
+	--fc-now-indicator-color: var(--calendar-danger);
+
+	color: var(--calendar-text);
+	font-family:
+		'SF Pro Display',
+		'SF Pro Text',
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		sans-serif;
+}
+
+.fc .fc-scrollgrid {
+	border: none;
+	border-radius: 16px;
+	overflow: hidden;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+	border-color: var(--calendar-grid);
+}
+
+/* ===== Header / Day Labels ===== */
 .fc .fc-col-header-cell-cushion {
-    color: #8E8E93;
-    display: grid;
-    font-weight: 600;
-    gap: 4px;
-    padding: 8px 0 10px;
-    place-items: center;
-    text-transform: lowercase;
+	color: var(--calendar-muted);
+	display: grid;
+	font-size: 12px;
+	font-weight: 600;
+	gap: 2px;
+	letter-spacing: 0.03em;
+	padding: 8px 4px;
+	place-items: center;
+	text-transform: lowercase;
 }
 
-/* Внутри твоего dayHeaderContent ты рендеришь .day — подкрашиваем «сегодня» */
 .fc .dayhead {
-    align-items: center;
-    display: flex;
-    gap: 2px;
+	align-items: center;
+	display: flex;
+	gap: 5px;
 }
 
 .fc .day {
-    align-items: center;
-    border-radius: 50%;
-    color: #1C1C1E;
-    display: flex;
-    font-size: 16px;
-    font-weight: 700;
-    height: 28px;
-    justify-content: center;
-    margin-top: 2px;
-    width: 28px;
-}
-.fc .day.is-today { background: #007AFF; color: #fff; font-size: 14px; }
-
-/* Ось времени и метки слева (timegrid) */
-.fc .fc-timegrid-axis-cushion {
-    color: #8E8E93;
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
+	align-items: center;
+	border-radius: 999px;
+	color: #1f2937;
+	display: inline-flex;
+	font-size: 14px;
+	font-weight: 700;
+	height: 26px;
+	justify-content: center;
+	width: 26px;
 }
 
-.fc .fc-timegrid-slot-label {
-    color: #8E8E93;
-    font-variant-numeric: tabular-nums;
+.fc .day.is-today {
+	background: var(--calendar-accent);
+	color: #fff;
 }
 
-/* Тонкие горизонтальные линии слотов */
+/* ===== Time Grid ===== */
+.fc .fc-timegrid-axis-cushion,
+.fc .fc-timegrid-slot-label-cushion {
+	color: var(--calendar-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+}
+
 .fc .fc-timegrid-slot {
-    border-bottom: 1px solid #F2F2F7;
+	border-bottom: 1px solid var(--calendar-grid-soft);
 }
 
 .fc .fc-timegrid-slot-minor {
-    border-bottom-color: #EFEFF4;
-    border-bottom-style: dashed;
+	border-bottom-color: #e9edf5;
+	border-bottom-style: dashed;
 }
 
-/* События (добавили us-event через eventClassNames) — делаем компактнее и «мягче» */
+.fc .fc-timegrid-now-indicator-line {
+	border-top-width: 2px;
+}
+
+.fc .fc-timegrid-now-indicator-arrow {
+	border-color: var(--calendar-danger);
+}
+
+/* ===== Day Grid ===== */
+.fc .fc-daygrid-day-number {
+	color: #4a5568;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 6px 8px;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+	color: var(--calendar-accent);
+	font-weight: 700;
+}
+
+.fc .fc-daygrid-more-link {
+	border-radius: 6px;
+	color: var(--calendar-accent);
+	font-size: 11px;
+	font-weight: 600;
+	padding: 1px 4px;
+}
+
+.fc .fc-daygrid-more-link:hover {
+	background: var(--calendar-accent-soft);
+}
+
+.fc .fc-highlight {
+	background: var(--calendar-accent-soft);
+}
+
+/* ===== Event Chips (default) ===== */
 .fc .us-event {
-    border-radius: 10px;
-    padding: 2px 6px;                     /* внутри .fc-event-main будет контент */
+	background: var(--calendar-event-bg);
+	border: 1px solid rgb(255 255 255 / 22%);
+	border-radius: 11px;
+	box-shadow: 0 6px 14px rgb(17 114 245 / 22%);
+	color: var(--fc-event-text-color);
 }
 
 .fc .us-event .fc-event-main {
-    font-size: 12px;
-    font-weight: 600;
+	padding: 0;
 }
 
-/* Убираем «заляпанность» выделений при drag/select */
-.fc .fc-highlight {
-    background: rgb(0 122 255 / 8%);
+.fc .us-event .us-event-content,
+.fc .us-event .us-event-title,
+.fc .us-event .us-event-time {
+	color: var(--fc-event-text-color);
 }
 
-/* Линия «сейчас» — тонкая красная */
-.fc .fc-timegrid-now-indicator-line { border-top-width: 2px; }
-
-.fc .fc-daygrid-event {
-    background-color: var(--fc-event-bg-color);
-    color: #fff;
-    overflow: hidden;
+.us-event-content {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+	padding: 3px 7px;
 }
 
-.fc-daygrid-event-dot {
-    display: none;
+.us-event-time {
+	font-size: 10px;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	line-height: 1.15;
+	opacity: 0.92;
+	white-space: nowrap;
+}
+
+.us-event-title {
+	font-size: 12px;
+	font-weight: 650;
+	line-height: 1.25;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ===== Month Event Variant ===== */
+.fc .us-event-month {
+	border-radius: 8px;
+	box-shadow: none;
+}
+
+.fc .us-event-month .us-event-content {
+	align-items: center;
+	flex-direction: row;
+	gap: 6px;
+	padding: 2px 6px;
+}
+
+.fc .us-event-month .us-event-time {
+	display: none;
+}
+
+/* ===== List View Variant ===== */
+.fc .us-event-list {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+}
+
+.fc .us-event-list .us-event-content {
+	color: #111827;
+	display: block;
+	gap: 2px;
+	padding: 0;
+	width: 100%;
+}
+
+.fc .us-event-list .us-event-time {
+	color: var(--calendar-muted);
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+.fc .us-event-list .us-event-title {
+	color: #111827;
+	font-size: 13px;
+	font-weight: 600;
+	overflow: visible;
+	text-overflow: clip;
+	white-space: normal;
+	word-break: break-word;
+}
+
+.fc .fc-list-day-cushion {
+	background: #f5f8ff;
+	color: #3d475d;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 8px 12px;
+}
+
+.fc .fc-list-event:hover td {
+	background: rgb(10 132 255 / 8%);
+}
+
+.fc .fc-list-event-dot {
+	border-color: var(--calendar-accent);
+}
+
+.fc .fc-list-event-time {
+	color: var(--calendar-muted);
+	font-variant-numeric: tabular-nums;
+	font-weight: 500;
+}
+
+/* ===== Multi-Month Grid ===== */
+.fc .fc-multimonth {
+	border: none;
+	gap: 12px;
+}
+
+.fc .fc-multimonth-month {
+	background: #fff;
+	border: 1px solid var(--calendar-grid);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.fc .fc-multimonth-title {
+	background: linear-gradient(180deg, #fafcff 0%, #f5f8fd 100%);
+	color: #1f2937;
+	font-size: 14px;
+	font-weight: 700;
+	padding: 12px 14px;
+}
+
+/* ===== Responsive Tuning ===== */
+@media (width <= 1024px) {
+	.calendar-shell,
+	.calendar-sidebar,
+	.calendar-toolbar {
+		border-radius: 16px;
+	}
+
+	.fc .day {
+		font-size: 13px;
+		height: 24px;
+		width: 24px;
+	}
+
+	.us-event-content {
+		padding: 2px 5px;
+	}
+
+	.us-event-title {
+		font-size: 11px;
+	}
+
+	.fc .us-event-list .us-event-title {
+		font-size: 12px;
+		line-height: 1.35;
+	}
+
+	.fc .fc-list-event-time {
+		font-size: 12px;
+		padding-right: 10px;
+		white-space: nowrap;
+	}
+
+	/* Increase month cell capacity on mobile so "+N more" appears less often. */
+	.fc .fc-daygrid-day-frame,
+	.fc .fc-multimonth .fc-daygrid-day-frame {
+		min-height: 118px;
+	}
+
+	.fc .fc-daygrid-day-events {
+		min-height: 3.2em;
+	}
 }
