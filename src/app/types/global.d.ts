@@ -7,7 +7,7 @@ declare module '*.css' {
 
 declare const __IS_DEV__: boolean;
 declare const __API_URL__: string;
-declare const __TG_BOT_NAME__: string;
+declare const __TG_OAUTH_CLIENT_ID__: string;
 
 type TelegramInsets = {
 	top: number;
@@ -38,9 +38,21 @@ type TelegramWebApp = {
 	offEvent?(eventType: string, callback: () => void): void;
 };
 
+type TelegramLoginOptions = {
+	client_id?: number;
+	bot_id?: number;
+	request_access?: Array<'phone' | 'write'>;
+	nonce?: string;
+};
+
+type TelegramLoginApi = {
+	auth?(options: TelegramLoginOptions, callback: (payload: unknown) => void): void;
+};
+
 interface Window {
 	Telegram?: {
 		WebApp?: TelegramWebApp;
+		Login?: TelegramLoginApi;
 	};
 }
 
