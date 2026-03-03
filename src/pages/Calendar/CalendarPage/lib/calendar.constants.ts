@@ -1,0 +1,7 @@
+export const SELECT_LONG_PRESS_DELAY_MS = 400;
+
+export const DEFAULT_DAY_MAX_EVENT_ROWS = 3;
+export const MOBILE_MONTH_DAY_MAX_EVENT_ROWS = 6;
+
+export const DEFAULT_SLOT_DURATION = '00:30:00';
+export const DEFAULT_SLOT_MAX_TIME = '24:00:00';
