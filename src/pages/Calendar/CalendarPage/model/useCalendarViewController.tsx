@@ -4,14 +4,16 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import type { DateClickArg } from '@fullcalendar/interaction';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
+import multiMonthPlugin from '@fullcalendar/multimonth';
 import type FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import type { DateValue } from '@internationalized/date';
 import { getLocalTimeZone } from '@internationalized/date';
 import classNames from 'classnames';
 
-import { getInitialDate, getInitialView, saveView, syncUrlParams } from 'shared/lib';
+import { getInitialDate, getInitialView, saveView } from 'shared/lib';
 
+import { isMonthLikeView } from '../lib/isMonthLikeView';
 import { useIsMobile } from '../lib/useIsMobile';
 
 export const useCalendarViewController = () => {
@@ -44,7 +46,6 @@ export const useCalendarViewController = () => {
 	const handleDatesSet = useCallback((arg: DatesSetArg) => {
 		setCurrentView(arg.view.type);
 		setCurrentDate(arg.view.currentStart);
-		syncUrlParams(arg.view.type, arg.view.currentStart);
 
 		setCurrentStartDate(arg.view.activeStart);
 		setCurrentEndDate(arg.view.activeEnd);
@@ -52,7 +53,7 @@ export const useCalendarViewController = () => {
 
 	const handleDateClick = useCallback(
 		(arg: DateClickArg) => {
-			if (isMobile && arg.view.type === 'dayGridMonth') {
+			if (isMobile && isMonthLikeView(arg.view.type)) {
 				calendarApi()?.changeView('timeGridDay', arg.date);
 			}
 		},
@@ -71,7 +72,7 @@ export const useCalendarViewController = () => {
 		const isToday = date.toDateString() === new Date().toDateString();
 		const dow = date.toLocaleDateString('ru', { weekday: 'short' });
 		const day = date.toLocaleDateString('ru', { day: '2-digit' });
-		const isMonthView = arg.view.type === 'dayGridMonth';
+		const isMonthView = isMonthLikeView(arg.view.type);
 
 		return (
 			<div className="dayhead">
@@ -97,7 +98,7 @@ export const useCalendarViewController = () => {
 	}, []);
 
 	const plugins = useMemo(
-		() => [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
+		() => [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, multiMonthPlugin],
 		[],
 	);
 
