@@ -29,9 +29,7 @@ const STEPS: Step[] = [
 	},
 	{
 		title: 'Или вступите по приглашению',
-		description: 'Если пространство уже есть, просто присоединитесь по коду приглашения.',
-		cta: 'Вступить по коду',
-		path: RoutesPaths.joinSpaceWithInviteCode,
+		description: 'Если пространство уже есть, присоединитесь по ссылке-приглашению.',
 		Icon: UserPlus,
 	},
 	{
