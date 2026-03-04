@@ -50,14 +50,13 @@ export const ConfirmUpdateEventModal = (props: Props) => {
 	);
 
 	return (
-		<Modal isOpen={isOpen} onClose={onClose}>
+		<Modal isOpen={isOpen} onClose={onClose} shouldBlockScroll={false}>
 			<ModalContent>
 				<div className="p-4">
 					<div className="mb-1 text-lg font-semibold">Как применить изменения?</div>
 					{isRecurringEvent && (
 						<p className="text-sm text-neutral-600">
-							Выберите, нужно изменить только текущее событие или все будущие в
-							серии.
+							Выберите, нужно изменить только текущее событие или все будущие в серии.
 						</p>
 					)}
 					{!isRecurringEvent && (

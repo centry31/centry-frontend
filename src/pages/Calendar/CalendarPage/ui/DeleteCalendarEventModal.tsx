@@ -35,7 +35,7 @@ export const DeleteCalendarEventModal = (props: Props) => {
 	} = useDeleteCalendarEventForm({ eventId, eventStart, eventFrequency, onSuccess });
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
 			<ModalContent>
 				<DeleteCalendarEventForm
 					isNotifyMessage={isNotifyMessage}
