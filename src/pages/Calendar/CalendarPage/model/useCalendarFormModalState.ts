@@ -66,13 +66,15 @@ const DEFAULT_EVENT_UPDATE: EditEventDefaults = {
 type Props = {
 	onOpenFormCreate: () => void;
 	onOpenFormEdit: () => void;
+	onOpenFormDelete: () => void;
 
 	onOpenDetails: () => void;
 	onCloseDetails: () => void;
 };
 
 export const useCalendarFormModalState = (props: Props) => {
-	const { onOpenFormCreate, onOpenDetails, onOpenFormEdit, onCloseDetails } = props;
+	const { onOpenFormCreate, onOpenDetails, onOpenFormEdit, onOpenFormDelete, onCloseDetails } =
+		props;
 
 	const [eventDetails, setEventDetails] = useState<CalendarEvent>(DEFAULT_EVENT_DATA);
 	const [createDefaults, setCreateDefaults] = useState<CreateCalendarEvent>(DEFAULT_EVENT_CREATE);
@@ -136,6 +138,11 @@ export const useCalendarFormModalState = (props: Props) => {
 		[onCloseDetails, onOpenFormEdit],
 	);
 
+	const handleDeleteEventModal = useCallback(() => {
+		onOpenFormDelete();
+		onCloseDetails();
+	}, [onCloseDetails, onOpenFormDelete]);
+
 	return {
 		eventDetails,
 		createDefaults,
@@ -144,5 +151,6 @@ export const useCalendarFormModalState = (props: Props) => {
 		onSelectSlot: handleSelectSlot,
 		onClickEvent: handleClickEvent,
 		onEditEventModal: handleEditEventModal,
+		onDeleteEventModal: handleDeleteEventModal,
 	};
 };

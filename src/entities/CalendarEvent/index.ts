@@ -9,6 +9,7 @@ export type {
 	CalendarEventReminder,
 	CreateCalendarEvent,
 	CreateUpdateCalendarEventScope,
+	DeleteCalendarEvent,
 	DeleteCalendarEventScope,
 	UpdateCalendarEvent,
 } from './model/types';

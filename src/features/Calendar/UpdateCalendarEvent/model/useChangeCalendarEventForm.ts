@@ -7,14 +7,9 @@ import { useCalendarViewStore } from 'entities/Calendar';
 import type {
 	CalendarEventFrequency,
 	CreateUpdateCalendarEventScope,
-	DeleteCalendarEventScope,
 	UpdateCalendarEvent,
 } from 'entities/CalendarEvent';
-import {
-	useDeleteCalendarEvent,
-	useGetCalendarEvents,
-	useUpdateCalendarEvent,
-} from 'entities/CalendarEvent';
+import { useGetCalendarEvents, useUpdateCalendarEvent } from 'entities/CalendarEvent';
 import { useGetSpace } from 'entities/Space';
 
 import { getEventDurationFromStartAndEnd, notifySuccess } from 'shared/lib';
@@ -42,7 +37,6 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		end: currentDate.end,
 	});
 	const { request: updateCalendarEvent, isLoading: isUpdating } = useUpdateCalendarEvent();
-	const { request: deleteCalendarEvent, isLoading: isDeleting } = useDeleteCalendarEvent();
 	const { data: currentSpace } = useGetSpace({ spaceId });
 
 	const {
@@ -66,6 +60,13 @@ export const useChangeCalendarEventForm = (props: Props) => {
 	const {
 		field: { value: timeZone },
 	} = useController({ control, name: 'timeZone', defaultValue: DEFAULT_TIME_ZONE });
+
+	const {
+		field: { value: isNotifyMessage, onChange: onToggleIsNotifyMessage },
+	} = useController({ control, name: 'isNotifyMessage' });
+	const {
+		field: { value: notifyMessage, onChange: onChangeNotifyMessage },
+	} = useController({ control, name: 'notifyMessage' });
 
 	const {
 		fields: reminderFields,
@@ -121,6 +122,17 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		[removeReminder],
 	);
 
+	const handleToggleIsNotifyMessage = useCallback(() => {
+		onToggleIsNotifyMessage(!isNotifyMessage);
+	}, [onToggleIsNotifyMessage, isNotifyMessage]);
+
+	const handleChangeNotifyMessage = useCallback(
+		(message: string) => {
+			onChangeNotifyMessage(message);
+		},
+		[onChangeNotifyMessage],
+	);
+
 	const handleChangeFrequency = useCallback(
 		(value: CalendarEventFrequency) => {
 			onChangeFrequency(value);
@@ -150,16 +162,22 @@ export const useChangeCalendarEventForm = (props: Props) => {
 			const result = await updateCalendarEvent({
 				spaceId,
 				eventId,
+
 				scope: actualScope,
 				oldStart: defaultValues.start,
 				newStart: start,
+				duration: durationMinutes,
+
 				title,
 				description,
-				duration: durationMinutes,
 				timeZone: timeZone || DEFAULT_TIME_ZONE,
+
 				frequency,
 				until,
+
 				reminders: reminderFields.map((field) => ({ offsetMinutes: field.offsetMinutes })),
+				isNotifyMessage,
+				notifyMessage,
 			});
 			if (result === undefined) return;
 
@@ -186,33 +204,6 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		],
 	);
 
-	const handleDeleteCalendarEvent = useCallback(
-		async (scope: DeleteCalendarEventScope) => {
-			const actualScope = defaultValues.frequency === 'NEVER' ? 'THIS' : scope;
-
-			const result = await deleteCalendarEvent({
-				spaceId,
-				eventId,
-				scope: actualScope,
-				start: defaultValues.start,
-			});
-			if (result === undefined) return;
-
-			mutateCalendarEvents();
-			notifySuccess('Событие удалено');
-			onSuccess?.();
-		},
-		[
-			defaultValues.frequency,
-			defaultValues.start,
-			deleteCalendarEvent,
-			spaceId,
-			eventId,
-			mutateCalendarEvents,
-			onSuccess,
-		],
-	);
-
 	return {
 		title,
 		description: description || '',
@@ -223,10 +214,9 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		until,
 
 		reminderFields,
-		isRemindersActive: Boolean(currentSpace?.hasTelegramChats),
+		isSpaceHasTelegramChats: Boolean(currentSpace?.hasTelegramChats),
 
 		isUpdating,
-		isDeleting,
 
 		onChangeTitle: handleChangeTitle,
 		onChangeDescription: handleChangeDescription,
@@ -236,8 +226,13 @@ export const useChangeCalendarEventForm = (props: Props) => {
 		onRemoveReminder: handleRemoveReminder,
 		onChangeFrequency: handleChangeFrequency,
 
+		isNotifyMessage,
+		onToggleIsNotifyMessage: handleToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage: handleChangeNotifyMessage,
+
 		onUpdateCalendarEvent: handleUpdateCalendarEvent,
-		onDeleteCalendarEvent: handleDeleteCalendarEvent,
 		onChangeUntil: handleChangeUntil,
 
 		getReminderOffset: (index: number) => getValues(`reminders.${index}.offsetMinutes`),
