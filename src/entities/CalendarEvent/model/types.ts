@@ -53,6 +53,14 @@ type UpdateCalendarEvent = {
 	description?: string | null;
 
 	reminders: CalendarEventReminder[];
+
+	isNotifyMessage?: boolean;
+	notifyMessage?: string;
+};
+
+type DeleteCalendarEvent = {
+	isNotifyMessage?: boolean;
+	notifyMessage?: string;
 };
 
 export {
@@ -61,6 +69,7 @@ export {
 	CalendarEventReminder,
 	CreateCalendarEvent,
 	CreateUpdateCalendarEventScope,
+	DeleteCalendarEvent,
 	DeleteCalendarEventScope,
 	FrequencySelectItem,
 	UpdateCalendarEvent,
