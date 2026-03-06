@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
 import { ImportBmstuScheduleHintPage } from 'pages/Bmstu/ImportBmstuScheduleHintPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
+import { ContactsPage } from 'pages/Landing/ContactsPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { NotFoundPage } from 'pages/NotFound/NotFoundPage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
@@ -30,6 +31,7 @@ enum Routes {
 	MAIN = 'main',
 
 	WELCOME = 'welcome',
+	CONTACTS = 'contacts',
 	// MAGIC_LINK = 'magicLink', // TODO: magic-links убраны на неопределенный срок
 	CALENDAR = 'calendar',
 	LOGIN_WITH_TELEGRAM = 'loginWithTelegram',
@@ -59,6 +61,7 @@ export type Path =
 	| '/calendar/:spaceId'
 	| '/login'
 	| '/welcome'
+	| '/contacts'
 	//
 	| '/spaces'
 	| '/spaces/settings/:spaceId'
@@ -83,6 +86,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.CALENDAR]: '/calendar/:spaceId',
 	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
 	[Routes.WELCOME]: '/welcome',
+	[Routes.CONTACTS]: '/contacts',
 
 	[Routes.SPACES]: '/spaces',
 	[Routes.SPACE_SETTINGS_LIST]: '/spaces/settings/:spaceId',
@@ -108,8 +112,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 export const routerConfig: Record<Routes, AppRoutesProps> = {
 	[Routes.MAIN]: {
 		path: RoutesPaths.main,
-		element: <Navigate to={RoutesPaths.spaces} />,
-		authOnly: true,
+		element: <Navigate to={RoutesPaths.welcome} />,
 	},
 	// [Routes.MAGIC_LINK]: {
 	// 	path: RoutesPaths.magicLink,
@@ -128,6 +131,10 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	[Routes.WELCOME]: {
 		path: RoutesPaths.welcome,
 		element: <WelcomePage />,
+	},
+	[Routes.CONTACTS]: {
+		path: RoutesPaths.contacts,
+		element: <ContactsPage />,
 	},
 
 	[Routes.SPACES]: {
