@@ -120,11 +120,11 @@ export const WelcomePage = () => {
 							className="mx-auto max-w-6xl border border-white/70 bg-white/80 backdrop-blur"
 						>
 							<CardBody className="grid gap-3 p-3 sm:grid-cols-3">
-								<img src="/calendar.png" />
+								<img src="/assets/calendar.png" />
 
-								<img src="/event.png" />
+								<img src="/assets/event.png" />
 
-								<img src="/spaces.png" />
+								<img src="/assets/spaces.png" />
 							</CardBody>
 						</Card>
 					</div>

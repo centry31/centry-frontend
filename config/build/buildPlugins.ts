@@ -6,9 +6,11 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import webpack from 'webpack';
 import type { WebpackConfiguration } from 'webpack-cli';
 import type { BuildOptions } from './types/config';
+import CopyPlugin from 'copy-webpack-plugin';
 
 export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins'] => {
 	const { paths, IS_DEV, API_URL } = props;
+
 	const TG_OAUTH_CLIENT_ID = process.env.TG_OAUTH_CLIENT_ID;
 	const TG_BOT_NAME = process.env.TG_BOT_NAME || '';
 
@@ -32,6 +34,15 @@ export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins
 		new webpack.ProgressPlugin(),
 		//
 		new webpack.HotModuleReplacementPlugin(),
+		//
+		new CopyPlugin({
+			patterns: [
+				{
+					from: paths.assets,
+					to: paths.build,
+				},
+			],
+		}),
 		//
 		// new BundleAnalyzerPlugin({ analyzerPort: 10000 }),
 	];
