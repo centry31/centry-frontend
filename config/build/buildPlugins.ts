@@ -38,8 +38,8 @@ export const BuildPlugins = (props: BuildOptions): WebpackConfiguration['plugins
 		new CopyPlugin({
 			patterns: [
 				{
-					from: paths.assets,
-					to: paths.build,
+					from: paths.sourceAssets,
+					to: paths.targetAssets,
 				},
 			],
 		}),
