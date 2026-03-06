@@ -33,12 +33,7 @@ export const SpaceInviteCodeCard = (props: Props) => {
 
 			<CardBody className="pt-0">
 				<div className="space-y-2">
-					<Snippet
-						size={'sm'}
-						classNames={{
-							pre: 'whitespace-pre-wrap break-words',
-						}}
-					>
+					<Snippet size={'sm'} classNames={{ pre: 'whitespace-pre-wrap break-words' }}>
 						{codeUrl}
 					</Snippet>
 				</div>
