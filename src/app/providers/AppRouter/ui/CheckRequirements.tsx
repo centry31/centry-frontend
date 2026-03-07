@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { useUserStore } from 'entities/User';
 
@@ -14,15 +14,7 @@ export function CheckRequirements(props: Props) {
 	const { children, isAuthRequired } = props;
 
 	const { authData } = useUserStore();
-	const location = useLocation();
 
-	if (isAuthRequired && !authData) {
-		// Redirect them to the /login page, but save the current location they were
-		// trying to go to when they were redirected. This allows us to send them
-		// along to that page after they login, which is a nicer user experience
-		// than dropping them off on the home page.
-		return <Navigate to={RoutesPaths.welcome} state={{ from: location }} replace />;
-	}
-
+	if (isAuthRequired && !authData) return <Navigate to={RoutesPaths.loginWithTelegram} replace />;
 	return children;
 }

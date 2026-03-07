@@ -11,16 +11,22 @@ type PendingUpdateEvent = CalendarEvent & {
 	oldStart: string;
 };
 
+type UpdateNotificationSettings = {
+	isNotifyMessage: boolean;
+	notifyMessage?: string;
+};
+
 type Props = {
 	start: Date;
 	end: Date;
+	isSpaceHasTelegramChats: boolean;
 
 	onOpenConfirm: () => void;
 	onCloseConfirm: () => void;
 };
 
 export const useChangeCalendarEvent = (props: Props) => {
-	const { start, end, onOpenConfirm, onCloseConfirm } = props;
+	const { start, end, isSpaceHasTelegramChats, onOpenConfirm, onCloseConfirm } = props;
 
 	const { spaceId = '' } = useParams();
 
@@ -43,41 +49,52 @@ export const useChangeCalendarEvent = (props: Props) => {
 		setRevertChange(undefined);
 	}, [revertChange]);
 
-	const handleUpdateOneEvent = useCallback(async () => {
-		if (!updatedEvent) return;
-		const result = await updateEvent({
-			...updatedEvent,
+	const handleUpdateOneEvent = useCallback(
+		async (notificationSettings: UpdateNotificationSettings) => {
+			if (!updatedEvent) return;
+			const result = await updateEvent({
+				...updatedEvent,
 
-			scope: 'THIS',
-			frequency: 'NEVER',
+				scope: 'THIS',
+				frequency: 'NEVER',
+				isNotifyMessage: notificationSettings.isNotifyMessage,
+				notifyMessage: notificationSettings.notifyMessage,
 
-			oldStart: updatedEvent.oldStart,
-			newStart: updatedEvent.start,
+				oldStart: updatedEvent.oldStart,
+				newStart: updatedEvent.start,
 
-			spaceId,
-			eventId: updatedEvent.id,
-		});
-		if (result === undefined) return;
-		onUpdateSuccess();
-		notifySuccess('Событие обновлено');
-	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
+				spaceId,
+				eventId: updatedEvent.id,
+			});
+			if (result === undefined) return;
+			onUpdateSuccess();
+			notifySuccess('Событие обновлено');
+		},
+		[onUpdateSuccess, spaceId, updateEvent, updatedEvent],
+	);
 
-	const handleUpdateFeatureEvents = useCallback(async () => {
-		if (!updatedEvent) return;
-		const result = await updateEvent({
-			...updatedEvent,
-			scope: 'THIS_AND_FUTURE',
+	const handleUpdateFeatureEvents = useCallback(
+		async (notificationSettings: UpdateNotificationSettings) => {
+			if (!updatedEvent) return;
+			const result = await updateEvent({
+				...updatedEvent,
 
-			oldStart: updatedEvent.oldStart,
-			newStart: updatedEvent.start,
+				scope: 'THIS_AND_FUTURE',
+				isNotifyMessage: notificationSettings.isNotifyMessage,
+				notifyMessage: notificationSettings.notifyMessage,
 
-			spaceId,
-			eventId: updatedEvent.id,
-		});
-		if (result === undefined) return;
-		onUpdateSuccess();
-		notifySuccess('Событие обновлено');
-	}, [onUpdateSuccess, spaceId, updateEvent, updatedEvent]);
+				oldStart: updatedEvent.oldStart,
+				newStart: updatedEvent.start,
+
+				spaceId,
+				eventId: updatedEvent.id,
+			});
+			if (result === undefined) return;
+			onUpdateSuccess();
+			notifySuccess('Событие обновлено');
+		},
+		[onUpdateSuccess, spaceId, updateEvent, updatedEvent],
+	);
 
 	const handleChangeEvent = useCallback(
 		(arg: EventChangeArg) => {
@@ -104,7 +121,7 @@ export const useChangeCalendarEvent = (props: Props) => {
 			setUpdatedEvent(calendarEvent);
 			setRevertChange(() => arg.revert);
 
-			if (calendarEvent.frequency === 'NEVER') {
+			if (calendarEvent.frequency === 'NEVER' && !isSpaceHasTelegramChats) {
 				updateEvent({
 					...calendarEvent,
 					scope: 'THIS',
@@ -122,7 +139,7 @@ export const useChangeCalendarEvent = (props: Props) => {
 			}
 			onOpenConfirm();
 		},
-		[onOpenConfirm, onUpdateSuccess, spaceId, updateEvent],
+		[isSpaceHasTelegramChats, onOpenConfirm, onUpdateSuccess, spaceId, updateEvent],
 	);
 
 	const handleCancelChangeEvents = useCallback(() => {
@@ -132,6 +149,7 @@ export const useChangeCalendarEvent = (props: Props) => {
 
 	return {
 		isEventUpdating,
+		isPendingUpdateRecurring: Boolean(updatedEvent && updatedEvent.frequency !== 'NEVER'),
 
 		onChangeEvent: handleChangeEvent,
 		onCancelChangeEvents: handleCancelChangeEvents,

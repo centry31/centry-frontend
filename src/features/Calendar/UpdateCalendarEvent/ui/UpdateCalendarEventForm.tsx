@@ -4,7 +4,6 @@ import type { ZonedDateTime } from '@internationalized/date';
 import type {
 	CalendarEventFrequency,
 	CreateUpdateCalendarEventScope,
-	DeleteCalendarEventScope,
 } from 'entities/CalendarEvent';
 import { FREQUENCY_PRESETS, REMINDERS_PRESETS } from 'entities/CalendarEvent';
 
@@ -26,10 +25,15 @@ type Props = {
 	until?: string;
 
 	reminderFields: ReminderField[];
-	isRemindersActive: boolean;
+	isSpaceHasTelegramChats: boolean;
 
 	isUpdating: boolean;
-	isDeleting: boolean;
+
+	isNotifyMessage?: boolean;
+	onToggleIsNotifyMessage: () => void;
+
+	notifyMessage?: string;
+	onChangeNotifyMessage: (message: string) => void;
 
 	onChangeTitle: (value: string) => void;
 	onChangeDescription: (value: string) => void;
@@ -41,12 +45,11 @@ type Props = {
 	onChangeUntil: (value?: ZonedDateTime | null) => void;
 
 	onUpdateCalendarEvent: (scope: CreateUpdateCalendarEventScope) => void;
-	onDeleteCalendarEvent: (scope: DeleteCalendarEventScope) => void;
 
 	getReminderOffset: (index: number) => number;
 };
 
-export const ChangeCalendarEventForm = (props: Props) => {
+export const UpdateCalendarEventForm = (props: Props) => {
 	const {
 		title,
 		description,
@@ -57,10 +60,13 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		until,
 
 		reminderFields,
-		isRemindersActive,
+		isSpaceHasTelegramChats,
 
-		isUpdating,
-		isDeleting,
+		isNotifyMessage,
+		onToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage,
 
 		onChangeTitle,
 		onChangeDescription,
@@ -71,8 +77,8 @@ export const ChangeCalendarEventForm = (props: Props) => {
 		onChangeFrequency,
 		onChangeUntil,
 
+		isUpdating,
 		onUpdateCalendarEvent,
-		onDeleteCalendarEvent,
 
 		getReminderOffset,
 	} = props;
@@ -80,10 +86,6 @@ export const ChangeCalendarEventForm = (props: Props) => {
 	const handleUpdateOneCalendarEvent = () => onUpdateCalendarEvent('THIS');
 	const handleUpdateFutureCalendarEvent = () => onUpdateCalendarEvent('THIS_AND_FUTURE');
 	const handleUpdateSingleCalendarEvent = () => onUpdateCalendarEvent('THIS');
-
-	const handleDeleteOneCalendarEvent = () => onDeleteCalendarEvent('THIS');
-	const handleDeleteSeriesCalendarEvent = () => onDeleteCalendarEvent('SERIES');
-	const handleDeleteSingleCalendarEvent = () => onDeleteCalendarEvent('THIS');
 
 	const handleChangeInfinityUntilSwitch = () => {
 		if (until) {
@@ -156,15 +158,34 @@ export const ChangeCalendarEventForm = (props: Props) => {
 					/>
 				)}
 
+				{!isSpaceHasTelegramChats && (
+					<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
+						Чтобы добавлять напоминания, привяжите Telegram-чат в настройках
+						пространства.
+					</div>
+				)}
+
+				<Switch
+					isSelected={isNotifyMessage}
+					onChange={onToggleIsNotifyMessage}
+					size={'sm'}
+					isDisabled={!isSpaceHasTelegramChats}
+				>
+					Уведомить привязанные Telegram чаты?
+				</Switch>
+
+				{isNotifyMessage && (
+					<Textarea
+						label="Сообщение"
+						value={notifyMessage}
+						onChange={(event) => onChangeNotifyMessage(event.target.value)}
+						placeholder={'Дополнительное Telegram сообщение'}
+						disabled={!isSpaceHasTelegramChats || !isNotifyMessage}
+					/>
+				)}
+
 				<div className="flex flex-col gap-2">
 					<div className="text-sm font-medium">Напоминания</div>
-
-					{!isRemindersActive && (
-						<div className="rounded-lg bg-warning-50 px-3 py-2 text-sm text-warning-700">
-							Чтобы добавлять напоминания, привяжите Telegram-чат в настройках
-							пространства.
-						</div>
-					)}
 
 					<div className="flex flex-wrap gap-2">
 						{REMINDERS_PRESETS.map((minutes) => (
@@ -173,7 +194,7 @@ export const ChangeCalendarEventForm = (props: Props) => {
 								size="sm"
 								variant="flat"
 								onPress={() => onAddReminder(minutes)}
-								disabled={!isRemindersActive}
+								disabled={!isSpaceHasTelegramChats}
 							>
 								{formatMinutesOffset(minutes)}
 							</Button>
@@ -231,39 +252,6 @@ export const ChangeCalendarEventForm = (props: Props) => {
 							disabled={isUpdating}
 						>
 							Обновить c будущими событиями
-						</Button>
-					</>
-				)}
-
-				{initialFrequency === 'NEVER' && (
-					<Button
-						color="danger"
-						onPress={handleDeleteSingleCalendarEvent}
-						isLoading={isDeleting}
-						disabled={isDeleting}
-					>
-						Удалить
-					</Button>
-				)}
-
-				{initialFrequency !== 'NEVER' && (
-					<>
-						<Button
-							color="danger"
-							variant="flat"
-							onPress={handleDeleteOneCalendarEvent}
-							isLoading={isDeleting}
-							disabled={isDeleting}
-						>
-							Удалить только текущее событие
-						</Button>
-						<Button
-							color="danger"
-							onPress={handleDeleteSeriesCalendarEvent}
-							isLoading={isDeleting}
-							disabled={isDeleting}
-						>
-							Удалить всю серию
 						</Button>
 					</>
 				)}

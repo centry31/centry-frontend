@@ -21,21 +21,9 @@ export const SpaceSettingsInviteCodesPage = () => {
 	const { data: inviteLinks, isLoading: isLinksLoading } = useGetSpaceInviteCodes({ spaceId });
 
 	const { isOpen, onOpenChange } = useDisclosure();
-	const {
-		isLoading,
-		maxUses,
-		expiresAtIso,
-		usesMode,
-		timeMode,
-		createdCode,
-		linkUrl,
-		onChangeMaxUses,
-		onChangeExpiresAt,
-		onPickExpiresAtBump,
-		onChangeUsesMode,
-		onChangeTimeMode,
-		onCreateInviteLink,
-	} = useCreateSpaceInviteCodeForm({ spaceId, isOpen });
+	const { isLoading, linkUrl, onCreateInviteLink } = useCreateSpaceInviteCodeForm({
+		spaceId,
+	});
 
 	return (
 		<div className={'p-3 flex max-w-2xl gap-5 m-auto flex-col'}>
@@ -55,16 +43,6 @@ export const SpaceSettingsInviteCodesPage = () => {
 					<CreateSpaceInviteCodeForm
 						isLoading={isLoading}
 						linkUrl={linkUrl}
-						createdCode={createdCode}
-						maxUses={maxUses}
-						expiresAtIso={expiresAtIso}
-						usesMode={usesMode}
-						timeMode={timeMode}
-						onChangeMaxUses={onChangeMaxUses}
-						onChangeExpiresAt={onChangeExpiresAt}
-						onPickExpiresAtBump={onPickExpiresAtBump}
-						onChangeUsesMode={onChangeUsesMode}
-						onChangeTimeMode={onChangeTimeMode}
 						onCreateInviteLink={onCreateInviteLink}
 						onClose={() => onOpenChange()}
 					/>

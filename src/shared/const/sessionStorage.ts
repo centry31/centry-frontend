@@ -1,0 +1,2 @@
+export const TG_MINI_APP_REDIRECT_LINK_SESSION_STORAGE_KEY = 'telegramMiniAppRedirectLink';
+export const PENDING_AUTH_REDIRECT_LINK_SESSION_STORAGE_KEY = 'pendingAuthRedirectLink';

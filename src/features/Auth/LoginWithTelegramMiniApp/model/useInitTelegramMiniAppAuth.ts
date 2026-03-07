@@ -1,6 +1,7 @@
 import { useLoginWithTelegramMiniApp, useUserStore } from 'entities/User';
 
-import { notifySuccess } from 'shared/lib';
+import { TG_MINI_APP_REDIRECT_LINK_SESSION_STORAGE_KEY } from 'shared/const';
+import { notifySuccess, parseTelegramStartParam } from 'shared/lib';
 
 export const useInitTelegramMiniAppAuth = () => {
 	const { initAuthData } = useUserStore();
@@ -26,6 +27,18 @@ export const useInitTelegramMiniAppAuth = () => {
 			tg?.requestFullsize?.();
 		} else {
 			initAuthData();
+		}
+
+		const redirectMiniAppLink = tg?.initDataUnsafe?.start_param;
+		if (typeof redirectMiniAppLink === 'string') {
+			const parsedRedirectPath = parseTelegramStartParam(redirectMiniAppLink);
+
+			if (parsedRedirectPath) {
+				sessionStorage.setItem(
+					TG_MINI_APP_REDIRECT_LINK_SESSION_STORAGE_KEY,
+					parsedRedirectPath,
+				);
+			}
 		}
 
 		return () => {

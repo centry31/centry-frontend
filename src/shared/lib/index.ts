@@ -20,4 +20,5 @@ export {
 	resolveSpaceId,
 	setLastSelectedSpaceId,
 } from './spaceSelection';
+export { encodeTelegramStartParam, parseTelegramStartParam } from './telegramStartParam';
 export { useGetParamFromUrl } from './useGetParamFromUrl';

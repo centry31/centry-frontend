@@ -9,18 +9,24 @@ type Props = {
 	isEditable: boolean;
 
 	onEdit: (event: CalendarEvent) => void;
+	onDelete: () => void;
 
 	isOpen: boolean;
 	onOpenChange: () => void;
 };
 
 export const EventDetailsModal = (props: Props) => {
-	const { event, isEditable, onEdit, isOpen, onOpenChange } = props;
+	const { event, isEditable, onEdit, onDelete, isOpen, onOpenChange } = props;
 
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} shouldBlockScroll={false}>
 			<ModalContent>
-				<EventDetails isEditable={isEditable} event={event} onEdit={onEdit} />
+				<EventDetails
+					isEditable={isEditable}
+					event={event}
+					onEdit={onEdit}
+					onDelete={onDelete}
+				/>
 			</ModalContent>
 		</Modal>
 	);

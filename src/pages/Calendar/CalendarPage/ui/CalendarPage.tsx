@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import type { EventClickArg } from '@fullcalendar/core';
 import { useDisclosure } from '@heroui/react';
 
 import { CalendarToolbar } from 'widgets/Calendar/CalendarToolbar';
@@ -33,6 +34,7 @@ export const CalendarPage = () => {
 	const { spaceId = '' } = useParams();
 	const { setCurrentDate } = useCalendarViewStore();
 	const { data: currentSpace } = useGetSpace({ spaceId });
+	const isSpaceHasTelegramChats = Boolean(currentSpace?.hasTelegramChats);
 
 	useEffect(() => {
 		setCurrentDate({
@@ -62,9 +64,11 @@ export const CalendarPage = () => {
 		onOpen: onOpenConfirm,
 		onClose: onCloseConfirm,
 	} = useDisclosure();
+	const { isOpen: isDeleteOpen, onOpenChange: onDeleteOpenChange } = useDisclosure();
 
 	const formModals = useCalendarFormModalState({
 		onOpenFormCreate: onCreateOpen,
+		onOpenFormDelete: onDeleteOpenChange,
 		onOpenDetails: onDetailsOpen,
 		onOpenFormEdit: onEditOpen,
 		onCloseDetails: onDetailsClose,
@@ -73,6 +77,7 @@ export const CalendarPage = () => {
 	const updateEvents = useChangeCalendarEvent({
 		start: view.currentStartDate,
 		end: view.currentEndDate,
+		isSpaceHasTelegramChats,
 		onOpenConfirm,
 		onCloseConfirm,
 	});
@@ -90,6 +95,19 @@ export const CalendarPage = () => {
 		events: events.events,
 	});
 
+	const handleCalendarEventClick = useCallback(
+		(arg: EventClickArg) => {
+			if (view.isMobile && isMonthLikeView(view.currentView)) {
+				const targetDate = arg.event.start ?? view.currentDate;
+				view.calendarRef.current?.getApi()?.changeView('timeGridDay', targetDate);
+				return;
+			}
+
+			formModals.onClickEvent(arg);
+		},
+		[formModals, view.calendarRef, view.currentDate, view.currentView, view.isMobile],
+	);
+
 	return (
 		<div className="calendar-page flex h-full flex-col gap-3 p-2 sm:p-3">
 			<CalendarModals
@@ -106,9 +124,15 @@ export const CalendarPage = () => {
 				isEditOpen={isEditOpen}
 				onEditOpenChange={onEditOpenChange}
 				//
+				isDeleteOpen={isDeleteOpen}
+				onDeleteOpenChange={onDeleteOpenChange}
+				onDeleteEvent={formModals.onDeleteEventModal}
+				//
 				isEditable={events.isEditable}
 				isConfirmOpen={isConfirmOpen}
 				isUpdatingEvent={updateEvents.isEventUpdating}
+				isSpaceHasTelegramChats={isSpaceHasTelegramChats}
+				isRecurringUpdate={updateEvents.isPendingUpdateRecurring}
 				//
 				onCancelChangeEvents={updateEvents.onCancelChangeEvents}
 				onUpdateOneEvent={updateEvents.onUpdateOneEvent}
@@ -142,7 +166,7 @@ export const CalendarPage = () => {
 					onDatesSet={view.onDatesSet}
 					onSelectSlot={formModals.onSelectSlot}
 					onChangeEvent={updateEvents.onChangeEvent}
-					onClickEvent={formModals.onClickEvent}
+					onClickEvent={handleCalendarEventClick}
 					onDateClick={view.onDateClick}
 					//
 					dayHeaderContent={view.dayHeaderContent}

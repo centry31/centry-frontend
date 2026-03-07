@@ -5,8 +5,6 @@ import type { SpaceInviteCode } from '../model/types';
 
 type Props = {
 	spaceId: string;
-	maxUses: number;
-	expiresAt: string;
 };
 
 export const useCreateInviteCode = () => {

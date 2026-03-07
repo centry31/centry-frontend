@@ -8,15 +8,20 @@ type Props = {
 
 	scope: DeleteCalendarEventScope;
 	start: string;
+
+	isNotifyMessage?: boolean;
+	notifyMessage?: string;
 };
 
 export const useDeleteCalendarEvent = () => {
 	const fetcher = async (props: Props) => {
-		const { eventId, spaceId, scope, start } = props;
+		const { eventId, spaceId, scope, start, isNotifyMessage, notifyMessage } = props;
 		await axiosInstance.delete(`/events/${spaceId}/${eventId}`, {
 			params: {
 				scope,
 				start,
+				isNotifyMessage,
+				notifyMessage,
 			},
 		});
 		return true;
