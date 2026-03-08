@@ -29,8 +29,8 @@ export const SpaceInviteCodeInfoCard = () => {
 
 	useEffect(() => {
 		if (!code) return;
-		void getSpaceInfo({ code }).then((space) => setSpaceInfo(space));
-	}, [code, getSpaceInfo]);
+		getSpaceInfo({ code }).then((space) => setSpaceInfo(space));
+	}, [code]);
 
 	const spaceDetailsPath = useMemo(() => {
 		if (!spaceInfo) return RoutesPaths.spaces;
