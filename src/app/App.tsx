@@ -63,7 +63,7 @@ const App = () => {
 
 				{authData && <NavbarAuth />}
 				{!isWelcomePage && !authData && <NavbarGuest />}
-				{!isWelcomePage && <FirstLoginOnboarding userId={authData?.id} />}
+				{authData && <FirstLoginOnboarding userId={authData.id} />}
 
 				<div className={'content'}>
 					<AppRouter />
