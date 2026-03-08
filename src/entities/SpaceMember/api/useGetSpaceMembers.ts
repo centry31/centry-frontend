@@ -22,5 +22,6 @@ export const useGetSpaceMembers = (props: Props) => {
 		return res.data.data;
 	};
 
-	return useSWR(`api/spaces/members/${spaceId}`, fetcher);
+	const key = spaceId ? `api/spaces/members/${spaceId}` : null;
+	return useSWR(key, fetcher);
 };

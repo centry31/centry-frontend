@@ -5,6 +5,7 @@ import { HeroUIProvider, Spinner, ToastProvider } from '@heroui/react';
 
 import { NavbarAuth } from 'widgets/Auth/NavbarAuth';
 import { NavbarGuest } from 'widgets/Auth/NavbarGuest';
+import { FirstLoginOnboarding } from 'widgets/Onboarding/FirstLoginOnboarding';
 
 import { useInitTelegramMiniAppAuth } from 'features/Auth/LoginWithTelegramMiniApp';
 
@@ -62,6 +63,7 @@ const App = () => {
 
 				{authData && <NavbarAuth />}
 				{!isWelcomePage && !authData && <NavbarGuest />}
+				{authData && <FirstLoginOnboarding userId={authData.id} />}
 
 				<div className={'content'}>
 					<AppRouter />

@@ -1,4 +1,5 @@
 export { requestInitAuthData } from './api/requestInitAuthData';
+export { useCompleteOnboarding } from './api/useCompleteOnboarding';
 export { useCreateTelegramOidcNonce } from './api/useCreateTelegramOidcNonce';
 export { useLoginWithMagicLink } from './api/useLoginWithMagicLink';
 export { useLoginWithTelegramMiniApp } from './api/useLoginWithTelegramMiniApp';

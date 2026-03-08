@@ -4,6 +4,7 @@ type User = {
 
 	username: string;
 	displayName: string;
+	isOnboardingCompleted: boolean;
 };
 
 export { User };
