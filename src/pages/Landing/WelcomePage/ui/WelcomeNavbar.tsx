@@ -14,29 +14,31 @@ export const WelcomeNavbar = () => {
 		<Navbar
 			maxWidth="xl"
 			isBordered
-			className="backdrop-blur supports-[backdrop-filter]:bg-white/70"
+			className="border-b border-white/70 bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/55"
 		>
 			<NavbarBrand>
-				<div className="mr-2 h-6 w-6 rounded-md bg-black" />
-				<span className="select-none text-base font-medium tracking-tight">centry.</span>
+				<div className="mr-2 h-6 w-6 rounded-md bg-[linear-gradient(180deg,#0f172a_0%,#334155_100%)]" />
+				<span className="select-none text-base font-semibold tracking-tight text-neutral-900">
+					centry.
+				</span>
 			</NavbarBrand>
 
 			<NavbarContent className="hidden gap-6 sm:flex" justify="center">
 				<NavbarItem>
-					<Link href="#how" color="foreground">
-						Как это работает
+					<Link href="#about" color="foreground" className="text-neutral-700">
+						Что это
 					</Link>
 				</NavbarItem>
 
 				<NavbarItem>
-					<Link href="#" color="foreground">
-						Фичи
+					<Link href="#features" color="foreground" className="text-neutral-700">
+						Что работает
 					</Link>
 				</NavbarItem>
 
 				<NavbarItem>
-					<Link href="#" color="foreground">
-						Цены
+					<Link href="#alpha" color="foreground" className="text-neutral-700">
+						Alpha
 					</Link>
 				</NavbarItem>
 			</NavbarContent>
@@ -44,7 +46,7 @@ export const WelcomeNavbar = () => {
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden sm:flex">
 					<Button variant="flat" onPress={handleNavigateToLoginPage} color={'primary'}>
-						Вход
+						Войти через Telegram
 					</Button>
 				</NavbarItem>
 			</NavbarContent>

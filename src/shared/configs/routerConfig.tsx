@@ -1,12 +1,15 @@
 /* eslint-disable @conarti/feature-sliced/layers-slices */
 import type { RouteProps } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { LoginWithTelegramPage } from 'pages/Auth/LoginWithTelegramPage';
 import { ImportBmstuScheduleHintPage } from 'pages/Bmstu/ImportBmstuScheduleHintPage';
 import { CalendarPage } from 'pages/Calendar/CalendarPage';
+import { ContactsPage } from 'pages/Landing/ContactsPage';
 import { WelcomePage } from 'pages/Landing/WelcomePage';
 import { NotFoundPage } from 'pages/NotFound/NotFoundPage';
 import { CreateSpacePage } from 'pages/Space/CreateSpacePage';
+import { InviteLandingPage } from 'pages/Space/InviteLandingPage';
 import { JoinSpaceInviteCodePage } from 'pages/Space/JoinSpaceInviteCodePage';
 import { NoSpacesPage } from 'pages/Space/NoSpacesPage';
 import { SpaceDetailsPage } from 'pages/Space/SpaceDetailsPage';
@@ -25,7 +28,10 @@ export type AppRoutesProps = RouteProps & {
 
 /** Конфигурация путей всего приложения */
 enum Routes {
+	MAIN = 'main',
+
 	WELCOME = 'welcome',
+	CONTACTS = 'contacts',
 	// MAGIC_LINK = 'magicLink', // TODO: magic-links убраны на неопределенный срок
 	CALENDAR = 'calendar',
 	LOGIN_WITH_TELEGRAM = 'loginWithTelegram',
@@ -42,6 +48,7 @@ enum Routes {
 	CREATE_SPACE = 'createSpace',
 	JOIN_SPACE_WITH_INVITE_CODE = 'joinSpaceWithInviteCode',
 	NO_SPACES = 'noSpaces',
+	INVITE_LANDING = 'inviteLanding',
 
 	IMPORT_BMSTU_SCHEDULE_HINT = 'importBmstuScheduleHint',
 
@@ -49,10 +56,12 @@ enum Routes {
 }
 
 export type Path =
+	| '/'
 	// | '/auth/magic-link'
 	| '/calendar/:spaceId'
 	| '/login'
 	| '/welcome'
+	| '/contacts'
 	//
 	| '/spaces'
 	| '/spaces/settings/:spaceId'
@@ -67,14 +76,17 @@ export type Path =
 	| '/spaces/create'
 	| '/spaces/join'
 	| '/spaces/no-spaces'
+	| '/invite'
 	//
 	| '/spaces/bmstu/:spaceId/import-schedule-hint';
 
 export const RoutesPaths: Record<Routes, Path> = {
+	[Routes.MAIN]: '/',
 	// [Routes.MAGIC_LINK]: '/auth/magic-link',
 	[Routes.CALENDAR]: '/calendar/:spaceId',
 	[Routes.LOGIN_WITH_TELEGRAM]: '/login',
 	[Routes.WELCOME]: '/welcome',
+	[Routes.CONTACTS]: '/contacts',
 
 	[Routes.SPACES]: '/spaces',
 	[Routes.SPACE_SETTINGS_LIST]: '/spaces/settings/:spaceId',
@@ -89,6 +101,7 @@ export const RoutesPaths: Record<Routes, Path> = {
 	[Routes.CREATE_SPACE]: '/spaces/create',
 	[Routes.JOIN_SPACE_WITH_INVITE_CODE]: '/spaces/join',
 	[Routes.NO_SPACES]: '/spaces/no-spaces',
+	[Routes.INVITE_LANDING]: '/invite',
 
 	[Routes.IMPORT_BMSTU_SCHEDULE_HINT]: '/spaces/bmstu/:spaceId/import-schedule-hint',
 
@@ -97,6 +110,10 @@ export const RoutesPaths: Record<Routes, Path> = {
 };
 
 export const routerConfig: Record<Routes, AppRoutesProps> = {
+	[Routes.MAIN]: {
+		path: RoutesPaths.main,
+		element: <Navigate to={RoutesPaths.welcome} />,
+	},
 	// [Routes.MAGIC_LINK]: {
 	// 	path: RoutesPaths.magicLink,
 	// 	element: <MagicLinkPage />,
@@ -114,6 +131,10 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 	[Routes.WELCOME]: {
 		path: RoutesPaths.welcome,
 		element: <WelcomePage />,
+	},
+	[Routes.CONTACTS]: {
+		path: RoutesPaths.contacts,
+		element: <ContactsPage />,
 	},
 
 	[Routes.SPACES]: {
@@ -173,6 +194,10 @@ export const routerConfig: Record<Routes, AppRoutesProps> = {
 		path: RoutesPaths.noSpaces,
 		element: <NoSpacesPage />,
 		authOnly: true,
+	},
+	[Routes.INVITE_LANDING]: {
+		path: RoutesPaths.inviteLanding,
+		element: <InviteLandingPage />,
 	},
 
 	[Routes.IMPORT_BMSTU_SCHEDULE_HINT]: {

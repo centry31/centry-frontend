@@ -60,9 +60,16 @@ export const useCalendarViewController = () => {
 		[calendarApi, isMobile],
 	);
 
+	// TODO: типизировать nextView
 	const handleDateChange = useCallback(
-		(value: DateValue) => {
-			calendarApi()?.gotoDate(value.toDate(getLocalTimeZone()));
+		(value: DateValue, nextView: string) => {
+			const date = value.toDate(getLocalTimeZone());
+
+			if (nextView) {
+				calendarApi()?.changeView(nextView, date);
+			} else {
+				calendarApi()?.gotoDate(date);
+			}
 		},
 		[calendarApi],
 	);

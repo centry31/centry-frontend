@@ -15,8 +15,13 @@ export const SpaceActionButtons = (props: Props) => {
 
 	const navigate = useNavigate();
 
-	const handleNavigateDetails = () => {
+	const handleNavigateMembers = () => {
 		const path = generatePath(RoutesPaths.spaceDetails, { spaceId: space.id });
+		navigate(path);
+	};
+
+	const handleNavigateCalendar = () => {
+		const path = generatePath(RoutesPaths.calendar, { spaceId: space.id });
 		navigate(path);
 	};
 
@@ -30,17 +35,30 @@ export const SpaceActionButtons = (props: Props) => {
 	return (
 		<>
 			<Button
-				onPress={handleNavigateDetails}
+				onPress={handleNavigateCalendar}
 				variant="flat"
+				size={'sm'}
 				endContent={<ArrowRight size={16} />}
 			>
-				Перейти
+				Календарь
 			</Button>
+
+			{!isOwner && (
+				<Button
+					onPress={handleNavigateMembers}
+					variant="flat"
+					size={'sm'}
+					endContent={<ArrowRight size={16} />}
+				>
+					Участники
+				</Button>
+			)}
 
 			{isOwner && (
 				<Button
 					onPress={handleNavigateSettings}
 					variant="flat"
+					size={'sm'}
 					endContent={<Settings size={16} />}
 				>
 					Настройки

@@ -5,7 +5,7 @@ import { safeParseAbsoluteToLocal } from 'shared/lib';
 
 type Props = {
 	currentDate: Date;
-	onDateChange: (value: DateValue) => void;
+	onDateChange: (value: DateValue, nextView: string) => void;
 
 	eventsCount: number;
 
@@ -26,7 +26,7 @@ export const CalendarSidebar = (props: Props) => {
 					classNames={{ base: 'border-none shadow-none' }}
 					className="calendar-mini bg-transparent m-auto"
 					value={safeParseAbsoluteToLocal(currentDate.toISOString())}
-					onChange={onDateChange}
+					onChange={(value) => onDateChange(value, 'timeGridDay')}
 				/>
 
 				<div className="flex flex-wrap gap-2">

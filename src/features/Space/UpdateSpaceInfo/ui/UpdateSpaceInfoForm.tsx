@@ -48,7 +48,7 @@ export const UpdateSpaceInfoForm = (props: Props) => {
 				</Button>
 
 				<Button variant="flat" onPress={onResetForm}>
-					Отмена
+					Отменить изменения
 				</Button>
 			</div>
 		</>

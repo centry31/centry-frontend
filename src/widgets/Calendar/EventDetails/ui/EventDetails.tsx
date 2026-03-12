@@ -1,5 +1,5 @@
 import { Button, Divider } from '@heroui/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash } from 'lucide-react';
 
 import type { CalendarEvent } from 'entities/CalendarEvent';
 
@@ -12,14 +12,19 @@ type Props = {
 	isEditable: boolean;
 
 	onEdit?: (event: CalendarEvent) => void;
+	onDelete?: () => void;
 };
 
 export const EventDetails = (props: Props) => {
-	const { event, isEditable, onEdit } = props;
+	const { event, isEditable, onEdit, onDelete } = props;
 	const { title, description, start, duration, reminders } = event;
 
 	const handleEdit = () => {
 		onEdit?.(event);
+	};
+
+	const handleDelete = () => {
+		onDelete?.();
 	};
 
 	return (
@@ -77,6 +82,15 @@ export const EventDetails = (props: Props) => {
 						onPress={handleEdit}
 					>
 						Редактировать
+					</Button>
+
+					<Button
+						color="danger"
+						startContent={<Trash size={16} />}
+						onPress={handleDelete}
+						variant={'flat'}
+					>
+						Удалить
 					</Button>
 				</div>
 			)}
