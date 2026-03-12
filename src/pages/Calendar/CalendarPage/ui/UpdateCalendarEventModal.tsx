@@ -1,9 +1,9 @@
 import { Modal, ModalContent } from '@heroui/react';
 
 import {
-	ChangeCalendarEventForm,
+	UpdateCalendarEventForm,
 	useChangeCalendarEventForm,
-} from 'features/Calendar/ChangeCalendarEvent';
+} from 'features/Calendar/UpdateCalendarEvent';
 
 import type { UpdateCalendarEvent } from 'entities/CalendarEvent';
 
@@ -17,7 +17,7 @@ type Props = {
 	onOpenChange: () => void;
 };
 
-export const ChangeCalendarEventModal = (props: Props) => {
+export const UpdateCalendarEventModal = (props: Props) => {
 	const { isOpen, onOpenChange, defaultValues, eventId, onSuccess } = props;
 
 	const {
@@ -30,10 +30,15 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		until,
 
 		reminderFields,
-		isRemindersActive,
+		isSpaceHasTelegramChats,
 
 		isUpdating,
-		isDeleting,
+
+		isNotifyMessage,
+		onToggleIsNotifyMessage,
+
+		notifyMessage,
+		onChangeNotifyMessage,
 
 		onChangeTitle,
 		onChangeDescription,
@@ -45,7 +50,6 @@ export const ChangeCalendarEventModal = (props: Props) => {
 		onChangeUntil,
 
 		onUpdateCalendarEvent,
-		onDeleteCalendarEvent,
 
 		getReminderOffset,
 	} = useChangeCalendarEventForm({ eventId, defaultValues, onSuccess });
@@ -58,7 +62,7 @@ export const ChangeCalendarEventModal = (props: Props) => {
 			scrollBehavior={'outside'}
 		>
 			<ModalContent>
-				<ChangeCalendarEventForm
+				<UpdateCalendarEventForm
 					title={title}
 					description={description}
 					//
@@ -69,10 +73,14 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					until={until}
 					//
 					reminderFields={reminderFields}
-					isRemindersActive={isRemindersActive}
+					isSpaceHasTelegramChats={isSpaceHasTelegramChats}
 					//
 					isUpdating={isUpdating}
-					isDeleting={isDeleting}
+					//
+					isNotifyMessage={isNotifyMessage}
+					onToggleIsNotifyMessage={onToggleIsNotifyMessage}
+					notifyMessage={notifyMessage}
+					onChangeNotifyMessage={onChangeNotifyMessage}
 					//
 					onChangeTitle={onChangeTitle}
 					onChangeDescription={onChangeDescription}
@@ -84,7 +92,6 @@ export const ChangeCalendarEventModal = (props: Props) => {
 					onChangeUntil={onChangeUntil}
 					//
 					onUpdateCalendarEvent={onUpdateCalendarEvent}
-					onDeleteCalendarEvent={onDeleteCalendarEvent}
 					//
 					getReminderOffset={getReminderOffset}
 				/>

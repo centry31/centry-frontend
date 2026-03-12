@@ -25,6 +25,9 @@ type Props = {
 	description?: string | null;
 
 	reminders: CalendarEventReminder[];
+
+	isNotifyMessage?: boolean;
+	notifyMessage?: string;
 };
 
 export const useUpdateCalendarEvent = () => {

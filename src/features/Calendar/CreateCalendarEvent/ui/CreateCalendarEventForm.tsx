@@ -161,15 +161,15 @@ export const CreateCalendarEventForm = (props: Props) => {
 					Уведомить привязанные Telegram чаты?
 				</Switch>
 
-				<Textarea
-					label="Сообщение"
-					value={notifyMessage}
-					onChange={(event) => onChangeNotifyMessage(event.target.value)}
-					placeholder={
-						'Здесь вы можете написать дополнительное сообщение к напоминанию, которое сразу отправится в привязанные Telegram чаты при создании'
-					}
-					disabled={!isSpaceHasTelegramChats || !isNotifyMessage}
-				/>
+				{isNotifyMessage && (
+					<Textarea
+						label="Сообщение"
+						value={notifyMessage}
+						onChange={(event) => onChangeNotifyMessage(event.target.value)}
+						placeholder={'Дополнительное Telegram сообщение'}
+						disabled={!isSpaceHasTelegramChats || !isNotifyMessage}
+					/>
+				)}
 
 				<div className="flex flex-col gap-2">
 					<div className="text-sm font-medium">Напоминания</div>

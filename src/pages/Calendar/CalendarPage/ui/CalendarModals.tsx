@@ -6,9 +6,13 @@ import type {
 	UpdateCalendarEvent,
 } from 'entities/CalendarEvent';
 
-import { ChangeCalendarEventModal } from './ChangeCalendarEventModal';
-import { ConfirmChangeEventModal } from './ConfirmChangeEventModal';
+import {
+	ConfirmUpdateEventModal,
+	type UpdateNotificationSettings,
+} from './ConfirmUpdateEventModal';
 import { CreateCalendarEventModal } from './CreateCalendarEventModal';
+import { DeleteCalendarEventModal } from './DeleteCalendarEventModal';
+import { UpdateCalendarEventModal } from './UpdateCalendarEventModal';
 
 type Props = {
 	createDefaults: CreateCalendarEvent;
@@ -18,18 +22,24 @@ type Props = {
 	eventDetails: CalendarEvent;
 	isDetailsOpen: boolean;
 	onDetailsOpenChange: () => void;
-	onEditEvent: (event: CalendarEvent) => void;
 
 	editDefaults: UpdateCalendarEvent & { eventId: string };
 	isEditOpen: boolean;
 	onEditOpenChange: () => void;
+	onEditEvent: (event: CalendarEvent) => void;
+
+	isDeleteOpen: boolean;
+	onDeleteOpenChange: () => void;
+	onDeleteEvent: () => void;
 
 	isEditable: boolean;
+	isSpaceHasTelegramChats: boolean;
+	isRecurringUpdate: boolean;
 
 	isConfirmOpen: boolean;
 	onCancelChangeEvents: () => void;
-	onUpdateOneEvent: () => void;
-	onUpdateFutureEvents: () => void;
+	onUpdateOneEvent: (settings: UpdateNotificationSettings) => void;
+	onUpdateFutureEvents: (settings: UpdateNotificationSettings) => void;
 	isUpdatingEvent: boolean;
 };
 
@@ -48,9 +58,15 @@ export const CalendarModals = (props: Props) => {
 		isEditOpen,
 		onEditOpenChange,
 
+		isDeleteOpen,
+		onDeleteEvent,
+		onDeleteOpenChange,
+
 		isEditable,
 		isConfirmOpen,
 		isUpdatingEvent,
+		isSpaceHasTelegramChats,
+		isRecurringUpdate,
 
 		onCancelChangeEvents,
 		onUpdateOneEvent,
@@ -73,13 +89,14 @@ export const CalendarModals = (props: Props) => {
 					isEditable={isEditable}
 					event={eventDetails}
 					onEdit={onEditEvent}
+					onDelete={onDeleteEvent}
 					isOpen={isDetailsOpen}
 					onOpenChange={onDetailsOpenChange}
 				/>
 			)}
 
 			{isEditOpen && (
-				<ChangeCalendarEventModal
+				<UpdateCalendarEventModal
 					isOpen={isEditOpen}
 					onOpenChange={onEditOpenChange}
 					eventId={editDefaults.eventId}
@@ -88,12 +105,25 @@ export const CalendarModals = (props: Props) => {
 				/>
 			)}
 
-			<ConfirmChangeEventModal
+			{isDeleteOpen && (
+				<DeleteCalendarEventModal
+					onSuccess={onDeleteOpenChange}
+					eventId={eventDetails.id}
+					eventStart={eventDetails.start}
+					eventFrequency={eventDetails.frequency}
+					isOpen={isDeleteOpen}
+					onOpenChange={onDeleteOpenChange}
+				/>
+			)}
+
+			<ConfirmUpdateEventModal
 				isOpen={isConfirmOpen}
 				onClose={onCancelChangeEvents}
 				onUpdateOne={onUpdateOneEvent}
 				onUpdateFuture={onUpdateFutureEvents}
 				isUpdating={isUpdatingEvent}
+				isSpaceHasTelegramChats={isSpaceHasTelegramChats}
+				isRecurringEvent={isRecurringUpdate}
 			/>
 		</>
 	);

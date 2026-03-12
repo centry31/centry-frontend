@@ -1,6 +1,4 @@
-export const getSpaceInviteLinkUrl = (code: string) => {
+export const getSpaceInviteLinkUrl = (code: string, host = window.location.origin) => {
 	if (!code) return null;
-
-	const host = window.location.origin;
-	return `${host}/spaces/join?code=${code}`;
+	return `${host}/invite?code=${code}`;
 };

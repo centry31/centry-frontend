@@ -10,10 +10,14 @@ import 'dotenv-defaults/config';
 
 export default () => {
 	const paths: BuildPaths = {
-		entry: path.resolve(__dirname, 'src', 'index.tsx'),
 		build: path.resolve(__dirname, 'build'),
-		html: path.resolve(__dirname, 'public', 'index.html'),
+
+		sourceAssets: path.resolve(__dirname, 'public', 'assets'),
+		targetAssets: path.resolve(__dirname, 'build', 'assets'),
+
 		src: path.resolve(__dirname, 'src'),
+		entry: path.resolve(__dirname, 'src', 'index.tsx'),
+		html: path.resolve(__dirname, 'public', 'index.html'),
 	};
 
 	// env
